@@ -3,7 +3,6 @@ use std::ops::*;
 //Vec4 is a wrapper for Tuple
 #[derive(Debug, PartialEq)]
 pub struct Vec4(pub f64, pub f64, pub f64, pub f64);
-
 //Vec4 + Vec4
 impl Add for Vec4 {
     type Output = Vec4;
@@ -100,6 +99,39 @@ impl<'a> Mul<&'a f64> for Vec4 {
     
     fn mul(self, other: &'a f64) -> Vec4 {
         Vec4(self.0 * other, self.1 * other, self.2 * other, self.3 * other)
+    }
+}
+
+//f64 * Vec4
+impl Mul<Vec4> for f64 {
+    type Output = Vec4;
+    
+    fn mul(self, other: Vec4) -> Vec4 {
+        Vec4(other.0 * self, other.1 * self, other.2 * self, other.3 * self)
+    }
+}
+//&f64 * &Vec4
+impl<'a, 'b> Mul<&'b Vec4> for &'a f64 {
+    type Output = Vec4;
+    
+    fn mul(self, other: &'b Vec4) -> Vec4 {
+        Vec4(other.0 * self, other.1 * self, other.2 * self, other.3 * self)
+    }
+}
+//&f64 * &Vec4
+impl<'a> Mul<Vec4> for &'a f64 {
+    type Output = Vec4;
+    
+    fn mul(self, other: Vec4) -> Vec4 {
+        Vec4(other.0 * self, other.1 * self, other.2 * self, other.3 * self)
+    }
+}
+//f64 * &Vec4
+impl<'a> Mul<&'a Vec4> for f64 {
+    type Output = Vec4;
+    
+    fn mul(self, other: &'a Vec4) -> Vec4 {
+        Vec4(other.0 * self, other.1 * self, other.2 * self, other.3 * self)
     }
 }
 
