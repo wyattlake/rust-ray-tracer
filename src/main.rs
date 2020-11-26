@@ -1,5 +1,4 @@
-use rust_raytracer::vector::*;
-use rust_raytracer::projectiles::*;
+use rust_raytracer::print_projectiles::*;
 
 fn main() {
     launch_projectile();
