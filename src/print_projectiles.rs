@@ -18,7 +18,7 @@ pub fn launch_projectile() {
         velocity = new_values.1;
         if &position.1 > &0.0 {
             let coords = convert_pos(&position, &canvas);
-            canvas.set(Color::new(1.0, 0.0, 0.0), coords.0 as usize, coords.1 as usize);
+            canvas.set(Color::new(1.0, 0.0, 0.0), coords.0, coords.1);
         }
     }
     println!("Object landed at x:{}, y:{}, z:{}", position.0, position.1, position.2);

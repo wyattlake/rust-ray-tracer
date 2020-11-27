@@ -1,15 +1,7 @@
 use std::ops::*;
 use std::fmt::Debug;
-
-pub trait Clone {
-    fn clone(&self) -> Self;
-}
-
-impl Clone for f64 {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
+use crate::vector::*;
+use crate::axis::*;
 
 //Matrix4x4 is composed of nested tuples
 #[derive(Debug, PartialEq)]
@@ -80,12 +72,57 @@ impl Matrix4x4 {
             Some(result)
         }
     }
-}
 
-impl Clone for Matrix4x4 {
     //Clones a given Matrix4x4
-    fn clone(&self) -> Matrix4x4 {
+    pub fn clone(&self) -> Matrix4x4 {
         Matrix4x4(self.0, self.1, self.2, self.3)
+    }
+
+    //Creates a translation matrix
+    pub fn translation(x: f64, y: f64, z: f64) -> Matrix4x4 {
+        Matrix4x4::new((1.0, 0.0, 0.0, x), (0.0, 1.0, 0.0, y), (0.0, 0.0, 1.0, z), (0.0, 0.0, 0.0, 1.0))
+    }
+
+    //Creates a translation matrix
+    pub fn scaling(x: f64, y: f64, z: f64) -> Matrix4x4 {
+        Matrix4x4::new((x, 0.0, 0.0, 0.0), (0.0, y, 0.0, 0.0), (0.0, 0.0, z, 0.0), (0.0, 0.0, 0.0, 1.0))
+    }
+
+    //Creates a reflection matrix
+    pub fn reflection(axis: Axis) -> Matrix4x4 {
+        match axis {
+            Axis::X => {
+                Matrix4x4::scaling(-1.0, 1.0, 1.0)
+            }
+            Axis::Y => {
+                Matrix4x4::scaling(1.0, -1.0, 1.0)
+            }
+            Axis::Z => {
+                Matrix4x4::scaling(1.0, 1.0, -1.0)
+            }
+        }
+    }
+
+    //Creates a rotation matrix
+    pub fn rotation(axis: Axis, degrees: f64) -> Matrix4x4 {
+        let r = degrees.to_radians();
+        match axis {
+            Axis::X => {
+                Matrix4x4::new((1.0, 0.0, 0.0, 0.0), (0.0, r.cos(), -r.sin(), 0.0), (0.0, r.sin(), r.cos(), 0.0), (0.0, 0.0, 0.0, 1.0))
+            },
+            Axis::Y => { 
+                Matrix4x4::new((r.cos(), 0.0, r.sin(), 0.0), (0.0, 1.0, 0.0, 0.0), (-r.sin(), 0.0, r.cos(), 0.0), (0.0, 0.0, 0.0, 1.0))
+            },
+            Axis::Z => { 
+                Matrix4x4::new((r.cos(), -r.sin(), 0.0, 0.0), (r.sin(), r.cos(), 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0))
+            },
+        }
+
+    }
+
+    //Creates a shearing matrix
+    pub fn shearing(x_y: f64, x_z: f64, y_x: f64, y_z: f64, z_x: f64, z_y: f64) -> Matrix4x4 {
+        Matrix4x4::new((1.0, x_y, x_z, 0.0), (y_x, 1.0, y_z, 0.0), (z_x, z_y, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0))
     }
 }
 
@@ -118,7 +155,8 @@ impl<'a> Mul<Matrix4x4> for &'a Matrix4x4 {
                   ((self.2.0 * other.0.0) + (self.2.1 * other.1.0) + (self.2.2 * other.2.0) + (self.2.3 * other.3.0), (self.2.0 * other.0.1) + (self.2.1 * other.1.1) + (self.2.2 * other.2.1) + (self.2.3 * other.3.1), (self.2.0 * other.0.2) + (self.2.1 * other.1.2) + (self.2.2 * other.2.2) + (self.2.3 * other.3.2), (self.2.0 * other.0.3) + (self.2.1 * other.1.3) + (self.2.2 * other.2.3) + (self.2.3 * other.3.3)),
                   ((self.3.0 * other.0.0) + (self.3.1 * other.1.0) + (self.3.2 * other.2.0) + (self.3.3 * other.3.0), (self.3.0 * other.0.1) + (self.3.1 * other.1.1) + (self.3.2 * other.2.1) + (self.3.3 * other.3.1), (self.3.0 * other.0.2) + (self.3.1 * other.1.2) + (self.3.2 * other.2.2) + (self.3.3 * other.3.2), (self.3.0 * other.0.3) + (self.3.1 * other.1.3) + (self.3.2 * other.2.3) + (self.3.3 * other.3.3)))
     }
-}//&Matrix4x4 * &Matrix4x4
+}
+//&Matrix4x4 * &Matrix4x4
 impl<'a> Mul<&'a Matrix4x4> for Matrix4x4 {
     type Output = Matrix4x4;
     fn mul(self, other: &'a Matrix4x4) -> Matrix4x4 {
@@ -126,6 +164,35 @@ impl<'a> Mul<&'a Matrix4x4> for Matrix4x4 {
                   ((self.1.0 * other.0.0) + (self.1.1 * other.1.0) + (self.1.2 * other.2.0) + (self.1.3 * other.3.0), (self.1.0 * other.0.1) + (self.1.1 * other.1.1) + (self.1.2 * other.2.1) + (self.1.3 * other.3.1), (self.1.0 * other.0.2) + (self.1.1 * other.1.2) + (self.1.2 * other.2.2) + (self.1.3 * other.3.2), (self.1.0 * other.0.3) + (self.1.1 * other.1.3) + (self.1.2 * other.2.3) + (self.1.3 * other.3.3)),
                   ((self.2.0 * other.0.0) + (self.2.1 * other.1.0) + (self.2.2 * other.2.0) + (self.2.3 * other.3.0), (self.2.0 * other.0.1) + (self.2.1 * other.1.1) + (self.2.2 * other.2.1) + (self.2.3 * other.3.1), (self.2.0 * other.0.2) + (self.2.1 * other.1.2) + (self.2.2 * other.2.2) + (self.2.3 * other.3.2), (self.2.0 * other.0.3) + (self.2.1 * other.1.3) + (self.2.2 * other.2.3) + (self.2.3 * other.3.3)),
                   ((self.3.0 * other.0.0) + (self.3.1 * other.1.0) + (self.3.2 * other.2.0) + (self.3.3 * other.3.0), (self.3.0 * other.0.1) + (self.3.1 * other.1.1) + (self.3.2 * other.2.1) + (self.3.3 * other.3.1), (self.3.0 * other.0.2) + (self.3.1 * other.1.2) + (self.3.2 * other.2.2) + (self.3.3 * other.3.2), (self.3.0 * other.0.3) + (self.3.1 * other.1.3) + (self.3.2 * other.2.3) + (self.3.3 * other.3.3)))
+    }
+}
+
+//Matrix4x4 * Vec4
+impl Mul<Vec4> for Matrix4x4 {
+    type Output = Vec4;
+    fn mul(self, other: Vec4) -> Vec4 {
+        Vec4::new((self.0.0 * other.0) + (self.0.1 * other.1) + (self.0.2 * other.2) + (self.0.3 * other.3), (self.1.0 * other.0) + (self.1.1 * other.1) + (self.1.2 * other.2) + (self.1.3 * other.3), (self.2.0 * other.0) + (self.2.1 * other.1) + (self.2.2 * other.2) + (self.2.3 * other.3), (self.3.0 * other.0) + (self.3.1 * other.1) + (self.3.2 * other.2) + (self.3.3 * other.3))
+    }
+}
+//&Matrix4x4 * &Vec4
+impl<'a, 'b> Mul<&'b Vec4> for &'a Matrix4x4 {
+    type Output = Vec4;
+    fn mul(self, other: &'b Vec4) -> Vec4 {
+        Vec4::new((self.0.0 * other.0) + (self.0.1 * other.1) + (self.0.2 * other.2) + (self.0.3 * other.3), (self.1.0 * other.0) + (self.1.1 * other.1) + (self.1.2 * other.2) + (self.1.3 * other.3), (self.2.0 * other.0) + (self.2.1 * other.1) + (self.2.2 * other.2) + (self.2.3 * other.3), (self.3.0 * other.0) + (self.3.1 * other.1) + (self.3.2 * other.2) + (self.3.3 * other.3))
+    }
+}
+//&Matrix4x4 * Vec4
+impl<'a> Mul<Vec4> for &'a Matrix4x4 {
+    type Output = Vec4;
+    fn mul(self, other: Vec4) -> Vec4 {
+        Vec4::new((self.0.0 * other.0) + (self.0.1 * other.1) + (self.0.2 * other.2) + (self.0.3 * other.3), (self.1.0 * other.0) + (self.1.1 * other.1) + (self.1.2 * other.2) + (self.1.3 * other.3), (self.2.0 * other.0) + (self.2.1 * other.1) + (self.2.2 * other.2) + (self.2.3 * other.3), (self.3.0 * other.0) + (self.3.1 * other.1) + (self.3.2 * other.2) + (self.3.3 * other.3))
+    }
+}
+//Matrix4x4 * Vec4
+impl<'a> Mul<&'a Vec4> for Matrix4x4 {
+    type Output = Vec4;
+    fn mul(self, other: &'a Vec4) -> Vec4 {
+        Vec4::new((self.0.0 * other.0) + (self.0.1 * other.1) + (self.0.2 * other.2) + (self.0.3 * other.3), (self.1.0 * other.0) + (self.1.1 * other.1) + (self.1.2 * other.2) + (self.1.3 * other.3), (self.2.0 * other.0) + (self.2.1 * other.1) + (self.2.2 * other.2) + (self.2.3 * other.3), (self.3.0 * other.0) + (self.3.1 * other.1) + (self.3.2 * other.2) + (self.3.3 * other.3))
     }
 }
 
@@ -197,11 +264,9 @@ impl Matrix3x3 {
             Some(result)
         }
     }
-}
 
-impl Clone for Matrix3x3 {
     //Clones a given Matrix4x4
-    fn clone(&self) -> Matrix3x3 {
+    pub fn clone(&self) -> Matrix3x3 {
         Matrix3x3(self.0, self.1, self.2)
     }
 }
