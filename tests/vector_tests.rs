@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use rust_raytracer::vector::*;
+    use rust_ray_tracer::vector::*;
 
     //Tests vector negation 
     #[test]

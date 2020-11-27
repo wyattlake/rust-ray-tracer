@@ -3,6 +3,46 @@ use std::ops::*;
 //Vec4 is a wrapper for Tuple
 #[derive(Debug, PartialEq)]
 pub struct Vec4(pub f64, pub f64, pub f64, pub f64);
+
+impl Vec4 {
+    //Checks if a given Vec4 is a vector
+    fn is_vector(vector: &Vec4) {
+        if vector.3 != 0.0 {
+            panic!("Vec4 cannot be a point")
+        }
+    }
+
+    //Creates a new Vec4
+    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Vec4 {
+        Vec4(x, y, z, w)
+    }
+
+    //Negates a Vec4
+    pub fn negate(&self) -> Vec4 {
+        Vec4(-self.0, -self.1, -self.2, -self.3)
+    }
+
+    //Gets the magnitude of a Vec4
+    pub fn magnitude(vector: &Vec4) -> f64 {
+        Vec4::is_vector(&vector);
+        ((vector.0 * vector.0) + (vector.1 * vector.1) + (vector.2 * vector.2)).sqrt()
+    }
+
+    //Normalizes a Vec4
+    pub fn normalize(&self) -> Vec4 {
+        let magnitude = Vec4::magnitude(&self);
+        Vec4(self.0 / magnitude, -self.1 / magnitude, -self.2 / magnitude, 0.0)
+    }
+
+    //Finds the dot product of 2 Vec4
+    pub fn dot(vec1: &Vec4, vec2: &Vec4) -> f64 {
+        Vec4::is_vector(&vec1);
+        Vec4::is_vector(&vec2);
+        (vec1.0 * vec2.0) + (vec1.1 * vec2.1) + (vec1.2 * vec2.2)
+    }
+}
+
+
 //Vec4 + Vec4
 impl Add for Vec4 {
     type Output = Vec4;
@@ -174,42 +214,3 @@ impl Clone for Vec4 {
         Vec4(self.0, self.1, self.2, self.3)
     }
 }
-
-impl Vec4 {
-    //Checks if a given Vec4 is a vector
-    fn is_vector(vector: &Vec4) {
-        if vector.3 != 0.0 {
-            panic!("Vec4 cannot be a point")
-        }
-    }
-
-    //Creates a new Vec4
-    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Vec4 {
-        Vec4(x, y, z, w)
-    }
-
-    //Negates a Vec4
-    pub fn negate(&self) -> Vec4 {
-        Vec4(-self.0, -self.1, -self.2, -self.3)
-    }
-
-    //Gets the magnitude of a Vec4
-    pub fn magnitude(vector: &Vec4) -> f64 {
-        Vec4::is_vector(&vector);
-        ((vector.0 * vector.0) + (vector.1 * vector.1) + (vector.2 * vector.2)).sqrt()
-    }
-
-    //Normalizes a Vec4
-    pub fn normalize(&self) -> Vec4 {
-        let magnitude = Vec4::magnitude(&self);
-        Vec4(self.0 / magnitude, -self.1 / magnitude, -self.2 / magnitude, 0.0)
-    }
-
-    //Finds the dot product of 2 Vec4
-    pub fn dot(vec1: &Vec4, vec2: &Vec4) -> f64 {
-        Vec4::is_vector(&vec1);
-        Vec4::is_vector(&vec2);
-        (vec1.0 * vec2.0) + (vec1.1 * vec2.1) + (vec1.2 * vec2.2)
-    }
-}
-

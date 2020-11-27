@@ -27,21 +27,9 @@ pub fn launch_projectile() {
 
 //Converts the projectile position to image coordinates
 fn convert_pos(position: &Vec4, canvas: &Canvas) -> Coordinates {
-    if position.0 > 0.0 {
-        let new_x = (position.0 * 2.0).round() as i32;
-        let new_y = (position.1 * 20.0).round() as i32;
-        if new_y > 0 {
-            println!("x: {}, y: {}", new_x, new_y);
-            Coordinates(new_x, canvas.height as i32 - new_y)
-        }
-        else {
-            println!("x: {}, y: {}", new_x, new_y);
-            Coordinates(new_x, 0)
-        }
-    }
-    else {
-        panic!("Y coordinate was negative");
-    }
+    let new_x = (position.0 * 2.0).round() as i32;
+    let new_y = (position.1 * 20.0).round() as i32;
+    Coordinates(new_x, canvas.height as i32 - new_y)
 }
 
 //Tick finds the new position and velocity

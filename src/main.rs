@@ -1,5 +1,4 @@
-use rust_raytracer::print_projectiles::*;
+use rust_ray_tracer::matrix::*;
 
 fn main() {
-    launch_projectile();
 }

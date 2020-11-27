@@ -21,23 +21,32 @@ impl Canvas {
     }
 
     //Gets a reference to a Color in the Canvas
-    pub fn get(&self, x: usize, y: usize) -> &Color {
-        self.in_bounds(x, y);
-        let index = self.width * y + x % self.width;
-        &self.contents[index]
+    pub fn get(&self, x: usize, y: usize) -> Option<&Color> {
+        if self.in_bounds(x, y) {
+            let index = self.width * y + x % self.width;
+            Some(&self.contents[index])
+        }
+        else {
+            None
+        }
     }
 
     //Sets the color of a pixel in the Canvas
     pub fn set(&mut self, color: Color, x: usize, y: usize) {
-        self.in_bounds(x, y);
-        let index = self.width * y + x % self.width;
-        self.contents[index] = color;
+        if self.in_bounds(x, y) {
+            let index = self.width * y + x % self.width;
+            self.contents[index] = color;
+        }
     }
 
     //Checks if given coordinates are in the canvas bounds
-    fn in_bounds(&self, x: usize, y: usize) {
-        if x > self.width - 1 || y > self.height - 1 || x < 0 || y < 0 {
-            panic!("Point (x: {}, y: {}) is outside the bounds of the canvas", x, y);
+    fn in_bounds(&self, x: usize, y: usize) -> bool {
+        if x > self.width - 1 || y > self.height - 1 {
+            println!("Pixel (x: {}, y: {}) is outside the bounds of the canvas", x, y);
+            false
+        }
+        else {
+            true
         }
     }
 
@@ -66,14 +75,11 @@ impl Canvas {
         let filename_formatted = &*format!("{}.ppm", filename);
         let path = Path::new(filename_formatted);
         let display = path.display();
-    
         let text = Canvas::format_ppm(canvas);
-
         let mut file = match File::create(&path) {
             Err(error) => panic!("Failed to open {}: {}", display, error),
             Ok(file) => file,
         };
-
         match file.write_all(text.as_bytes()) {
             Err(error) => panic!("Failed to write to {}: {}", display, error),
             Ok(_) => println!("Successfully wrote canvas to {}", display),

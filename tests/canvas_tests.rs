@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use rust_raytracer::canvas::*;
-    use rust_raytracer::color::*;
+    use rust_ray_tracer::canvas::*;
+    use rust_ray_tracer::color::*;
 
     //Tests reading and writing to the canvas
     #[test]
@@ -9,7 +9,7 @@ mod tests {
         let mut canvas = Canvas::new(10, 10);
         let green = Color::new(0.0, 1.0, 0.0);
         canvas.set(green.clone(), 5, 5);
-        assert_eq!(canvas.get(5, 5), &green);
+        assert_eq!(canvas.get(5, 5), Some(&green));
     }
 
     //Tests line length of generated ppm
