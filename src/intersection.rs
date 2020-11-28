@@ -5,7 +5,7 @@ use std::rc::Rc;
 #[derive(Debug, PartialEq)]
 pub struct Intersection {
     t: f64,
-    object: Rc<Sphere>,
+    pub object: Rc<Sphere>,
 }
 
 impl Intersection where {
@@ -38,6 +38,11 @@ impl Intersection where {
     //Gets the t value of an intersection
     pub fn get_t(&self) -> f64 {
         self.t
+    }
+
+    //Gets the object value of an intersection
+    pub fn get_object(&self) -> Sphere {
+        (*self.object).clone()
     }
 }
 

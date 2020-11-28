@@ -1,4 +1,7 @@
+
+use crate::sphere::Sphere;
 use std::ops::*;
+use std::rc::Rc;
 
 //Vec4 is a wrapper for Tuple
 #[derive(Debug, PartialEq)]
@@ -19,7 +22,7 @@ impl Vec4 {
 
     //Negates a Vec4
     pub fn negate(&self) -> Vec4 {
-        Vec4(-self.0, -self.1, -self.2, -self.3)
+        Vec4(-self.0, -self.1, -self.2, self.3)
     }
 
     //Gets the magnitude of a Vec4
@@ -31,7 +34,7 @@ impl Vec4 {
     //Normalizes a Vec4
     pub fn normalize(&self) -> Vec4 {
         let magnitude = Vec4::magnitude(&self);
-        Vec4(self.0 / magnitude, -self.1 / magnitude, -self.2 / magnitude, 0.0)
+        Vec4(self.0 / magnitude, self.1 / magnitude, self.2 / magnitude, 0.0)
     }
 
     //Finds the dot product of 2 Vec4
@@ -39,6 +42,25 @@ impl Vec4 {
         Vec4::is_vector(&vec1);
         Vec4::is_vector(&vec2);
         (vec1.0 * vec2.0) + (vec1.1 * vec2.1) + (vec1.2 * vec2.2)
+    }
+
+    //Finds the normal of a given point on a sphere
+    pub fn normal(sphere: &Rc<Sphere>, world_point: &Vec4) -> Vec4 {
+        let object_point = (*sphere.get_transform()).inverse().unwrap() * world_point;
+        let object_normal = object_point - Vec4::new(0.0, 0.0, 0.0, 1.0);
+        let mut world_normal = (*sphere.get_transform()).inverse().unwrap().transpose() * object_normal; 
+        world_normal.3 = 0.0;
+        world_normal.normalize()
+    }
+
+    //Reflects a vector about a given normal
+    pub fn reflect(vector: &Vec4, normal: &Vec4) -> Vec4 {
+        vector - (normal * 2.0 * Vec4::dot(vector, normal))
+    }
+
+    //Rounds a vector (used for testing)
+    pub fn round(&self) -> Vec4 {
+        Vec4::new(self.0.round(), self.1.round(), self.2.round(), 0.0)
     }
 }
 

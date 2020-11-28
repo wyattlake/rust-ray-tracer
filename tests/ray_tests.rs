@@ -11,7 +11,7 @@ mod tests {
     #[test]
     fn ray_position() {
         let ray = Ray::new((2.0, 3.0, 4.0), (1.0, 0.0, 0.0));
-        assert_eq!(Ray::position(ray, 1.0), Vec4::new(3.0, 3.0, 4.0, 1.0))
+        assert_eq!(Ray::position(&ray, &1.0), Vec4::new(3.0, 3.0, 4.0, 1.0))
     }
 
     //Tests ray intersection with 2 points on unit sphere
@@ -100,5 +100,13 @@ mod tests {
         let sphere_ref = Rc::new(sphere);
         let result = Ray::intersect(sphere_ref, &ray);
         assert_eq!(result, None);
+    }
+
+    #[test]
+    //Tests surface normals on the x axis
+    fn surface_normal_x() {
+        let s = Sphere::new();
+        let vector = Vec4::normal(&s, &Vec4::new(1.0, 0.0, 0.0, 1.0));
+        assert_eq!(vector, Vec4::new(1.0, 0.0, 0.0, 0.0))
     }
 }

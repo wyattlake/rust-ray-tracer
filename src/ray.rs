@@ -28,8 +28,8 @@ impl Ray where {
     }
 
     //Calculates the position of a ray
-    pub fn position(ray: Ray, t: f64) -> Vec4 {
-        ray.origin + (ray.direction * t)
+    pub fn position(ray: &Ray, t: &f64) -> Vec4 {
+        ray.get_origin() + (ray.get_direction() * t)
     }
 
     //Lists where a ray intersects with the unit sphere and pushes to an IntersectionList
@@ -54,6 +54,14 @@ impl Ray where {
             origin: matrix * ray.origin.clone(),
             direction: matrix * ray.direction.clone(),
         }
+    }
+
+    pub fn get_origin(&self) -> &Vec4 {
+        &self.origin
+    }
+
+    pub fn get_direction(&self) -> &Vec4 {
+        &self.direction
     }
 }
 

@@ -8,7 +8,7 @@ mod tests {
         let clr1 = Color::new(0.9, 0.6, 0.75);
         let clr2 = Color::new(0.7, 0.1, 0.25);
         let clr3 = clr1 + clr2;
-        assert_eq!(&Color::new(1.6, 0.7, 1.0), &clr3);
+        assert_eq!(&Color::new(1.6, 0.7, 1.0), &clr3.round());
     }
 
     //Tests color subtraction 
