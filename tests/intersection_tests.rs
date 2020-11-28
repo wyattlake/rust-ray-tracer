@@ -1,8 +1,8 @@
 #[cfg(test)]
 
 mod tests {
-    use rust_ray_tracer::sphere::*;
-    use rust_ray_tracer::intersection::*; 
+    use rust_ray_tracer::objects::sphere::*;
+    use rust_ray_tracer::ray_tracing::intersection::*; 
     use std::rc::Rc;
 
     #[test]

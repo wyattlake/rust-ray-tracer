@@ -1,10 +1,10 @@
 #[cfg(test)]
 
 mod tests {
-    use rust_ray_tracer::material::Material;
-    use rust_ray_tracer::vector::Vec4;
-    use rust_ray_tracer::color::Color;
-    use rust_ray_tracer::lighting::*;
+    use rust_ray_tracer::core::vector::Vec4;
+    use rust_ray_tracer::core::color::Color;
+    use rust_ray_tracer::ray_tracing::lighting::*;
+    use rust_ray_tracer::ray_tracing::material::Material;
 
 
     //Tests lighting when directly facing at a sphere

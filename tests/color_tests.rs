@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use rust_ray_tracer::color::*;
+    use rust_ray_tracer::core::color::*;
 
     //Tests color addition
     #[test]

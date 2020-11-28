@@ -1,4 +1,4 @@
-use crate::vector::*;
+use crate::core::vector::*;
 
 //Launches a projectile with set environment conditions
 pub fn launch_projectile() {

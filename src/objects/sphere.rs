@@ -1,5 +1,5 @@
-use crate::matrix::Matrix4x4;
-use crate::material::Material;
+use crate::core::matrix::Matrix4x4;
+use crate::ray_tracing::material::Material;
 use std::rc::Rc;
 
 //A sphere has a transform trait which keeps track of its transformations

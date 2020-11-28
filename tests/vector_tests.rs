@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
-    use rust_ray_tracer::vector::*;
-    use rust_ray_tracer::sphere::*;
-    use rust_ray_tracer::axis::*;
-    use rust_ray_tracer::matrix::*;
+    use rust_ray_tracer::core::vector::Vec4;
+    use rust_ray_tracer::core::matrix::Matrix4x4;
+    use rust_ray_tracer::objects::sphere::Sphere;
+    use rust_ray_tracer::misc::axis::Axis;
     use std::rc::Rc;
 
     //Tests vector negation 

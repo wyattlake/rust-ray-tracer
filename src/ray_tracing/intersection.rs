@@ -1,4 +1,4 @@
-use crate::sphere::Sphere;
+use crate::objects::sphere::Sphere;
 use std::rc::Rc;
 
 //Intersection stores the time of intersection and an Rc to the Object

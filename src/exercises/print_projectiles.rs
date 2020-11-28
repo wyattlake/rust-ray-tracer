@@ -1,6 +1,6 @@
-use crate::vector::*;
-use crate::canvas::*;
-use crate::color::*;
+use crate::core::vector::*;
+use crate::core::canvas::*;
+use crate::core::color::*;
 
 //Launches a projectile with set environment conditions
 pub fn launch_projectile() {

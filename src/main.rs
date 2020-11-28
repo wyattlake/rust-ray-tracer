@@ -1,12 +1,12 @@
-use rust_ray_tracer::vector::Vec4;
-use rust_ray_tracer::ray::Ray;
-use rust_ray_tracer::intersection::Intersection;
-use rust_ray_tracer::matrix::Matrix4x4;
-use rust_ray_tracer::color::Color;
-use rust_ray_tracer::canvas::Canvas;
-use rust_ray_tracer::sphere::Sphere;
-use rust_ray_tracer::axis::Axis;
-use rust_ray_tracer::lighting::*;
+use rust_ray_tracer::core::vector::Vec4;
+use rust_ray_tracer::ray_tracing::ray::Ray;
+use rust_ray_tracer::ray_tracing::intersection::Intersection;
+use rust_ray_tracer::core::matrix::Matrix4x4;
+use rust_ray_tracer::core::color::Color;
+use rust_ray_tracer::core::canvas::Canvas;
+use rust_ray_tracer::objects::sphere::Sphere;
+use rust_ray_tracer::misc::axis::Axis;
+use rust_ray_tracer::ray_tracing::lighting::*;
 use std::rc::Rc;
 
 fn main() {

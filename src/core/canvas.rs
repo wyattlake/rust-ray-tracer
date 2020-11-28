@@ -1,4 +1,4 @@
-use crate::color::Color;
+use crate::core::color::Color;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;

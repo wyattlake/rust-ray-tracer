@@ -1,4 +1,4 @@
-use crate::utils::clamp_float;
+use crate::misc::utils::clamp_float;
 use std::ops::*;
 
 //Color is a wrapper for Tuple

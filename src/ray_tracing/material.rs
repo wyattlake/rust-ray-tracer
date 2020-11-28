@@ -1,5 +1,5 @@
-use crate::color::Color;
-use crate::utils::clamp_float;
+use crate::core::color::Color;
+use crate::misc::utils::clamp_float;
 
 #[derive(Debug, PartialEq)]
 //A Material holds a bunch of properties for an object

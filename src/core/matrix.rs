@@ -1,7 +1,7 @@
 use std::ops::*;
 use std::fmt::Debug;
-use crate::vector::*;
-use crate::axis::*;
+use crate::core::vector::*;
+use crate::misc::axis::*;
 
 //Matrix4x4 is composed of nested tuples
 #[derive(Debug, PartialEq)]

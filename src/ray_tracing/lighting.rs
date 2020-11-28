@@ -1,6 +1,6 @@
-use crate::color::Color;
-use crate::vector::Vec4;
-use crate::material::Material;
+use crate::core::color::Color;
+use crate::core::vector::Vec4;
+use crate::ray_tracing::material::Material;
 
 //Light in space with no size
 #[derive(Debug, PartialEq)]

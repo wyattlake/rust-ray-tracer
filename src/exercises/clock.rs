@@ -1,8 +1,8 @@
-use crate::matrix::*;
-use crate::vector::*;
-use crate::canvas::*;
-use crate::color::*;
-use crate::axis::Axis;
+use crate::core::matrix::*;
+use crate::core::vector::*;
+use crate::core::canvas::*;
+use crate::core::color::*;
+use crate::misc::axis::Axis;
 
 //Draws pixels in a clock formation
 pub fn draw() {

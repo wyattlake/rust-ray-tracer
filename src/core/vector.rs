@@ -1,5 +1,5 @@
 
-use crate::sphere::Sphere;
+use crate::objects::sphere::Sphere;
 use std::ops::*;
 use std::rc::Rc;
 

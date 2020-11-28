@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use rust_ray_tracer::canvas::*;
-    use rust_ray_tracer::color::*;
+    use rust_ray_tracer::core::color::Color;
+    use rust_ray_tracer::core::canvas::Canvas;
 
     //Tests reading and writing to the canvas
     #[test]

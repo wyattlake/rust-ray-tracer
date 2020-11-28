@@ -1,9 +1,9 @@
 #[cfg(test)]
 
 mod tests {
-    use rust_ray_tracer::matrix::*;
-    use rust_ray_tracer::vector::*;
-    use rust_ray_tracer::axis::Axis;
+    use rust_ray_tracer::core::matrix::*;
+    use rust_ray_tracer::core::vector::*;
+    use rust_ray_tracer::misc::axis::Axis;
 
     //Tests matrix indexing
     #[test]
