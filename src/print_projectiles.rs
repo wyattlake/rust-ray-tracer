@@ -2,8 +2,7 @@ use crate::vector::*;
 use crate::canvas::*;
 use crate::color::*;
 
-struct Coordinates (i32, i32);
-
+//Launches a projectile with set environment conditions
 pub fn launch_projectile() {
     let mut canvas = Canvas::new(800, 800);
     let gravity = Vec4::new(0.0, -0.005, 0.0, 0.0);
@@ -22,14 +21,14 @@ pub fn launch_projectile() {
         }
     }
     println!("Object landed at x:{}, y:{}, z:{}", position.0, position.1, position.2);
-    Canvas::write_file(canvas, "test");
+    Canvas::write_file(canvas, "image");
 }
 
 //Converts the projectile position to image coordinates
-fn convert_pos(position: &Vec4, canvas: &Canvas) -> Coordinates {
+fn convert_pos(position: &Vec4, canvas: &Canvas) -> (i32, i32) {
     let new_x = (position.0 * 2.0).round() as i32;
     let new_y = (position.1 * 20.0).round() as i32;
-    Coordinates(new_x, canvas.height as i32 - new_y)
+    (new_x, canvas.height as i32 - new_y)
 }
 
 //Tick finds the new position and velocity

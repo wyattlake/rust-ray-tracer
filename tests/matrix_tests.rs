@@ -77,9 +77,10 @@ mod tests {
     #[test]
     //Tests matrix inverse
     fn matrix_inverse() {
-        let matrix1 = Matrix4x4::new((1.0, 1.0, 1.0, -1.0), (1.0, 1.0, -1.0, 1.0), (1.0, -1.0, 1.0, 1.0), (-1.0, 1.0, 1.0, 1.0));
+        let matrix1 = Matrix4x4::new((1.0, 0.0, 0.0, 5.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0));
         let result1 = matrix1.inverse();
-        assert_eq!(None, result1);
+        let matrix2 = Matrix4x4::new((1.0, 0.0, 0.0, -5.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0));
+        assert_eq!(matrix2, result1.unwrap());
         let matrix3 = Matrix4x4::identity();
         let matrix4 = matrix3.clone().inverse();
         assert_eq!(Some(matrix3), matrix4);

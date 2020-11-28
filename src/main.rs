@@ -1,5 +1,4 @@
-use rust_ray_tracer::clock;
-
+use rust_ray_tracer::ray_trace_sphere::*;
 fn main() {
-    clock::draw();
+    draw_sphere();
 }

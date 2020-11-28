@@ -40,7 +40,6 @@ impl Matrix4x4 {
         if (row + column) % 2 == 0 {
             sign = 1.0;
         }
-        println!("cofactor: {}", Matrix3x3::determinant(&sub_matrix) * sign);
         Matrix3x3::determinant(&sub_matrix) * sign
     }
 
@@ -60,22 +59,16 @@ impl Matrix4x4 {
     }
 
     //Finds the inverse of a Matrix4x4
-    pub fn inverse(self) -> Option<Matrix4x4> {
+    pub fn inverse(&self) -> Option<Matrix4x4> {
         let det = Matrix4x4::determinant(&self);
         if det < 0.0 {
             None
         }
         else {
-            let cofactor_matrix = Matrix4x4::new((Matrix4x4::cofactor(&self, 0, 0), Matrix4x4::cofactor(&self, 0, 1), Matrix4x4::cofactor(&self, 0, 2), Matrix4x4::cofactor(&self, 0, 3)), (Matrix4x4::cofactor(&self, 1, 0), Matrix4x4::cofactor(&self, 1, 1), Matrix4x4::cofactor(&self, 1, 2), Matrix4x4::cofactor(&self, 1, 3)), (Matrix4x4::cofactor(&self, 2, 0), Matrix4x4::cofactor(&self, 2, 1), Matrix4x4::cofactor(&self, 2, 2), Matrix4x4::cofactor(&self, 2, 3)), (Matrix4x4::cofactor(&self, 3, 0), Matrix4x4::cofactor(&self, 3, 1), Matrix4x4::cofactor(&self, 3, 2), Matrix4x4::cofactor(&self, 3, 3)));
-            cofactor_matrix.transpose();
+            let cofactor_matrix = Matrix4x4::new((Matrix4x4::cofactor(&self, 0, 0), Matrix4x4::cofactor(&self, 0, 1), Matrix4x4::cofactor(&self, 0, 2), Matrix4x4::cofactor(&self, 0, 3)), (Matrix4x4::cofactor(&self, 1, 0), Matrix4x4::cofactor(&self, 1, 1), Matrix4x4::cofactor(&self, 1, 2), Matrix4x4::cofactor(&self, 1, 3)), (Matrix4x4::cofactor(&self, 2, 0), Matrix4x4::cofactor(&self, 2, 1), Matrix4x4::cofactor(&self, 2, 2), Matrix4x4::cofactor(&self, 2, 3)), (Matrix4x4::cofactor(&self, 3, 0), Matrix4x4::cofactor(&self, 3, 1), Matrix4x4::cofactor(&self, 3, 2), Matrix4x4::cofactor(&self, 3, 3))).transpose();
             let result = Matrix4x4((cofactor_matrix.0.0 / det, cofactor_matrix.0.1 / det, cofactor_matrix.0.2 / det, cofactor_matrix.0.3 / det), (cofactor_matrix.1.0 / det, cofactor_matrix.1.1 / det, cofactor_matrix.1.2 / det, cofactor_matrix.1.3 / det), (cofactor_matrix.2.0 / det, cofactor_matrix.2.1 / det, cofactor_matrix.2.2 / det, cofactor_matrix.2.3 / det), (cofactor_matrix.3.0 / det, cofactor_matrix.3.1 / det, cofactor_matrix.3.2 / det, cofactor_matrix.3.3 / det));
             Some(result)
         }
-    }
-
-    //Clones a given Matrix4x4
-    pub fn clone(&self) -> Matrix4x4 {
-        Matrix4x4(self.0, self.1, self.2, self.3)
     }
 
     //Creates a translation matrix
@@ -123,6 +116,13 @@ impl Matrix4x4 {
     //Creates a shearing matrix
     pub fn shearing(x_y: f64, x_z: f64, y_x: f64, y_z: f64, z_x: f64, z_y: f64) -> Matrix4x4 {
         Matrix4x4::new((1.0, x_y, x_z, 0.0), (y_x, 1.0, y_z, 0.0), (z_x, z_y, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0))
+    }
+}
+
+impl Clone for Matrix4x4 {
+    //Clones a given Matrix4x4
+    fn clone(&self) -> Matrix4x4 {
+        Matrix4x4(self.0, self.1, self.2, self.3)
     }
 }
 
@@ -259,14 +259,16 @@ impl Matrix3x3 {
         }
         else {
             let cofactor_matrix = Matrix3x3::new((Matrix3x3::cofactor(&self, 0, 0), Matrix3x3::cofactor(&self, 0, 1), Matrix3x3::cofactor(&self, 0, 2)), (Matrix3x3::cofactor(&self, 1, 0), Matrix3x3::cofactor(&self, 1, 1), Matrix3x3::cofactor(&self, 1, 2)), (Matrix3x3::cofactor(&self, 2, 0), Matrix3x3::cofactor(&self, 2, 1), Matrix3x3::cofactor(&self, 2, 2)));
-            cofactor_matrix.transpose();
-            let result = Matrix3x3((cofactor_matrix.0.0 / det, cofactor_matrix.0.1 / det, cofactor_matrix.0.2 / det), (cofactor_matrix.1.0 / det, cofactor_matrix.1.1 / det, cofactor_matrix.1.2 / det), (cofactor_matrix.2.0 / det, cofactor_matrix.2.1 / det, cofactor_matrix.2.2 / det));
+            let cofactor_matrix_t = cofactor_matrix.transpose();
+            let result = Matrix3x3((cofactor_matrix_t.0.0 / det, cofactor_matrix_t.0.1 / det, cofactor_matrix_t.0.2 / det), (cofactor_matrix_t.1.0 / det, cofactor_matrix_t.1.1 / det, cofactor_matrix_t.1.2 / det), (cofactor_matrix_t.2.0 / det, cofactor_matrix_t.2.1 / det, cofactor_matrix_t.2.2 / det));
             Some(result)
         }
     }
+}
 
+impl Clone for Matrix3x3 {
     //Clones a given Matrix4x4
-    pub fn clone(&self) -> Matrix3x3 {
+    fn clone(&self) -> Matrix3x3 {
         Matrix3x3(self.0, self.1, self.2)
     }
 }
@@ -318,11 +320,6 @@ impl Matrix2x2 {
         Matrix2x2(row1, row2)
     }
 
-    //Clones a given Matrix2x2
-    pub fn clone(&self) -> Matrix2x2 {
-        Matrix2x2(self.0, self.1)
-    }
-
     //Creates an instance of the 2x2 identity Matrix
     pub fn identity() -> Matrix2x2 {
         Matrix2x2::new((1.0, 0.0), (0.0, 1.0))
@@ -336,6 +333,13 @@ impl Matrix2x2 {
     //Finds the determinant of a Matrix2x2
     pub fn determinant(matrix: Matrix2x2) -> f64 {
         (matrix.0.0 * matrix.1.1) - (matrix.1.0 * matrix.0.1)
+    }
+}
+
+impl Clone for Matrix2x2 {
+    //Clones a given Matrix2x2
+    fn clone(&self) -> Matrix2x2 {
+        Matrix2x2(self.0, self.1)
     }
 }
 

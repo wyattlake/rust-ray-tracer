@@ -1,5 +1,6 @@
 use crate::vector::*;
 
+//Launches a projectile with set environment conditions
 pub fn launch_projectile() {
     let gravity = Vec4::new(0.0, -0.1, 0.0, 0.0);
     let wind = Vec4::new(-0.01, 0.0, 0.0, 0.0);
