@@ -1,3 +1,5 @@
 # Rust Ray Tracer
 
-A simple ray tracer written in Rust following The Ray Tracer Challenge by Jamis Buck
+A simple ray tracer written in Rust following The Ray Tracer Challenge by Jamis Buck.
+
+![Ray Traced Sphere](https://i.imgur.com/lALEmpg.png)
