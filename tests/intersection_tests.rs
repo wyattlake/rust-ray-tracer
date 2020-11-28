@@ -11,8 +11,8 @@ mod tests {
         let sphere = Sphere::new();
         let i1 = Intersection::new(3.0, Rc::clone(&sphere));
         let i2 = Intersection::new(-1.0, sphere.clone());
-        let i3 = Intersection::hit(&[i1, i2]);
-        assert_eq!(i3.unwrap(), &i1);
+        let i3 = Intersection::hit(&[i1.clone(), i2]);
+        assert_eq!(i3.unwrap(), i1);
     }
 
     #[test]
@@ -34,7 +34,7 @@ mod tests {
         let i2 = Intersection::new(7.0, Rc::clone(&sphere));
         let i3 = Intersection::new(-3.0, Rc::clone(&sphere));
         let i4 = Intersection::new(2.0, Rc::clone(&sphere));
-        let i5 = Intersection::hit(&[i1, i2, i3, i4]);
-        assert_eq!(i5.unwrap(), &i4);
+        let i5 = Intersection::hit(&[i1, i2, i3, i4.clone()]);
+        assert_eq!(i5.unwrap(), i4);
     }
 }

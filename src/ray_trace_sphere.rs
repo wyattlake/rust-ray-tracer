@@ -47,7 +47,7 @@ pub fn draw_sphere() {
             let target_pos = Vec4::new(x_pos, y_pos, wall_z, 1.0);
 
             //Finds a vector from the ray origin to the target position
-            let vector = (target_pos - &ray_origin).normalize();
+            let vector = (&ray_origin - target_pos).normalize();
 
             //Creates a new from the origin and calculated vector
             let ray = Ray::new_from_vec(ray_origin.clone(), vector);

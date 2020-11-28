@@ -41,7 +41,7 @@ impl Ray where {
         let c = Vec4::dot(&vector_to_unit_sphere, &vector_to_unit_sphere) - 1.0;
         let discriminant = (b * b) - (4.0 * a * c);
         if discriminant >= 0.0 {
-            Some(vec![(Intersection::new((b - (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object))), (Intersection::new((b + (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object)))])
+            Some(vec![(Intersection::new((- b - (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object))), (Intersection::new((- b + (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object)))])
         }
         else {
             None

@@ -78,7 +78,7 @@ mod tests {
         assert_eq!(&new_ray.direction, &Vec4::new(0.0, 3.0, 0.0, 0.0));
     }
 
-    //Tests ray intersection with a transformed sphere
+    //Tests ray intersection with a scaled sphere
     #[test]
     fn ray_intersect_scaled_sphere() {
         let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 0.0, 1.0));
