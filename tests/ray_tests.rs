@@ -5,6 +5,7 @@ mod tests {
     use rust_ray_tracer::ray_tracing::ray::Ray;
     use rust_ray_tracer::core::matrix::Matrix4x4;
     use rust_ray_tracer::objects::sphere::Sphere;
+    use rust_ray_tracer::objects::general::{Object, ObjectMethods};
     use std::rc::Rc;
 
     //Tests the ray position function
@@ -106,7 +107,7 @@ mod tests {
     //Tests surface normals on the x axis
     fn surface_normal_x() {
         let s = Sphere::new();
-        let vector = Vec4::normal(&s, &Vec4::new(1.0, 0.0, 0.0, 1.0));
+        let vector = Object::normal(&s, &Vec4::new(1.0, 0.0, 0.0, 1.0));
         assert_eq!(vector, Vec4::new(1.0, 0.0, 0.0, 0.0))
     }
 }

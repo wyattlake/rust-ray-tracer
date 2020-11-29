@@ -7,7 +7,6 @@ mod tests {
     use rust_ray_tracer::ray_tracing::scene::Scene;
     use rust_ray_tracer::ray_tracing::material::Material;
 
-
     //Tests lighting when directly facing at a sphere
     #[test]
     fn sphere_front() {

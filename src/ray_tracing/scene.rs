@@ -7,11 +7,12 @@ use crate::ray_tracing::lighting::*;
 use crate::core::comp::Comp;
 use crate::ray_tracing::ray::Ray;
 use crate::ray_tracing::intersection::Intersection;
+use crate::objects::general::{ObjectMethods, Object};
 use std::rc::Rc;
 
 pub struct Scene {
     light_sources: Vec<PointLight>,
-    objects: Vec<Rc<Sphere>>,
+    objects: Vec<Rc<Object>>,
 }
 
 impl Scene {
@@ -39,12 +40,12 @@ impl Scene {
     }
 
     //Pushes an object to the scene
-    pub fn add_object(&mut self, object: Rc<Sphere>) {
+    pub fn add_object(&mut self, object: Rc<Object>) {
         self.objects.push(object);
     }
 
     //Gets the Scene's objects
-    pub fn get_objects(&self) -> &Vec<Rc<Sphere>> {
+    pub fn get_objects(&self) -> &Vec<Rc<Object>> {
         &self.objects
     }
 
@@ -60,9 +61,9 @@ impl Scene {
             objects: vec![],
         };
         let mut sphere1_raw = Sphere::new_raw(); 
-        &sphere1_raw.mut_material_ref().set_color(Color::new(0.8, 1.0, 0.6));
-        &sphere1_raw.mut_material_ref().set_diffuse(0.7);
-        &sphere1_raw.mut_material_ref().set_specular(0.2);
+        &sphere1_raw.get_mut_material().set_color(Color::new(0.8, 1.0, 0.6));
+        &sphere1_raw.get_mut_material().set_diffuse(0.7);
+        &sphere1_raw.get_mut_material().set_specular(0.2);
         let sphere1 = Rc::new(sphere1_raw);
         let mut sphere2_raw = Sphere::new_raw(); 
         &sphere2_raw.transform(Matrix4x4::scaling(0.5, 0.5, 0.5));

@@ -1,16 +1,16 @@
-use crate::objects::sphere::Sphere;
+use crate::objects::general::Object;
 use std::rc::Rc;
 
 //Intersection stores the time of intersection and an Rc to the Object
 #[derive(Debug, PartialEq)]
 pub struct Intersection {
     t: f64,
-    object: Rc<Sphere>,
+    object: Rc<Object>,
 }
 
 impl Intersection where {
     //Creates a new intersection
-    pub fn new(t: f64, object: Rc<Sphere>) -> Intersection {
+    pub fn new(t: f64, object: Rc<Object>) -> Intersection {
         Intersection {
             t: t,
             object: object,
@@ -41,7 +41,7 @@ impl Intersection where {
     }
 
     //Gets the object value of an intersection
-    pub fn get_object(self) -> Rc<Sphere> {
+    pub fn get_object(self) -> Rc<Object> {
         self.object
     }
 }

@@ -1,8 +1,8 @@
 use crate::core::vector::*;
 use crate::ray_tracing::intersection::*;
 use crate::core::matrix::Matrix4x4;
-use crate::objects::sphere::Sphere;
 use crate::ray_tracing::scene::Scene;
+use crate::objects::general::Object;
 use std::rc::Rc;
 
 //A Ray has a origin (point) and a direction (vector)
@@ -52,8 +52,8 @@ impl Ray where {
     }
 
     //Lists where a ray intersects with the unit sphere
-    pub fn intersect(object: Rc<Sphere>, ray: &Ray) -> Option<Vec<Intersection>> {
-        let transformed_ray = Ray::transform(ray, &((*object.get_transform()).inverse().unwrap()));
+    pub fn intersect(object: Rc<Object>, ray: &Ray) -> Option<Vec<Intersection>> {
+        let transformed_ray = Ray::transform(ray, &((object.get_transform()).inverse().unwrap()));
         let vector_to_unit_sphere = &transformed_ray.origin - Vec4::new(0.0, 0.0, 0.0, 1.0);
         let a = Vec4::dot(&transformed_ray.direction, &transformed_ray.direction);
         let b = 2.0 * Vec4::dot(&transformed_ray.direction, &vector_to_unit_sphere);
@@ -72,15 +72,15 @@ impl Ray where {
         let objects = scene.get_objects();
         let mut intersections: Vec<Intersection> = vec![];
         for object in objects {
-            let transformed_ray = Ray::transform(ray, &((*object.get_transform()).inverse().unwrap()));
+            let transformed_ray = Ray::transform(ray, &((object.get_transform()).inverse().unwrap()));
             let vector_to_unit_sphere = &transformed_ray.origin - Vec4::new(0.0, 0.0, 0.0, 1.0);
             let a = Vec4::dot(&transformed_ray.direction, &transformed_ray.direction);
             let b = 2.0 * Vec4::dot(&transformed_ray.direction, &vector_to_unit_sphere);
             let c = Vec4::dot(&vector_to_unit_sphere, &vector_to_unit_sphere) - 1.0;
             let discriminant = (b * b) - (4.0 * a * c);
             if discriminant >= 0.0 {
-                &intersections.push(Intersection::new((- b - (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object)));
-                &intersections.push(Intersection::new((- b + (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object)));
+                &intersections.push(Intersection::new((- b - (discriminant.sqrt())) / (2.0 * a), Rc::clone(object)));
+                &intersections.push(Intersection::new((- b + (discriminant.sqrt())) / (2.0 * a), Rc::clone(object)));
             }
         }
         intersections.sort_by(|a, b| b.get_t().partial_cmp(&a.get_t()).unwrap());

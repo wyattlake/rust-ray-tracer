@@ -3,6 +3,7 @@
 mod tests {
     use rust_ray_tracer::objects::sphere::*;
     use rust_ray_tracer::ray_tracing::intersection::*; 
+    use rust_ray_tracer::objects::general::ObjectMethods;
     use std::rc::Rc;
 
     #[test]

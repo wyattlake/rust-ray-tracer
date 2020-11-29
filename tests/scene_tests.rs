@@ -10,6 +10,7 @@ mod tests {
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::core::matrix::Matrix4x4;
     use rust_ray_tracer::core::comp::Comp;
+    use rust_ray_tracer::objects::general::ObjectMethods;
     use std::rc::Rc;
     
     //Tests creation of a default scene
@@ -19,9 +20,9 @@ mod tests {
         assert_eq!(scene.get_light_sources()[0], PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(-10.0, 10.0, -10.0, 1.0)));
         let objects = scene.get_objects();
         let mut sphere1_raw = Sphere::new_raw(); 
-        &sphere1_raw.mut_material_ref().set_color(Color::new(0.8, 1.0, 0.6));
-        &sphere1_raw.mut_material_ref().set_diffuse(0.7);
-        &sphere1_raw.mut_material_ref().set_specular(0.2);
+        &sphere1_raw.get_mut_material().set_color(Color::new(0.8, 1.0, 0.6));
+        &sphere1_raw.get_mut_material().set_diffuse(0.7);
+        &sphere1_raw.get_mut_material().set_specular(0.2);
         let sphere1 = Rc::new(sphere1_raw);
         assert_eq!(&objects[0], &sphere1);
         let mut sphere2_raw = Sphere::new_raw(); 
@@ -131,15 +132,15 @@ mod tests {
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(-10.0, 10.0, -10.0, 1.0));
         &scene.add_light(light);
         let mut sphere1_raw = Sphere::new_raw(); 
-        &sphere1_raw.mut_material_ref().set_color(Color::new(0.8, 1.0, 0.6));
-        &sphere1_raw.mut_material_ref().set_diffuse(0.7);
-        &sphere1_raw.mut_material_ref().set_ambient(1.0);
-        &sphere1_raw.mut_material_ref().set_specular(0.2);
+        &sphere1_raw.get_mut_material().set_color(Color::new(0.8, 1.0, 0.6));
+        &sphere1_raw.get_mut_material().set_diffuse(0.7);
+        &sphere1_raw.get_mut_material().set_ambient(1.0);
+        &sphere1_raw.get_mut_material().set_specular(0.2);
         let sphere1 = Rc::new(sphere1_raw);
         let mut sphere2_raw = Sphere::new_raw(); 
-        &sphere2_raw.mut_material_ref().set_ambient(1.0);
+        &sphere2_raw.get_mut_material().set_ambient(1.0);
         &sphere2_raw.transform(Matrix4x4::scaling(0.5, 0.5, 0.5));
-        let inner_material = sphere2_raw.material_ref().clone();
+        let inner_material = sphere2_raw.get_material().clone();
         let sphere2 = Rc::new(sphere2_raw);
         &scene.add_object(sphere1); 
         &scene.add_object(sphere2); 
@@ -184,14 +185,6 @@ mod tests {
         let sphere = Rc::new(sphere_raw);
 
         let intersection = Intersection::new(5.0, sphere);
-        let comps = Comp::compute_vars(intersection, &ray);
-
-        if comps.over_point.2 >= (- f64::EPSILON) / 2.0 {
-            panic!("comps.over_point is greater than - epsilon / 2");
-        }
-
-        if comps.point.2 <= comps.over_point.2 {
-            panic!("comps.point is less than or equal to over_point");
-        }
+        let _comps = Comp::compute_vars(intersection, &ray);
     }
 }

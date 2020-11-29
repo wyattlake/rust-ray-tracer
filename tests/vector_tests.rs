@@ -1,10 +1,6 @@
 #[cfg(test)]
 mod tests {
     use rust_ray_tracer::core::vector::Vec4;
-    use rust_ray_tracer::core::matrix::Matrix4x4;
-    use rust_ray_tracer::objects::sphere::Sphere;
-    use rust_ray_tracer::misc::axis::Axis;
-    use std::rc::Rc;
 
     //Tests vector negation 
     #[test]
@@ -74,59 +70,6 @@ mod tests {
         let cross2 = vec4 * vec3;
         assert_eq!(Vec4::new(-1.0, 2.0, -1.0, 0.0), cross1);
         assert_eq!(Vec4::new(1.0, -2.0, 1.0, 0.0), cross2);
-    }
-
-    #[test]
-    //Tests surface normals on the x axis
-    fn surface_normal_y() {
-        let s = Sphere::new();
-        let vector = Vec4::normal(&s, &Vec4::new(0.0, 1.0, 0.0, 1.0));
-        assert_eq!(vector, Vec4::new(0.0, 1.0, 0.0, 0.0)) 
-    }
-
-    #[test]
-    //Tests surface normals on the x axis
-    fn surface_normal_z() {
-        let s = Sphere::new();
-        let vector = Vec4::normal(&s, &Vec4::new(0.0, 0.0, 1.0, 1.0));
-        assert_eq!(vector, Vec4::new(0.0, 0.0, 1.0, 0.0))
-    }
-
-    #[test]
-    //Tests surface normals at an arbitrary point
-    fn surface_normal() {
-        let s = Sphere::new();
-        let vector = Vec4::normal(&s, &Vec4::new(((3.0 as f64).sqrt())/3.0, ((3.0 as f64).sqrt())/3.0, ((3.0 as f64).sqrt())/3.0, 1.0));
-        assert_eq!(vector, Vec4::new(((3.0 as f64).sqrt())/3.0, ((3.0 as f64).sqrt())/3.0, ((3.0 as f64).sqrt())/3.0, 0.0));
-    }
-
-    #[test]
-    //Tests if surface normals are normalized
-    fn surface_normal_normalized() {
-        let s = Sphere::new();
-        let vector = Vec4::normal(&s, &Vec4::new(((3.0 as f64).sqrt())/3.0, ((3.0 as f64).sqrt())/3.0, ((3.0 as f64).sqrt())/3.0, 1.0));
-        assert_eq!(&vector, &vector.normalize());
-    }
-
-    #[test]
-    //Tests surface normals on translated spheres
-    fn surface_normal_translated() {
-        let mut s = Sphere::new_raw();
-        &s.transform(Matrix4x4::translation(1.0, 0.0, 0.0));
-        let sphere = Rc::new(s);
-        let vector = Vec4::normal(&sphere, &Vec4::new(2.0, 0.0, 0.0, 0.0));
-        assert_eq!(&vector, &Vec4::new(1.0, 0.0, 0.0, 0.0));
-    }
-
-    #[test]
-    //Tests surface normals on scaled spheres
-    fn surface_normal_scaled() {
-        let mut s = Sphere::new_raw();
-        &s.transform(Matrix4x4::scaling(1.5, 1.0, 1.0));
-        &s.transform(Matrix4x4::rotation(Axis::Z, 360.0));
-        let sphere = Rc::new(s);
-        let vector = Vec4::normal(&sphere, &Vec4::new(1.0, 0.0, 0.0, 0.0));
-        assert_eq!(vector.round(), Vec4::new(1.0, 0.0, 0.0, 0.0));
     }
 
     #[test]

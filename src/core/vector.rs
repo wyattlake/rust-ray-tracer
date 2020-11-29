@@ -1,7 +1,4 @@
-
-use crate::objects::sphere::Sphere;
 use std::ops::*;
-use std::rc::Rc;
 
 //Vec4 is a wrapper for Tuple
 #[derive(Debug, PartialEq)]
@@ -42,15 +39,6 @@ impl Vec4 {
         Vec4::is_vector(&vec1);
         Vec4::is_vector(&vec2);
         (vec1.0 * vec2.0) + (vec1.1 * vec2.1) + (vec1.2 * vec2.2)
-    }
-
-    //Finds the normal of a given point on a sphere
-    pub fn normal(sphere: &Rc<Sphere>, world_point: &Vec4) -> Vec4 {
-        let object_point = (*sphere.get_transform()).inverse().unwrap() * world_point;
-        let object_normal = object_point - Vec4::new(0.0, 0.0, 0.0, 1.0);
-        let mut world_normal = (*sphere.get_transform()).inverse().unwrap().transpose() * object_normal; 
-        world_normal.3 = 0.0;
-        world_normal.normalize()
     }
 
     //Reflects a vector about a given normal
