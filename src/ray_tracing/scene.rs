@@ -76,7 +76,8 @@ impl Scene {
     pub fn scene_lighting(scene: &Scene, comps: Comp) -> Color {
         let mut color = Color::new(0.0, 0.0, 0.0);
         for light in scene.get_light_sources() {
-            color = color + lighting(comps.object.get_material(), &light, &comps.point, &comps.e_vec, &comps.n_vec);
+            let shadow = in_shadow(&light, &comps.over_point, scene);
+            color = color + lighting(comps.object.get_material(), &light, &comps.over_point, &comps.e_vec, &comps.n_vec, shadow);
         }
         color
     }
@@ -89,6 +90,20 @@ impl Scene {
             let comps = Comp::compute_vars(hit.unwrap(), &ray);
             let color = Scene::scene_lighting(&scene, comps);
             Some(color)
+        }
+        else {
+            None
+        }
+    }
+
+    //Gets the color without any lighting calculations
+    pub fn compute_color_quick(ray: Ray, scene: &Scene) -> Option<Color> {
+        let intersections = Ray::intersect_scene(scene, &ray);
+        let hit = Intersection::hit(&intersections);
+        if hit != None {
+            let object = hit.unwrap().get_object();
+            let color = object.get_material().get_color();
+            Some(color.clone())
         }
         else {
             None

@@ -10,14 +10,14 @@ use rust_ray_tracer::misc::axis::Axis;
 use std::rc::Rc;
 
 fn main() {
-    let mut canvas = Canvas::new(600, 300);
+    let mut canvas = Canvas::new(100, 50);
 
     let mut scene = Scene::new();
 
-    let light_color = Color::new(1.0, 1.0, 1.0);
+    let light_color = Color::new(0.8, 0.3, 0.3);
     let light = PointLight::new(light_color, Vec4::new(-10.0, 10.0, -10.0, 1.0));
     &scene.add_light(light);
-
+    
     let green = Color::new(0.1, 1.0, 0.5);
     let yellow_green = Color::new(0.5, 1.0, 0.1);
     let yellow = Color::new(1.0, 0.8, 0.1);
@@ -62,12 +62,13 @@ fn main() {
     let sphere1 = Rc::new(sphere3_raw);
     &scene.add_object(sphere1);
 
-    let mut camera = Camera::new(600, 300, 45.0);
+    let mut camera = Camera::new(100, 50, 45.0);
     let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
     let end_pos = Vec4::new(0.0, 1.0, 0.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 
     camera.transform(Matrix4x4::view_transform(start_pos, end_pos, up_vec));
+
     Camera::render(&camera, &scene, &mut canvas);
 
     println!("Image successfully rendered");

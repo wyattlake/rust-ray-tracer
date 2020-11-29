@@ -12,11 +12,12 @@ pub struct Comp {
     pub e_vec: Vec4,
     pub n_vec: Vec4,
     pub inside: bool,
+    pub over_point: Vec4,
 }
 
 impl Comp {
     //Creates a new Comp
-    pub fn new(t: f64, object: Rc<Sphere>, point: Vec4, e_vec: Vec4, n_vec: Vec4, inside: bool) -> Comp {
+    pub fn new(t: f64, object: Rc<Sphere>, point: Vec4, e_vec: Vec4, n_vec: Vec4, inside: bool, over_point: Vec4) -> Comp {
         Comp {
             t,
             object,
@@ -24,6 +25,7 @@ impl Comp {
             e_vec,
             n_vec,
             inside,
+            over_point,
         }
     }
 
@@ -35,10 +37,11 @@ impl Comp {
         let mut n_vec = Vec4::normal(&object, &point);
         let e_vec = ray.get_direction().negate();
         let mut inside = false;
+        let over_point = &point + (&n_vec.normalize() * (f64::EPSILON + 0.00001));
         if Vec4::dot(&n_vec, &e_vec) < 0.0 {
             inside = true;
             n_vec = n_vec.negate();
         }
-        Comp::new(t, object, point, e_vec, n_vec, inside)
+        Comp::new(t, object, over_point.clone(), e_vec, n_vec, inside, over_point)
     }
 }

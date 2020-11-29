@@ -6,7 +6,7 @@ mod tests {
     use rust_ray_tracer::ray_tracing::ray::Ray;
     use rust_ray_tracer::objects::sphere::Sphere;
     use rust_ray_tracer::ray_tracing::scene::Scene;
-    use rust_ray_tracer::ray_tracing::lighting::PointLight;
+    use rust_ray_tracer::ray_tracing::lighting::*;
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::core::matrix::Matrix4x4;
     use rust_ray_tracer::core::comp::Comp;
@@ -103,7 +103,7 @@ mod tests {
         let intersection = Intersection::new(0.5, sphere);
         let comps = Comp::compute_vars(intersection, &ray);
         let color = Scene::scene_lighting(&scene, comps);
-        assert_eq!(color.round(), Color::new(0.90498, 0.90498, 0.90498).round());
+        assert_eq!(color.round(), Color::new(0.1, 0.1, 0.1).round());
     }
 
     //Tests color when a ray misses
@@ -146,5 +146,52 @@ mod tests {
         let ray = Ray::new((0.0, 0.0, 0.75), (0.0, 0.0, -1.0));
         let color = Scene::compute_color(ray, &scene);
         assert_eq!(color.unwrap().round(), inner_material.get_color().round());
+    }
+
+    #[test]
+    //Tests lighting of an intersection in shadow
+    fn intersection_in_shadow() {
+        let mut scene = Scene::new();
+
+        &scene.clear_lights();
+        let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 0.0, -10.0, 1.0));
+        &scene.add_light(light);
+
+        let sphere1 = Sphere::new();
+        &scene.add_object(sphere1);
+
+        let mut sphere2_raw = Sphere::new_raw(); 
+        &sphere2_raw.transform(Matrix4x4::translation(0.0, 0.0, 10.0));
+        let sphere2 = Rc::new(sphere2_raw);
+        &scene.add_object(sphere2);
+
+        let ray = Ray::new((0.0, 0.0, 5.0), (0.0, 0.0, 1.0));
+        let intersection = Intersection::new(4.0, Rc::clone(&scene.get_objects()[1]));
+
+        let comps = Comp::compute_vars(intersection, &ray);
+        let color = Scene::scene_lighting(&scene, comps);
+        assert_eq!(color, Color::new(0.1, 0.1, 0.1));
+    }
+
+    //Tests intersections offsetting points
+    #[test]
+
+    fn point_offset() {
+        let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 0.0, 1.0));
+
+        let mut sphere_raw = Sphere::new_raw();
+        &sphere_raw.transform(Matrix4x4::translation(0.0, 0.0, 1.0));
+        let sphere = Rc::new(sphere_raw);
+
+        let intersection = Intersection::new(5.0, sphere);
+        let comps = Comp::compute_vars(intersection, &ray);
+
+        if comps.over_point.2 >= (- f64::EPSILON) / 2.0 {
+            panic!("comps.over_point is greater than - epsilon / 2");
+        }
+
+        if comps.point.2 <= comps.over_point.2 {
+            panic!("comps.point is less than or equal to over_point");
+        }
     }
 }
