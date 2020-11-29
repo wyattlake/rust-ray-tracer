@@ -75,7 +75,6 @@ impl Scene {
     //Lights a pixel in the scene
     pub fn scene_lighting(scene: &Scene, comps: Comp) -> Color {
         let mut color = Color::new(0.0, 0.0, 0.0);
-        println!("point: {:?}, eye vector: {:?}, normal vector: {:?}", &comps.point, &comps.e_vec, &comps.n_vec);
         for light in scene.get_light_sources() {
             color = color + lighting(comps.object.get_material(), &light, &comps.point, &comps.e_vec, &comps.n_vec);
         }

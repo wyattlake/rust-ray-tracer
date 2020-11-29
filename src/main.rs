@@ -1,91 +1,75 @@
 use rust_ray_tracer::core::vector::Vec4;
-use rust_ray_tracer::ray_tracing::ray::Ray;
-use rust_ray_tracer::ray_tracing::intersection::Intersection;
 use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::color::Color;
-use rust_ray_tracer::core::canvas::Canvas;
 use rust_ray_tracer::objects::sphere::Sphere;
+use rust_ray_tracer::core::canvas::Canvas;
+use rust_ray_tracer::ray_tracing::scene::Scene;
+use rust_ray_tracer::ray_tracing::camera::Camera;
+use rust_ray_tracer::ray_tracing::lighting::PointLight;
 use rust_ray_tracer::misc::axis::Axis;
-use rust_ray_tracer::ray_tracing::lighting::*;
 use std::rc::Rc;
 
 fn main() {
-    //Origin from which all rays are cast
-    let ray_origin = Vec4::new(0.0, 0.0, -5.0, 1.0);
+    let mut canvas = Canvas::new(600, 300);
 
-    //Creates a new sphere, changes the color, and stores it as a new Rc
-    let mut sphere = Sphere::new_raw();
-    &sphere.transform(Matrix4x4::scaling(1.0, 0.3, 1.0));
-    &sphere.transform(Matrix4x4::rotation(Axis::X, -50.0));
-    &sphere.transform(Matrix4x4::rotation(Axis::Z, 70.0));
-    &sphere.transform(Matrix4x4::translation(0.0, 0.1, 0.0));
-    &sphere.mut_material_ref().set_color(Color::new(0.0, 0.0, 1.0));
-    let sphere = Rc::new(sphere);
+    let mut scene = Scene::new();
 
-    //Creates a point light
-    let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(-10.0, 10.0, -10.0, 1.0));
+    let light_color = Color::new(1.0, 1.0, 1.0);
+    let light = PointLight::new(light_color, Vec4::new(-10.0, 10.0, -10.0, 1.0));
+    &scene.add_light(light);
 
-    //Z coordinate of the wall
-    let wall_z = 10.0;
+    let green = Color::new(0.1, 1.0, 0.5);
+    let yellow_green = Color::new(0.5, 1.0, 0.1);
+    let yellow = Color::new(1.0, 0.8, 0.1);
+    let tan = Color::new(1.0, 0.9, 0.9);
 
-    //Wide enough to capture sphere with some edges
-    let wall_size = 7.0;
+    let mut floor1_raw = Sphere::new_raw();
+    &floor1_raw.mut_material_ref().set_color(tan.clone());
+    &floor1_raw.mut_material_ref().set_specular(0.0);
+    &floor1_raw.transform(Matrix4x4::scaling(10.0, 0.01, 10.0));
+    let floor1 = Rc::new(floor1_raw);
+    &scene.add_object(floor1);
 
-    //Canvas dimensions
-    let canvas_w = 100.0;
-    let canvas_h = 100.0;
+    let mut left_wall_raw = Sphere::new_raw();
+    &left_wall_raw.mut_material_ref().set_color(tan.clone());
+    &left_wall_raw.mut_material_ref().set_specular(0.0);
+    &left_wall_raw.transform(Matrix4x4::translation(0.0, 0.0, 5.0) * Matrix4x4::rotation(Axis::Y, -45.0) * Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(10.0, 0.01, 10.0));
+    let left_wall = Rc::new(left_wall_raw);
+    &scene.add_object(left_wall);
 
-    let mut canvas = Canvas::new(canvas_w as usize, canvas_h as usize);
+    let mut right_wall_raw = Sphere::new_raw();
+    &right_wall_raw.mut_material_ref().set_color(tan.clone());
+    &right_wall_raw.mut_material_ref().set_specular(0.0);
+    &right_wall_raw.transform(Matrix4x4::translation(0.0, 0.0, 5.0) * Matrix4x4::rotation(Axis::Y, 45.0) * Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(10.0, 0.01, 10.0));
+    let right_wall = Rc::new(right_wall_raw);
+    &scene.add_object(right_wall);
 
-    //Size of individual pixels in the scene units
-    let pixel_size = wall_size / canvas_h;
+    let mut sphere1_raw = Sphere::new_raw();
+    &sphere1_raw.mut_material_ref().set_color(green);
+    &sphere1_raw.transform(Matrix4x4::translation(-0.5, 1.0, 0.5));
+    let sphere1 = Rc::new(sphere1_raw);
+    &scene.add_object(sphere1);
 
-    //Hald of the wall
-    let bound = wall_size / 2.0;
+    let mut sphere2_raw = Sphere::new_raw();
+    &sphere2_raw.mut_material_ref().set_color(yellow_green);
+    &sphere2_raw.transform(Matrix4x4::translation(1.5, 0.5, -0.5) * Matrix4x4::scaling(0.5, 0.5, 0.5));
+    let sphere1 = Rc::new(sphere2_raw);
+    &scene.add_object(sphere1);
 
-    //This loop points a vector towards the wall at each pixel
-    for y in 0..(canvas_h as i32) {
-        //Gets the y position in scene units
-        let y_pos = bound - (pixel_size * (y as f64));
+    let mut sphere3_raw = Sphere::new_raw();
+    &sphere3_raw.mut_material_ref().set_color(yellow);
+    &sphere3_raw.transform(Matrix4x4::translation(-1.6, 0.33, -0.75) * Matrix4x4::scaling(0.33, 0.33, 0.33));
+    let sphere1 = Rc::new(sphere3_raw);
+    &scene.add_object(sphere1);
 
-        for x in 0..(canvas_h as i32) {
-            //Gets the x position in scene units
-            let x_pos = - bound + (pixel_size * (x as f64));
+    let mut camera = Camera::new(600, 300, 45.0);
+    let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
+    let end_pos = Vec4::new(0.0, 1.0, 0.0, 1.0);
+    let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 
-            //Sets the target position for the ray
-            let target_pos = Vec4::new(x_pos, y_pos, wall_z, 1.0);
+    camera.transform(Matrix4x4::view_transform(start_pos, end_pos, up_vec));
+    Camera::render(&camera, &scene, &mut canvas);
 
-            //Finds a vector from the ray origin to the target position
-            let vector = (target_pos - &ray_origin).normalize();
-
-            //Creates a new from the origin and calculated vector
-            let ray = Ray::new_from_vec(ray_origin.clone(), vector);
-
-            //Finds the intersections of the ray with the sphere
-            let result = Ray::intersect(Rc::clone(&sphere), &ray);
-
-            if result != None {
-                let mut unwrapped_vec = result.unwrap();
-                let i1 = unwrapped_vec.remove(0);
-                let i2 = unwrapped_vec.remove(0); 
-                //Finds which intersection is visible
-                let visible_intersection = Intersection::hit(&[i1, i2]);
-                if visible_intersection != None {
-                    let hit = visible_intersection.unwrap();
-                    //Finds the point at which the ray intersected the sphere
-                    let point = Ray::position(&ray, &hit.get_t());
-                    //Finds the normal vector
-                    let normal = Vec4::normal(&hit.clone().get_object(), &point);
-                    //Finds the eye vector
-                    let eye = &ray.get_direction().negate();
-                    let color = lighting(hit.get_object().material_ref(), &light, &point, &eye, &normal);
-
-                    //Paints the Pixel if there is a visible intersection
-                    canvas.set(color.clone(), x, y);
-                }
-            }
-        }
-    }
     println!("Image successfully rendered");
     Canvas::write_file(canvas, "image");
 }

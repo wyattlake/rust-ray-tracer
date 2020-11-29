@@ -65,7 +65,7 @@ mod tests {
         let ray = Ray::new((1.0, 2.0, 3.0), (0.0, 1.0, 0.0));
         let matrix = Matrix4x4::translation(3.0, 4.0, 5.0);
         let new_ray = Ray::transform(&ray, &matrix);
-        assert_eq!(new_ray.get_origin(), Vec4::new(4.0, 6.0, 8.0, 1.0));
+        assert_eq!(new_ray.get_origin(), &Vec4::new(4.0, 6.0, 8.0, 1.0));
     }
 
     //Tests ray scaling
@@ -74,8 +74,8 @@ mod tests {
         let ray = Ray::new((1.0, 2.0, 3.0), (0.0, 1.0, 0.0));
         let matrix = Matrix4x4::scaling(2.0, 3.0, 4.0);
         let new_ray = Ray::transform(&ray, &matrix);
-        assert_eq!(&new_ray.get_origin(), &Vec4::new(2.0, 6.0, 12.0, 1.0));
-        assert_eq!(&new_ray.get_direction(), &Vec4::new(0.0, 3.0, 0.0, 0.0));
+        assert_eq!(new_ray.get_origin(), &Vec4::new(2.0, 6.0, 12.0, 1.0));
+        assert_eq!(new_ray.get_direction(), &Vec4::new(0.0, 3.0, 0.0, 0.0));
     }
 
     //Tests ray intersection with a scaled sphere
