@@ -10,7 +10,7 @@ pub struct PointLight {
 }
 
 //Computes a color given all the variables of the environment
-pub fn lighting(material: &Material, point: &Vec4, light: &PointLight, e_vec: &Vec4, n_vec: &Vec4) -> Color {
+pub fn lighting(material: &Material, light: &PointLight, point: &Vec4, e_vec: &Vec4, n_vec: &Vec4) -> Color {
     let black = Color::new(0.0, 0.0, 0.0);
     let mut diffuse = black.clone();
     let mut specular = black.clone();
@@ -41,7 +41,6 @@ pub fn lighting(material: &Material, point: &Vec4, light: &PointLight, e_vec: &V
             specular = light.get_intensity() * material.get_specular() * (factor as f32);
         }
     }
-    println!("ambient: {:?}, diffuse: {:?}, specular: {:?}", &ambient, &diffuse, &specular);
     ambient + diffuse + specular
 }
 

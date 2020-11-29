@@ -117,6 +117,27 @@ impl Matrix4x4 {
     pub fn shearing(x_y: f64, x_z: f64, y_x: f64, y_z: f64, z_x: f64, z_y: f64) -> Matrix4x4 {
         Matrix4x4::new((1.0, x_y, x_z, 0.0), (y_x, 1.0, y_z, 0.0), (z_x, z_y, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0))
     }
+
+    //Rounds a matrix for testing
+    pub fn round(&self) -> Matrix4x4 {
+        let mut m = vec![vec![self.0.0, self.0.1, self.0.2, self.0.3], vec![self.1.0, self.1.1, self.1.2, self.1.3], vec![self.2.0, self.2.1, self.2.2, self.2.3], vec![self.3.0, self.3.1, self.3.2, self.3.3]];
+        for y in 0..4 {
+            for x in 0..4 {
+                m[y][x] = ((m[y][x] * 10000.0).round())/10000.0;
+            }
+        };
+        Matrix4x4::new((m[0][0], m[0][1], m[0][2], m[0][3]),  (m[1][0], m[1][1], m[1][2], m[1][3]), (m[2][0], m[2][1], m[2][2], m[2][3]), (m[3][0], m[3][1], m[3][2], m[3][3])) 
+    }
+
+    //Creates a new view transform matrix
+    pub fn view_transform(view_start_pos: Vec4, view_end_pos: Vec4, up_vec: Vec4) -> Matrix4x4 {
+        let forward = (view_end_pos - view_start_pos.clone()).normalize();
+        let up_normalized = up_vec.normalize();
+        let left = &forward * up_normalized;
+        let true_up = &left * &forward;
+        let orientation = Matrix4x4::new((left.0, left.1, left.2, 0.0), (true_up.0, true_up.1, true_up.2, 0.0), (forward.negate().0, forward.negate().1, forward.negate().2, 0.0), (0.0, 0.0, 0.0, 1.0));
+        orientation * Matrix4x4::translation(-view_start_pos.0, -view_start_pos.1, -view_start_pos.2)
+    }
 }
 
 impl Clone for Matrix4x4 {

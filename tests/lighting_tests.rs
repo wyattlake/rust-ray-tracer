@@ -15,7 +15,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 0.0, -10.0, 1.0));
-        let result = lighting(&m, &position, &light, &e_vec, &n_vec);
+        let result = lighting(&m, &light, &position, &e_vec, &n_vec);
         assert_eq!(result.round(), Color::new(1.9, 1.9, 1.9).round());
     }
 
@@ -27,7 +27,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, ((2.0 as f64).sqrt())/2.0, -((2.0 as f64).sqrt())/2.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 0.0, -10.0, 1.0));
-        let result = lighting(&m, &position, &light, &e_vec, &n_vec);
+        let result = lighting(&m, &light, &position, &e_vec, &n_vec);
         assert_eq!(result.round(), Color::new(1.0, 1.0, 1.0).round());
     }
 
@@ -39,7 +39,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 10.0, -10.0, 1.0));
-        let result = lighting(&m, &position, &light, &e_vec, &n_vec);
+        let result = lighting(&m, &light, &position, &e_vec, &n_vec);
         assert_eq!(result.round(), Color::new(0.7364, 0.7364, 0.7364).round());
     }
 
@@ -51,7 +51,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, -((2.0 as f64).sqrt())/2.0, -((2.0 as f64).sqrt())/2.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 10.0, -10.0, 1.0));
-        let result = lighting(&m, &position, &light, &e_vec, &n_vec);
+        let result = lighting(&m, &light, &position, &e_vec, &n_vec);
         assert_eq!(result.round(), Color::new(1.6364, 1.6364, 1.6364).round());
     }
 
@@ -63,7 +63,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 10.0, 10.0, 1.0));
-        let result = lighting(&m, &position, &light, &e_vec, &n_vec);
+        let result = lighting(&m, &light, &position, &e_vec, &n_vec);
         assert_eq!(result.round(), Color::new(0.1, 0.1, 0.1).round());
     }
 }

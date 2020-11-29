@@ -16,9 +16,10 @@ fn main() {
     //Creates a new sphere, changes the color, and stores it as a new Rc
     let mut sphere = Sphere::new_raw();
     &sphere.transform(Matrix4x4::scaling(1.0, 0.3, 1.0));
-    &sphere.transform(Matrix4x4::rotation(Axis::Z, 30.0));
-    &sphere.transform(Matrix4x4::rotation(Axis::Y, -40.0));
-    &sphere.mut_material_ref().set_color(Color::new(0.0, 1.0, 1.0));
+    &sphere.transform(Matrix4x4::rotation(Axis::X, -50.0));
+    &sphere.transform(Matrix4x4::rotation(Axis::Z, 70.0));
+    &sphere.transform(Matrix4x4::translation(0.0, 0.1, 0.0));
+    &sphere.mut_material_ref().set_color(Color::new(0.0, 0.0, 1.0));
     let sphere = Rc::new(sphere);
 
     //Creates a point light
@@ -36,7 +37,7 @@ fn main() {
 
     let mut canvas = Canvas::new(canvas_w as usize, canvas_h as usize);
 
-    //Size of individual pixels in the world units
+    //Size of individual pixels in the scene units
     let pixel_size = wall_size / canvas_h;
 
     //Hald of the wall
@@ -44,11 +45,11 @@ fn main() {
 
     //This loop points a vector towards the wall at each pixel
     for y in 0..(canvas_h as i32) {
-        //Gets the y position in world units
+        //Gets the y position in scene units
         let y_pos = bound - (pixel_size * (y as f64));
 
         for x in 0..(canvas_h as i32) {
-            //Gets the x position in world units
+            //Gets the x position in scene units
             let x_pos = - bound + (pixel_size * (x as f64));
 
             //Sets the target position for the ray
@@ -74,10 +75,10 @@ fn main() {
                     //Finds the point at which the ray intersected the sphere
                     let point = Ray::position(&ray, &hit.get_t());
                     //Finds the normal vector
-                    let normal = Vec4::normal(&hit.object, &point);
+                    let normal = Vec4::normal(&hit.clone().get_object(), &point);
                     //Finds the eye vector
-                    let eye = &ray.direction.negate();
-                    let color = lighting(hit.object.material_ref(), &point, &light, &eye, &normal);
+                    let eye = &ray.get_direction().negate();
+                    let color = lighting(hit.get_object().material_ref(), &light, &point, &eye, &normal);
 
                     //Paints the Pixel if there is a visible intersection
                     canvas.set(color.clone(), x, y);

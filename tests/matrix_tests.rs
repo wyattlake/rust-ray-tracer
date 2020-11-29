@@ -154,4 +154,45 @@ mod tests {
         point6 = Matrix4x4::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0) * point6;
         assert_eq!(Vec4(2.0, 3.0, 7.0, 1.0), point6);
     }
+
+    #[test]
+    //Tests default view orientation
+    pub fn default_orientation() {
+        let view_start_pos = Vec4::new(0.0, 0.0, 0.0, 1.0);
+        let view_end_pos = Vec4::new(0.0, 0.0, -1.0, 1.0);
+        let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
+        let transform = Matrix4x4::view_transform(view_start_pos, view_end_pos, up_vec);
+        assert_eq!(transform, Matrix4x4::identity());
+    }
+
+    #[test]
+    //Tests a flipped view orientation
+    pub fn flipped_orientation() {
+        let view_start_pos = Vec4::new(0.0, 0.0, 0.0, 1.0);
+        let view_end_pos = Vec4::new(0.0, 0.0, 1.0, 1.0);
+        let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
+        let transform = Matrix4x4::view_transform(view_start_pos, view_end_pos, up_vec);
+        assert_eq!(transform.round(), Matrix4x4::scaling(-1.0, 1.0, -1.0));
+    }
+
+    #[test]
+    //Tests a translated view orientation
+    pub fn translated_orientation() {
+        let view_start_pos = Vec4::new(0.0, 0.0, 8.0, 1.0);
+        let view_end_pos = Vec4::new(0.0, 0.0, 0.0, 1.0);
+        let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
+        let transform = Matrix4x4::view_transform(view_start_pos, view_end_pos, up_vec);
+        assert_eq!(transform.round(), Matrix4x4::translation(0.0, 0.0, -8.0));
+    }
+
+    #[test]
+    //Tests an arbitrary view orientation
+    pub fn arbitrary_orientation() {
+        let view_start_pos = Vec4::new(1.0, 3.0, 2.0, 1.0);
+        let view_end_pos = Vec4::new(4.0, -2.0, 8.0, 1.0);
+        let up_vec = Vec4::new(1.0, 1.0, 0.0, 0.0);
+        let transform = Matrix4x4::view_transform(view_start_pos, view_end_pos, up_vec);
+        let expected_result = Matrix4x4::new((-0.50709, 0.50709, 0.67612, -2.36643), (0.76772, 0.60609, 0.12122, -2.82843), (-0.35857, 0.59761, -0.71714, 0.0), (0.0, 0.0, 0.0, 1.0)); 
+        assert_eq!(transform.round(), expected_result.round());
+    }
 }
