@@ -55,6 +55,6 @@ mod tests {
         camera.transform(Matrix4x4::view_transform(start_pos, end_pos, up_vec));
         let mut canvas = Canvas::new(11, 11);
         Camera::render(&camera, &scene, &mut canvas);
-        assert_eq!(canvas.get(5, 5).unwrap().round(), Color::new(0.38066, 0.47583, 0.2855).round());
+        assert_eq!(canvas.get(5, 5).unwrap().round(), Color::new(0.38062, 0.47583, 0.2855).round());
     }
 }

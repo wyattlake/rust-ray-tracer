@@ -60,11 +60,11 @@ impl ObjectMethods for Plane {
     //Intersects a ray with a plane
     fn intersect(object: &Rc<Object>, ray: &Ray) -> Option<Vec<Intersection>> {
         let transformed_ray = Ray::transform(ray, &((object.get_transform()).inverse().unwrap()));
-        if transformed_ray.get_direction().1.abs() < EPSILON_BUMP {
+        if transformed_ray.get_direction().1.abs() <= EPSILON_BUMP {
             None 
         }
         else {
-            Some(vec![Intersection::new(-ray.get_origin().1 / ray.get_direction().1, Rc::clone(&object))])
+            Some(vec![Intersection::new(-transformed_ray.get_origin().1 / transformed_ray.get_direction().1, Rc::clone(&object))])
         }
     }
 

@@ -119,6 +119,7 @@ mod tests {
         let sphere = Sphere::new();
         assert_eq!(pattern.color_at_object(&sphere, &Vec4::new(0.0, 0.0, 0.0, 1.0)), WHITE);
         assert_eq!(pattern.color_at_object(&sphere, &Vec4::new(0.99, 0.0, 0.0, 1.0)), WHITE);
+        assert_eq!(pattern.color_at_object(&sphere, &Vec4::new(1.01, 0.0, 0.0, 1.0)), BLACK);
     }
 
     #[test]
@@ -127,6 +128,7 @@ mod tests {
         let pattern = CheckerboardPattern::new(WHITE, BLACK);
         assert_eq!(pattern.color_at(&Vec4::new(0.0, 0.0, 0.0, 1.0)), WHITE);
         assert_eq!(pattern.color_at(&Vec4::new(0.0, 0.99, 0.0, 1.0)), WHITE);
+        assert_eq!(pattern.color_at(&Vec4::new(0.0, 1.01, 0.0, 1.0)), BLACK);
     }
 
     #[test]
@@ -135,5 +137,6 @@ mod tests {
         let pattern = CheckerboardPattern::new(WHITE, BLACK);
         assert_eq!(pattern.color_at(&Vec4::new(0.0, 0.0, 0.0, 1.0)), WHITE);
         assert_eq!(pattern.color_at(&Vec4::new(0.0, 0.0, 0.99, 1.0)), WHITE);
+        assert_eq!(pattern.color_at(&Vec4::new(0.0, 0.0, 1.01, 1.0)), BLACK);
     }
 }

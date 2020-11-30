@@ -73,22 +73,23 @@ impl Scene {
     }
 
     //Lights a pixel in the scene
-    pub fn scene_lighting(scene: &Scene, comps: Comp) -> Color {
+    pub fn scene_lighting(scene: &Scene, comps: Comp, remaining: i32) -> Color {
         let mut color = Color::new(0.0, 0.0, 0.0);
         for light in scene.get_light_sources() {
             let shadow = in_shadow(&light, &comps.over_point, scene);
             color = color + lighting(comps.object.get_material(), &comps.object, &light, &comps.over_point, &comps.e_vec, &comps.n_vec, shadow);
         }
-        color
+        let reflected = reflected_color(scene, &comps, remaining);
+        color + reflected
     }
 
     //Computes the color at a given point
-    pub fn compute_color(ray: Ray, scene: &Scene) -> Option<Color> {
+    pub fn compute_color(ray: Ray, scene: &Scene, remaining: i32) -> Option<Color> {
         let intersections = Ray::intersect_scene(scene, &ray);
         let hit = Intersection::hit(&intersections);
         if hit != None {
             let comps = Comp::compute_vars(hit.unwrap(), &ray);
-            let color = Scene::scene_lighting(&scene, comps);
+            let color = Scene::scene_lighting(&scene, comps, remaining);
             Some(color)
         }
         else {

@@ -18,12 +18,8 @@ fn main() {
     let mut scene = Scene::new();
 
     let light_color = Color::new(1.0, 1.0, 1.0);
-    let light = PointLight::new(light_color, Vec4::new(-10.0, 10.0, -10.0, 1.0));
+    let light = PointLight::new(light_color, Vec4::new(-5.0, 15.0, -5.0, 1.0));
     &scene.add_light(light);
-
-    let green = Color::new(0.1, 1.0, 0.5);
-    let yellow_green = Color::new(0.5, 1.0, 0.1);
-    let tan = Color::new(1.0, 0.9, 0.9);
 
     let mut pattern = RingPattern::new(Color::new(0.18, 0.63, 0.19), Color::new(0.22, 0.81, 0.28));
     &pattern.transform(Matrix4x4::scaling(0.23, 0.23, 0.23) * Matrix4x4::rotation(Axis::Z, 70.0) * Matrix4x4::rotation(Axis::X, -60.0));
@@ -35,29 +31,42 @@ fn main() {
     &pattern3.transform(Matrix4x4::scaling(1.0, 1.0, 1.0));
 
     let mut floor1_raw = Plane::new_raw();
-    &floor1_raw.get_mut_material().set_color(tan.clone());
-    &floor1_raw.get_mut_material().set_specular(0.0);
-    &floor1_raw.get_mut_material().set_pattern(pattern3);
+    &floor1_raw.get_mut_material().set_reflectivity(0.5);
+    &floor1_raw.get_mut_material().set_ambient(0.5);
+    &floor1_raw.get_mut_material().set_color(Color::new(0.3, 0.3, 0.3));
     let floor1 = Rc::new(floor1_raw);
     &scene.add_object(floor1);
 
+    let mut floor2_raw = Plane::new_raw();
+    &floor2_raw.get_mut_material().set_ambient(0.5);
+    &floor2_raw.get_mut_material().set_color(Color::new(0.3, 0.3, 0.3));
+    &floor2_raw.transform(Matrix4x4::translation(0.0, 0.0, 10.0) * Matrix4x4::rotation(Axis::X, 90.0));
+    let floor2 = Rc::new(floor2_raw);
+    &scene.add_object(floor2);
+
     let mut sphere1_raw = Sphere::new_raw();
-    &sphere1_raw.get_mut_material().set_color(green);
-    &sphere1_raw.transform(Matrix4x4::translation(-0.5, 1.0, 0.5));
-    &sphere1_raw.get_mut_material().set_pattern(pattern);
+    &sphere1_raw.transform(Matrix4x4::translation(0.3, 1.0, 0.5));
+    &sphere1_raw.get_mut_material().set_color(Color::new_255(255, 25, 64));
     let sphere1 = Rc::new(sphere1_raw);
     &scene.add_object(sphere1);
 
     let mut sphere2_raw = Sphere::new_raw();
-    &sphere2_raw.get_mut_material().set_color(yellow_green);
+    &sphere2_raw.get_mut_material().set_color(Color::new_255(76, 230, 83));
+    &sphere2_raw.get_mut_material().set_reflectivity(0.05);
     &sphere2_raw.transform(Matrix4x4::translation(1.5, 0.5, -0.5) * Matrix4x4::scaling(0.5, 0.5, 0.5));
-    &sphere2_raw.get_mut_material().set_pattern(pattern2);
     let sphere1 = Rc::new(sphere2_raw);
     &scene.add_object(sphere1);
 
+    let mut sphere3_raw = Sphere::new_raw();
+    &sphere3_raw.get_mut_material().set_color(Color::new_255(141, 58, 224));
+    &sphere3_raw.get_mut_material().set_reflectivity(0.05);
+    &sphere3_raw.transform(Matrix4x4::translation(-1.5, 0.7, -0.5) * Matrix4x4::scaling(0.7, 0.7, 0.7));
+    let sphere3 = Rc::new(sphere3_raw);
+    &scene.add_object(sphere3);
+
     let mut camera = Camera::new(1000, 500, 45.0);
     let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
-    let end_pos = Vec4::new(0.0, 1.0, 0.0, 1.0);
+    let end_pos = Vec4::new(0.0, 1.0, 3.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 
     camera.transform(Matrix4x4::view_transform(start_pos, end_pos, up_vec));

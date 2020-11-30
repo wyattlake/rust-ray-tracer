@@ -89,8 +89,8 @@ mod tests {
         let sphere = Rc::clone(&scene.get_objects()[0]);
         let intersection = Intersection::new(4.0, sphere);
         let comps = Comp::compute_vars(intersection, &ray);
-        let color = Scene::scene_lighting(&scene, comps);
-        assert_eq!(color.round(), Color::new(0.38066, 0.47583, 0.2855).round());
+        let color = Scene::scene_lighting(&scene, comps, 5);
+        assert_eq!(color.round(), Color::new(0.38063, 0.47583, 0.2855).round());
     }
 
     #[test]
@@ -103,7 +103,7 @@ mod tests {
         let sphere = Rc::clone(&scene.get_objects()[1]);
         let intersection = Intersection::new(0.5, sphere);
         let comps = Comp::compute_vars(intersection, &ray);
-        let color = Scene::scene_lighting(&scene, comps);
+        let color = Scene::scene_lighting(&scene, comps, 5);
         assert_eq!(color.round(), Color::new(0.1, 0.1, 0.1).round());
     }
 
@@ -112,7 +112,7 @@ mod tests {
     fn ray_misses() {
         let scene = Scene::default();
         let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 1.0, 0.0));
-        let color = Scene::compute_color(ray, &scene);
+        let color = Scene::compute_color(ray, &scene, 5);
         assert_eq!(color, None);
     }
 
@@ -121,8 +121,8 @@ mod tests {
     fn ray_hits() {
         let scene = Scene::default();
         let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 0.0, 1.0));
-        let color = Scene::compute_color(ray, &scene);
-        assert_eq!(color.unwrap().round(), Color::new(0.38066, 0.47583, 0.2855).round());
+        let color = Scene::compute_color(ray, &scene, 5);
+        assert_eq!(color.unwrap().round(), Color::new(0.3806, 0.47583, 0.2855).round());
     }
 
     //Tests color when a ray hits from inside a sphere
@@ -145,7 +145,7 @@ mod tests {
         &scene.add_object(sphere1); 
         &scene.add_object(sphere2); 
         let ray = Ray::new((0.0, 0.0, 0.75), (0.0, 0.0, -1.0));
-        let color = Scene::compute_color(ray, &scene);
+        let color = Scene::compute_color(ray, &scene, 5);
         assert_eq!(color.unwrap().round(), inner_material.get_color().round());
     }
 
@@ -170,7 +170,7 @@ mod tests {
         let intersection = Intersection::new(4.0, Rc::clone(&scene.get_objects()[1]));
 
         let comps = Comp::compute_vars(intersection, &ray);
-        let color = Scene::scene_lighting(&scene, comps);
+        let color = Scene::scene_lighting(&scene, comps, 5);
         assert_eq!(color, Color::new(0.1, 0.1, 0.1));
     }
 

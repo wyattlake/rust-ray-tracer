@@ -14,6 +14,11 @@ impl Color {
         Color(r, g, b)
     }
 
+    //Creates a new Color
+    pub fn new_255(r: i32, g: i32, b: i32) -> Color {
+        Color((r as f32) / 255.0, (g as f32) / 255.0, (b as f32) / 255.0)
+    }
+
     //clamp_floats colors between 0 and 1
     fn clamp(&self) -> Color {
         Color(clamp_float(self.0, 0.0, 1.0), clamp_float(self.1, 0.0, 1.0), clamp_float(self.2, 0.0, 1.0))
@@ -28,6 +33,47 @@ impl Color {
     pub fn ppm_string(&self) -> String {
         let fixed_color = self.clamp().convert();
         format!("{} {} {}", fixed_color.0.round() as i32, fixed_color.1.round() as i32, fixed_color.2.round() as i32)
+    }
+
+    //Takes a color and fully converts it to charaxcter
+    pub fn txt_string(&self) -> String {
+        let fixed_color = self.clamp().convert();
+        let mut character = "  ";
+        println!("{} ", (fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0);
+        if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) == 1.0 {
+            character = "@@";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.98 {
+            character = "# ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.95 {
+            character = "& ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.85 {
+            character = "$ ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.75 {
+            character = "{ ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.65 {
+            character = "{ ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.55 {
+            character = "[ ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.4 {
+            character = "/ ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.3 {
+            character = ": ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.2 {
+            character = ", ";
+        }
+        else if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) > 0.15 {
+            character = ". ";
+        };
+        format!("{}", character)
     }
     
     //Gets the length of a color's ppm string

@@ -1,4 +1,5 @@
 use crate::core::color::*;
+use crate::core::comp::Comp;
 use crate::core::vector::Vec4;
 use crate::ray_tracing::material::Material;
 use crate::ray_tracing::ray::Ray;
@@ -12,6 +13,23 @@ use std::rc::Rc;
 pub struct PointLight {
     intensity: Color,
     position: Vec4,
+}
+
+//Creates a ray reflected off of a surface
+pub fn reflected_color(scene: &Scene, comps: &Comp, remaining: i32) -> Color {
+    if comps.object.get_material().get_reflectivity() == &0.0 || remaining <= 0 {
+        Color::new(0.0, 0.0, 0.0)
+    }
+    else {
+        let reflected_ray = Ray::new_from_vec(comps.over_point.clone(), comps.r_vec.clone());
+        let color = Scene::compute_color(reflected_ray, scene, remaining - 1);
+        if color != None {
+            color.unwrap() * comps.object.get_material().get_reflectivity()
+        }
+        else {
+            Color::new(0.0, 0.0, 0.0)
+        }
+    }
 }
 
 //Computes a color given all the variables of the environment

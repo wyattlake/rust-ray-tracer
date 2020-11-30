@@ -11,29 +11,32 @@ pub struct Material {
     diffuse: f32,
     specular: f32,
     shininess: f32,
+    reflectivity: f32,
     pattern: Option<Pattern>,
 }
 
 impl Material {
     //Creates a new Material and clamps all the values
-    pub fn new(color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, pattern: Option<Pattern>) -> Material {
+    pub fn new(color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, reflectivity: f32, pattern: Option<Pattern>) -> Material {
         Material {
             color: color,
             ambient: clamp_float(ambient, 0.0, 1.0),
             diffuse: clamp_float(diffuse, 0.0, 1.0),
             specular: clamp_float(specular, 0.0, 1.0),
             shininess: clamp_float(shininess, 1.0, 200.0),
+            reflectivity: reflectivity,
             pattern,
         }
     }
 
     //Sets a material
-    pub fn set(&mut self, color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, pattern: Option<Pattern>) {
+    pub fn set(&mut self, color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, reflectivity: f32, pattern: Option<Pattern>) {
         self.color = color;
         self.ambient = clamp_float(ambient, 0.0, 1.0); 
         self.diffuse = clamp_float(diffuse, 0.0, 1.0);
         self.specular = clamp_float(specular, 0.0, 1.0);
         self.shininess = clamp_float(shininess, 1.0, 200.0);
+        self.reflectivity = reflectivity;
         self.pattern = pattern;
     }
 
@@ -45,6 +48,7 @@ impl Material {
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
+            reflectivity: 0.0,
             pattern: None,
         } 
     }
@@ -99,6 +103,16 @@ impl Material {
         self.specular = shininess;
     } 
 
+    //Gets the shininess value of a Material
+    pub fn get_reflectivity(&self) -> &f32 {
+        &self.reflectivity
+    }
+
+    //Sets the shininess of a Material
+    pub fn set_reflectivity(&mut self, reflectivity: f32) {
+        self.reflectivity = reflectivity;
+    } 
+
     //Gets the pattern of a Material
     pub fn get_pattern(&self) -> &Option<Pattern> {
         &self.pattern
@@ -112,6 +126,6 @@ impl Material {
 
 impl Clone for Material {
     fn clone(&self) -> Material {
-        Material::new(self.color.clone(), self.ambient.clone(), self.diffuse.clone(), self.specular.clone(), self.shininess.clone(), self.pattern.clone())
+        Material::new(self.color.clone(), self.ambient.clone(), self.diffuse.clone(), self.specular.clone(), self.shininess.clone(), self.reflectivity.clone(), self.pattern.clone())
     }
 }

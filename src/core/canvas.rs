@@ -69,12 +69,45 @@ impl Canvas {
         result
     }
 
+    //Formats the canvas contents
+    pub fn format_txt(canvas: Canvas) -> String {
+        let mut current_item = 0;
+        let slice = &canvas.contents[..];
+        let mut result = String::from("");
+        for color in slice {
+            if &current_item >= &canvas.width {
+                result.push_str("\n");
+                current_item = 0; 
+            }
+            result.push_str(&*format!("{}", color.txt_string()));
+            current_item += 1;
+        };
+        result.push_str("\n");
+        result
+    }
+
     //Write the canvas to a ppm file
     pub fn write_file(canvas: Canvas, filename: &str) {
         let filename_formatted = &*format!("{}.ppm", filename);
         let path = Path::new(filename_formatted);
         let display = path.display();
         let text = Canvas::format_ppm(canvas);
+        let mut file = match File::create(&path) {
+            Err(error) => panic!("Failed to open {}: {}", display, error),
+            Ok(file) => file,
+        };
+        match file.write_all(text.as_bytes()) {
+            Err(error) => panic!("Failed to write to {}: {}", display, error),
+            Ok(_) => println!("Wrote canvas to {}", display),
+        }
+    }
+
+    //Write the canvas to a txt file
+    pub fn write_file_txt(canvas: Canvas, filename: &str) {
+        let filename_formatted = &*format!("{}.txt", filename);
+        let path = Path::new(filename_formatted);
+        let display = path.display();
+        let text = Canvas::format_txt(canvas);
         let mut file = match File::create(&path) {
             Err(error) => panic!("Failed to open {}: {}", display, error),
             Ok(file) => file,
