@@ -1,6 +1,9 @@
 use crate::misc::utils::clamp_float;
 use std::ops::*;
 
+pub const WHITE: Color = Color(1.0, 1.0, 1.0);
+pub const BLACK: Color = Color(0.0, 0.0, 0.0);
+
 //Color is a wrapper for Tuple
 #[derive(Debug, PartialEq)]
 pub struct Color(pub f32, pub f32, pub f32);

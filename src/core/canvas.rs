@@ -81,7 +81,7 @@ impl Canvas {
         };
         match file.write_all(text.as_bytes()) {
             Err(error) => panic!("Failed to write to {}: {}", display, error),
-            Ok(_) => println!("Successfully wrote canvas to {}", display),
+            Ok(_) => println!("Wrote canvas to {}", display),
         }
     }
 }

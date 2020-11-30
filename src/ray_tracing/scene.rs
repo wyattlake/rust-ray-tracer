@@ -1,4 +1,3 @@
-use crate::ray_tracing::lighting::PointLight;
 use crate::core::matrix::Matrix4x4;
 use crate::core::color::Color;
 use crate::core::vector::Vec4;
@@ -78,7 +77,7 @@ impl Scene {
         let mut color = Color::new(0.0, 0.0, 0.0);
         for light in scene.get_light_sources() {
             let shadow = in_shadow(&light, &comps.over_point, scene);
-            color = color + lighting(comps.object.get_material(), &light, &comps.over_point, &comps.e_vec, &comps.n_vec, shadow);
+            color = color + lighting(comps.object.get_material(), &comps.object, &light, &comps.over_point, &comps.e_vec, &comps.n_vec, shadow);
         }
         color
     }

@@ -23,7 +23,7 @@ mod tests {
     fn parallel_intersection() {
         let p = Plane::new();
         let ray = Ray::new((0.0, 10.0, 0.0), (0.0, 0.0, 1.0));
-        let intersections = Plane::intersect(p, &ray);
+        let intersections = Plane::intersect(&p, &ray);
         assert_eq!(intersections, None);
     }
 
@@ -32,7 +32,7 @@ mod tests {
     fn coplanar_intersection() {
         let p = Plane::new();
         let ray = Ray::new((0.0, 0.0, 0.0), (0.0, 0.0, 1.0));
-        let intersections = Plane::intersect(p, &ray);
+        let intersections = Plane::intersect(&p, &ray);
         assert_eq!(intersections, None);
     }
 
@@ -41,7 +41,7 @@ mod tests {
     fn above_plane_intersection() {
         let p = Plane::new();
         let ray = Ray::new((0.0, 1.0, 0.0), (0.0, -1.0, 0.0));
-        let intersections = Plane::intersect(p, &ray).unwrap();
+        let intersections = Plane::intersect(&p, &ray).unwrap();
         assert_eq!(intersections.len(), 1);
         assert_eq!(intersections[0].get_t(), 1.0);
     }
@@ -51,7 +51,7 @@ mod tests {
     fn below_plane_intersection() {
         let p = Plane::new();
         let ray = Ray::new((0.0, -1.0, 0.0), (0.0, 1.0, 0.0));
-        let intersections = Plane::intersect(p, &ray).unwrap();
+        let intersections = Plane::intersect(&p, &ray).unwrap();
         assert_eq!(intersections.len(), 1);
         assert_eq!(intersections[0].get_t(), 1.0);
     }

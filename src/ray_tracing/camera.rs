@@ -73,12 +73,24 @@ impl Camera {
 
     //Renders a scene
     pub fn render(camera: &Camera, scene: &Scene, canvas: &mut Canvas) {
+        let mut counter = 0;
+        let mut percent = 0;
+        let pixels = &camera.hsize * &camera.vsize;
+        let percentage_update = pixels as f32 / 10.0;
         for y in 0..camera.vsize {
             for x in 0..camera.hsize {
                 let ray = Camera::ray_towards_pixel(camera, x, y);
                 let color = Scene::compute_color(ray, scene);
                 if color != None {
                     canvas.set(color.unwrap().clone(), x, y);
+                }
+                if counter as f32 > percentage_update {
+                    percent += 10;
+                    println!("Render is {}% complete", percent);
+                    counter = 0;
+                }
+                else {
+                    counter += 1;
                 }
             }
         }

@@ -1,9 +1,11 @@
-use crate::core::color::Color;
+use crate::core::color::*;
 use crate::core::vector::Vec4;
 use crate::ray_tracing::material::Material;
 use crate::ray_tracing::ray::Ray;
 use crate::ray_tracing::scene::Scene;
+use crate::objects::general::*;
 use crate::ray_tracing::intersection::Intersection;
+use std::rc::Rc;
 
 //Light in space with no size
 #[derive(Debug, PartialEq)]
@@ -13,9 +15,13 @@ pub struct PointLight {
 }
 
 //Computes a color given all the variables of the environment
-pub fn lighting(material: &Material, light: &PointLight, point: &Vec4, e_vec: &Vec4, n_vec: &Vec4, shadow: bool) -> Color {
+pub fn lighting(material: &Material, object: &Rc<Object>, light: &PointLight, point: &Vec4, e_vec: &Vec4, n_vec: &Vec4, shadow: bool) -> Color {
+    let mut color = material.get_color().clone();
+    if material.get_pattern() != &None {
+        color = material.get_pattern().as_ref().unwrap().color_at_object(object, point);
+    }
     if shadow {
-        let effective_color = material.get_color() * light.get_intensity();
+        let effective_color = color * light.get_intensity();
         &effective_color * material.get_ambient()
     }
     else {
@@ -24,7 +30,7 @@ pub fn lighting(material: &Material, light: &PointLight, point: &Vec4, e_vec: &V
         let mut specular = black.clone();
     
         //Combines surface and light color
-        let effective_color = material.get_color() * light.get_intensity();
+        let effective_color = color * light.get_intensity();
     
         //Finds the direction to the light source
         let light_vec = (light.get_position() - point).normalize();
