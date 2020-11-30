@@ -42,11 +42,9 @@ impl Canvas {
     //Checks if given coordinates are in the canvas bounds
     fn in_bounds(&self, x: i32, y: i32) -> bool {
         if x > (self.width - 1) as i32 || y > (self.height - 1) as i32 || x < 0 || y < 0 {
-            println!("Pixel (x: {}, y: {}) is outside the bounds of the canvas", x, y);
             false
         }
         else {
-            println!("Pixel (x: {}, y: {}) is inside the bounds of the canvas", x, y);
             true
         }
     }

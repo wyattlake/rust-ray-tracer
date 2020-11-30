@@ -72,15 +72,12 @@ impl Ray where {
         let objects = scene.get_objects();
         let mut intersections: Vec<Intersection> = vec![];
         for object in objects {
-            let transformed_ray = Ray::transform(ray, &((object.get_transform()).inverse().unwrap()));
-            let vector_to_unit_sphere = &transformed_ray.origin - Vec4::new(0.0, 0.0, 0.0, 1.0);
-            let a = Vec4::dot(&transformed_ray.direction, &transformed_ray.direction);
-            let b = 2.0 * Vec4::dot(&transformed_ray.direction, &vector_to_unit_sphere);
-            let c = Vec4::dot(&vector_to_unit_sphere, &vector_to_unit_sphere) - 1.0;
-            let discriminant = (b * b) - (4.0 * a * c);
-            if discriminant >= 0.0 {
-                &intersections.push(Intersection::new((- b - (discriminant.sqrt())) / (2.0 * a), Rc::clone(object)));
-                &intersections.push(Intersection::new((- b + (discriminant.sqrt())) / (2.0 * a), Rc::clone(object)));
+            let object_intersections = Object::intersect(object, ray);
+            if object_intersections != None {
+                let unwrapped_intersections = object_intersections.unwrap();
+                for x in unwrapped_intersections{
+                    &intersections.push(x);
+                }
             }
         }
         intersections.sort_by(|a, b| b.get_t().partial_cmp(&a.get_t()).unwrap());

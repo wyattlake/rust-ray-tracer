@@ -1,6 +1,7 @@
 use crate::core::vector::Vec4;
 use crate::ray_tracing::intersection::Intersection;
 use crate::objects::general::{Object};
+use crate::misc::utils::*;
 use crate::ray_tracing::ray::Ray;
 use std::rc::Rc;
 
@@ -38,7 +39,7 @@ impl Comp {
         let mut n_vec = Object::normal(&object, &point);
         let e_vec = ray.get_direction().negate();
         let mut inside = false;
-        let over_point = &point + (&n_vec.normalize() * (f64::EPSILON + 0.00001));
+        let over_point = &point + (&n_vec.normalize() * EPSILON_BUMP);
         if Vec4::dot(&n_vec, &e_vec) < 0.0 {
             inside = true;
             n_vec = n_vec.negate();

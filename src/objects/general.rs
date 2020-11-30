@@ -1,6 +1,7 @@
 use crate::core::matrix::Matrix4x4;
 use crate::core::vector::Vec4;
 use crate::objects::sphere::Sphere;
+use crate::objects::plane::Plane;
 use crate::ray_tracing::material::Material;
 use crate::ray_tracing::ray::Ray;
 use crate::ray_tracing::intersection::Intersection;
@@ -11,21 +12,30 @@ use std::borrow::Borrow;
 #[derive(Debug, PartialEq)]
 pub enum Object {
     Sphere(Sphere),
+    Plane(Plane),
 }
 
 impl Object {
+    //Finds the type of the object and gets that object's transform
     pub fn get_transform(&self) -> &Matrix4x4 {
-        match &*self.borrow() {
+        match self {
             Object::Sphere(sphere) => {
                 sphere.get_transform() 
+            }
+            Object::Plane(plane) => {
+                plane.get_transform() 
             }
         }
     }
 
-    pub fn intersect(object: Rc<Object>, ray: &Ray) -> Option<Vec<Intersection>> {
+    //Intersects an object
+    pub fn intersect(object: &Rc<Object>, ray: &Ray) -> Option<Vec<Intersection>> {
         match &*object.borrow() {
             Object::Sphere(_) => {
                 Sphere::intersect(object, ray)
+            }
+            Object::Plane(_) => {
+                Plane::intersect(object, ray)
             }
         }
     }
@@ -35,6 +45,9 @@ impl Object {
             Object::Sphere(_) => {
                 Sphere::normal(object, point)
             }
+            Object::Plane(_) => {
+                Plane::normal(object, point)
+            }
         }
     }
 
@@ -42,6 +55,9 @@ impl Object {
         match self {
             Object::Sphere(sphere) => {
                 sphere.get_mut_material() 
+            }
+            Object::Plane(plane) => {
+                plane.get_mut_material() 
             }
         }
     }
@@ -51,12 +67,19 @@ impl Object {
             Object::Sphere(sphere) => {
                 sphere.transform(matrix);
             }
+            Object::Plane(plane) => {
+                plane.transform(matrix);
+            }
         }
     }
+
     pub fn get_material(&self) -> &Material {
         match self {
             Object::Sphere(sphere) => {
                 sphere.get_material()
+            }
+            Object::Plane(plane) => {
+                plane.get_material()
             }
         } 
     }
@@ -84,4 +107,10 @@ pub trait ObjectMethods {
 
     //Gets a mutable reference to the material
     fn get_mut_material(&mut self) -> &mut Material;
+
+    //Intersects a given object with a ray
+    fn intersect(object: &Rc<Object>, ray: &Ray) -> Option<Vec<Intersection>>;
+
+    //Finds the normal of an object at a given point
+    fn normal(object: &Rc<Object>, world_point: &Vec4) -> Vec4;
 }
