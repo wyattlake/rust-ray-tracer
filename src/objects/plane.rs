@@ -34,7 +34,7 @@ impl ObjectMethods for Plane {
 
     //Applies a transformation to a Plane
     fn transform(&mut self, matrix: Matrix4x4) {
-        self.transform = matrix * self.transform.clone();
+        self.transform = matrix * self.get_transform();
     }
 
     //Returns the Plane transform
@@ -71,15 +71,5 @@ impl ObjectMethods for Plane {
     //The normal of a plane is always a vector pointing directly upwards
     fn normal(_object: &Rc<Object>, _world_point: &Vec4) -> Vec4 {
         Vec4::new(0.0, 1.0, 0.0, 0.0)
-    }
-}
-
-impl Clone for Plane {
-    //Clones a given plane
-    fn clone(&self) -> Plane {
-        Plane {
-            transform: self.transform.clone(),
-            material: self.material.clone(),
-        }
     }
 }

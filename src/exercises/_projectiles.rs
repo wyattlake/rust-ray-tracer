@@ -19,6 +19,6 @@ pub fn _launch_projectile() {
 //Tick finds the new position and velocity
 fn _tick(position: &Vec4, gravity: &Vec4, wind: &Vec4, velocity: &Vec4) -> (Vec4, Vec4) {
     let new_position = position + velocity;
-    let new_velocity = (velocity + gravity + wind).clone();
+    let new_velocity = velocity + gravity + wind;
     (new_position, new_velocity)
 }

@@ -13,7 +13,7 @@ pub struct Ray {
 
 impl Ray where {
     //Creates a new Ray
-    pub fn new(origin: (f64, f64, f64), direction: (f64, f64, f64)) -> Ray {
+    pub fn new(origin: (f32, f32, f32), direction: (f32, f32, f32)) -> Ray {
         Ray {
             origin: Vec4::new(origin.0, origin.1, origin.2, 1.0),
             direction: Vec4::new(direction.0, direction.1, direction.2, 0.0),
@@ -39,15 +39,15 @@ impl Ray where {
     }
 
     //Calculates the position of a ray
-    pub fn position(ray: &Ray, t: &f64) -> Vec4 {
+    pub fn position(ray: &Ray, t: &f32) -> Vec4 {
         ray.get_origin() + (ray.get_direction() * t)
     }
 
         //Creates a new Ray transformed by a matrix
     pub fn transform(ray: &Ray, matrix: &Matrix4x4) -> Ray {
         Ray {
-            origin: matrix * ray.origin.clone(),
-            direction: matrix * ray.direction.clone(),
+            origin: matrix * ray.get_origin(),
+            direction: matrix * ray.get_direction(),
         }
     }
 
@@ -83,15 +83,5 @@ impl Ray where {
         intersections.sort_by(|a, b| b.get_t().partial_cmp(&a.get_t()).unwrap());
         intersections.reverse();
         intersections
-    }
-}
-
-impl Clone for Ray {
-    //Clones a given Ray
-    fn clone(&self) -> Ray {
-        Ray {
-            origin: self.origin.clone(),
-            direction: self.direction.clone(),
-        }
     }
 }

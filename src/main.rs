@@ -13,7 +13,7 @@ use rust_ray_tracer::objects::general::ObjectMethods;
 use std::rc::Rc;
 
 fn main() {
-    let mut canvas = Canvas::new(1000, 500);
+    let mut canvas = Canvas::new(1500, 750);
 
     let mut scene = Scene::new();
 
@@ -31,47 +31,50 @@ fn main() {
     &pattern3.transform(Matrix4x4::scaling(1.0, 1.0, 1.0));
 
     let mut floor1_raw = Plane::new_raw();
-    &floor1_raw.get_mut_material().set_reflectivity(0.5);
     &floor1_raw.get_mut_material().set_ambient(0.5);
     &floor1_raw.get_mut_material().set_color(Color::new(0.3, 0.3, 0.3));
+    &floor1_raw.get_mut_material().set_pattern(pattern3);
     let floor1 = Rc::new(floor1_raw);
     &scene.add_object(floor1);
 
-    let mut floor2_raw = Plane::new_raw();
-    &floor2_raw.get_mut_material().set_ambient(0.5);
-    &floor2_raw.get_mut_material().set_color(Color::new(0.3, 0.3, 0.3));
-    &floor2_raw.transform(Matrix4x4::translation(0.0, 0.0, 10.0) * Matrix4x4::rotation(Axis::X, 90.0));
-    let floor2 = Rc::new(floor2_raw);
-    &scene.add_object(floor2);
+    // let mut floor2_raw = Plane::new_raw();
+    // &floor2_raw.get_mut_material().set_ambient(0.5);
+    // &floor2_raw.get_mut_material().set_color(Color::new(0.3, 0.3, 0.3));
+    // &floor2_raw.transform(Matrix4x4::translation(0.0, 0.0, 10.0) * Matrix4x4::rotation(Axis::X, 90.0));
+    // let floor2 = Rc::new(floor2_raw);
+    // &scene.add_object(floor2);
 
     let mut sphere1_raw = Sphere::new_raw();
-    &sphere1_raw.transform(Matrix4x4::translation(0.3, 1.0, 0.5));
-    &sphere1_raw.get_mut_material().set_color(Color::new_255(255, 25, 64));
+    &sphere1_raw.transform(Matrix4x4::translation(0.0, 1.0, 0.5));
+    &sphere1_raw.get_mut_material().set_color(WHITE);
+    &sphere1_raw.get_mut_material().set_reflectivity(0.4);
     let sphere1 = Rc::new(sphere1_raw);
     &scene.add_object(sphere1);
 
-    let mut sphere2_raw = Sphere::new_raw();
-    &sphere2_raw.get_mut_material().set_color(Color::new_255(76, 230, 83));
-    &sphere2_raw.get_mut_material().set_reflectivity(0.05);
-    &sphere2_raw.transform(Matrix4x4::translation(1.5, 0.5, -0.5) * Matrix4x4::scaling(0.5, 0.5, 0.5));
-    let sphere1 = Rc::new(sphere2_raw);
-    &scene.add_object(sphere1);
+    // let mut sphere2_raw = Sphere::new_raw();
+    // &sphere2_raw.get_mut_material().set_color(Color::new_255(76, 230, 83));
+    // &sphere2_raw.get_mut_material().set_reflectivity(0.05);
+    // &sphere2_raw.transform(Matrix4x4::translation(1.5, 0.5, -0.5) * Matrix4x4::scaling(0.5, 0.5, 0.5));
+    // let sphere1 = Rc::new(sphere2_raw);
+    // &scene.add_object(sphere1);
 
-    let mut sphere3_raw = Sphere::new_raw();
-    &sphere3_raw.get_mut_material().set_color(Color::new_255(141, 58, 224));
-    &sphere3_raw.get_mut_material().set_reflectivity(0.05);
-    &sphere3_raw.transform(Matrix4x4::translation(-1.5, 0.7, -0.5) * Matrix4x4::scaling(0.7, 0.7, 0.7));
-    let sphere3 = Rc::new(sphere3_raw);
-    &scene.add_object(sphere3);
+    // let mut sphere3_raw = Sphere::new_raw();
+    // &sphere3_raw.get_mut_material().set_color(Color::new_255(141, 58, 224));
+    // &sphere3_raw.get_mut_material().set_reflectivity(0.05);
+    // &sphere3_raw.transform(Matrix4x4::translation(-1.5, 0.7, -0.5) * Matrix4x4::scaling(0.7, 0.7, 0.7));
+    // let sphere3 = Rc::new(sphere3_raw);
+    // &scene.add_object(sphere3);
 
-    let mut camera = Camera::new(1000, 500, 45.0);
+    let mut camera = Camera::new(1500, 750, 45.0);
     let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
     let end_pos = Vec4::new(0.0, 1.0, 3.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 
     camera.transform(Matrix4x4::view_transform(start_pos, end_pos, up_vec));
 
-    Camera::render(&camera, &scene, &mut canvas);
+    println!("Render started...");
+
+    Camera::render_supersampled(&camera, &scene, &mut canvas);
 
     println!("Image successfully rendered");
     Canvas::write_file(canvas, "image");

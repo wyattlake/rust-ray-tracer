@@ -21,7 +21,7 @@ pub fn reflected_color(scene: &Scene, comps: &Comp, remaining: i32) -> Color {
         Color::new(0.0, 0.0, 0.0)
     }
     else {
-        let reflected_ray = Ray::new_from_vec(comps.over_point.clone(), comps.r_vec.clone());
+        let reflected_ray = Ray::new_from_vec(Vec4::new(comps.over_point.0, comps.over_point.1, comps.over_point.2, 1.0), Vec4::new(comps.r_vec.0, comps.r_vec.1, comps.r_vec.2, 0.0));
         let color = Scene::compute_color(reflected_ray, scene, remaining - 1);
         if color != None {
             color.unwrap() * comps.object.get_material().get_reflectivity()
@@ -83,9 +83,9 @@ pub fn in_shadow(light: &PointLight, point: &Vec4, scene: &Scene) -> bool {
     let distance = Vec4::magnitude(&vector);
     let direction = (&vector).normalize();
 
-    let shadow_ray = Ray::new_from_vec(point.clone(), direction);
-    let intersections = Ray::intersect_scene(scene, &shadow_ray);
-    let ray_hit = Intersection::hit(&intersections);
+    let shadow_ray = Ray::new_from_vec(Vec4::new(point.0, point.1, point.2, 1.0), direction);
+    let mut intersections = Ray::intersect_scene(scene, &shadow_ray);
+    let ray_hit = Intersection::hit(&mut intersections);
     let mut result = false;
     if ray_hit != None {
         if ray_hit.unwrap().get_t() < distance {
@@ -112,15 +112,5 @@ impl PointLight {
     //Gets the position of a PointLight
     pub fn get_position(&self) -> &Vec4 {
         &self.position
-    }
-}
-
-impl Clone for PointLight {
-    //Clones a PointLight
-    fn clone(&self) -> PointLight {
-        PointLight {
-            intensity: self.intensity.clone(),
-            position: self.position.clone(),
-        } 
     }
 }

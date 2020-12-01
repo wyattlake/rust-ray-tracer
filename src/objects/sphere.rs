@@ -34,7 +34,7 @@ impl ObjectMethods for Sphere {
 
     //Applies a transformation to a sphere
     fn transform(&mut self, matrix: Matrix4x4) {
-        self.transform = matrix * self.transform.clone();
+        self.transform = matrix * &self.transform;
     }
 
     //Returns the sphere transform
@@ -83,15 +83,5 @@ impl ObjectMethods for Sphere {
         let mut world_normal = (object.get_transform()).inverse().unwrap().transpose() * object_normal; 
         world_normal.3 = 0.0;
         world_normal.normalize()
-    }
-}
-
-impl Clone for Sphere {
-    //Clones a given sphere
-    fn clone(&self) -> Sphere {
-        Sphere {
-            transform: self.transform.clone(),
-            material: self.material.clone(),
-        }
     }
 }

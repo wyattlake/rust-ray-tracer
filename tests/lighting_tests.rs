@@ -28,7 +28,7 @@ mod tests {
         let object = Sphere::new();
         let m = Material::default();
         let position = Vec4::new(0.0, 0.0, 0.0, 1.0);
-        let e_vec = Vec4::new(0.0, ((2.0 as f64).sqrt())/2.0, -((2.0 as f64).sqrt())/2.0, 0.0);
+        let e_vec = Vec4::new(0.0, ((2.0 as f32).sqrt())/2.0, -((2.0 as f32).sqrt())/2.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 0.0, -10.0, 1.0));
         let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, false);
@@ -54,7 +54,7 @@ mod tests {
         let object = Sphere::new();
         let m = Material::default();
         let position = Vec4::new(0.0, 0.0, 0.0, 1.0);
-        let e_vec = Vec4::new(0.0, -((2.0 as f64).sqrt())/2.0, -((2.0 as f64).sqrt())/2.0, 0.0);
+        let e_vec = Vec4::new(0.0, -((2.0 as f32).sqrt())/2.0, -((2.0 as f32).sqrt())/2.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 10.0, -10.0, 1.0));
         let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, false);

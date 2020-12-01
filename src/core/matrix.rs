@@ -4,12 +4,12 @@ use crate::core::vector::*;
 use crate::misc::axis::*;
 
 //Matrix4x4 is composed of nested tuples
-#[derive(Debug, PartialEq)]
-pub struct Matrix4x4 (pub (f64, f64, f64, f64), pub (f64, f64, f64, f64), pub (f64, f64, f64, f64), (f64, f64, f64, f64));
+#[derive(Debug, PartialEq, Clone)]
+pub struct Matrix4x4 (pub (f32, f32, f32, f32), pub (f32, f32, f32, f32), pub (f32, f32, f32, f32), (f32, f32, f32, f32));
 
 impl Matrix4x4 {
     //Creates a new Matrix4x4
-    pub fn new(row1: (f64, f64, f64, f64), row2: (f64, f64, f64, f64), row3: (f64, f64, f64, f64), row4: (f64, f64, f64, f64)) -> Matrix4x4 {
+    pub fn new(row1: (f32, f32, f32, f32), row2: (f32, f32, f32, f32), row3: (f32, f32, f32, f32), row4: (f32, f32, f32, f32)) -> Matrix4x4 {
         Matrix4x4(row1, row2, row3, row4)
     }
 
@@ -34,7 +34,7 @@ impl Matrix4x4 {
     }
 
     //Finds the cofactor of a Matrix3x3
-    pub fn cofactor(matrix: &Matrix4x4, row: usize, column: usize) -> f64 {
+    pub fn cofactor(matrix: &Matrix4x4, row: usize, column: usize) -> f32 {
         let sub_matrix: Matrix3x3 = Matrix4x4::sub_matrix(matrix, row, column);
         let mut sign = -1.0;
         if (row + column) % 2 == 0 {
@@ -44,14 +44,14 @@ impl Matrix4x4 {
     }
 
     //Gets a value from a Matrix4x4
-    pub fn get(&self, row: usize, column: usize) -> f64 {
+    pub fn get(&self, row: usize, column: usize) -> f32 {
         let m = [[self.0.0, self.0.1, self.0.2, self.0.3], [self.1.0, self.1.1, self.1.2, self.1.3], [self.2.0, self.2.1, self.2.2, self.2.3], [self.3.0, self.3.1, self.3.2, self.3.3]]; 
         m[row][column]
     }
 
     //Finds the determinant of a Matrix4x4
-    pub fn determinant(matrix: &Matrix4x4) -> f64 {
-        let mut determinant: f64 = 0.0;
+    pub fn determinant(matrix: &Matrix4x4) -> f32 {
+        let mut determinant: f32 = 0.0;
         for i in 0..4 {
             determinant = determinant + (Matrix4x4::cofactor(&matrix, 0, i) * matrix.get(0, i));
         }
@@ -72,12 +72,12 @@ impl Matrix4x4 {
     }
 
     //Creates a translation matrix
-    pub fn translation(x: f64, y: f64, z: f64) -> Matrix4x4 {
+    pub fn translation(x: f32, y: f32, z: f32) -> Matrix4x4 {
         Matrix4x4::new((1.0, 0.0, 0.0, x), (0.0, 1.0, 0.0, y), (0.0, 0.0, 1.0, z), (0.0, 0.0, 0.0, 1.0))
     }
 
     //Creates a translation matrix
-    pub fn scaling(x: f64, y: f64, z: f64) -> Matrix4x4 {
+    pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4x4 {
         Matrix4x4::new((x, 0.0, 0.0, 0.0), (0.0, y, 0.0, 0.0), (0.0, 0.0, z, 0.0), (0.0, 0.0, 0.0, 1.0))
     }
 
@@ -97,7 +97,7 @@ impl Matrix4x4 {
     }
 
     //Creates a rotation matrix
-    pub fn rotation(axis: Axis, degrees: f64) -> Matrix4x4 {
+    pub fn rotation(axis: Axis, degrees: f32) -> Matrix4x4 {
         let r = degrees.to_radians();
         match axis {
             Axis::X => {
@@ -114,7 +114,7 @@ impl Matrix4x4 {
     }
 
     //Creates a shearing matrix
-    pub fn shearing(x_y: f64, x_z: f64, y_x: f64, y_z: f64, z_x: f64, z_y: f64) -> Matrix4x4 {
+    pub fn shearing(x_y: f32, x_z: f32, y_x: f32, y_z: f32, z_x: f32, z_y: f32) -> Matrix4x4 {
         Matrix4x4::new((1.0, x_y, x_z, 0.0), (y_x, 1.0, y_z, 0.0), (z_x, z_y, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0))
     }
 
@@ -131,19 +131,12 @@ impl Matrix4x4 {
 
     //Creates a new view transform matrix
     pub fn view_transform(view_start_pos: Vec4, view_end_pos: Vec4, up_vec: Vec4) -> Matrix4x4 {
-        let forward = (view_end_pos - view_start_pos.clone()).normalize();
+        let forward = (view_end_pos - &view_start_pos).normalize();
         let up_normalized = up_vec.normalize();
         let left = &forward * up_normalized;
         let true_up = &left * &forward;
         let orientation = Matrix4x4::new((left.0, left.1, left.2, 0.0), (true_up.0, true_up.1, true_up.2, 0.0), (forward.negate().0, forward.negate().1, forward.negate().2, 0.0), (0.0, 0.0, 0.0, 1.0));
         orientation * Matrix4x4::translation(-view_start_pos.0, -view_start_pos.1, -view_start_pos.2)
-    }
-}
-
-impl Clone for Matrix4x4 {
-    //Clones a given Matrix4x4
-    fn clone(&self) -> Matrix4x4 {
-        Matrix4x4(self.0, self.1, self.2, self.3)
     }
 }
 
@@ -218,12 +211,12 @@ impl<'a> Mul<&'a Vec4> for Matrix4x4 {
 }
 
 //Matrix3x3 is composed of nested tuples
-#[derive(Debug, PartialEq)]
-pub struct Matrix3x3 (pub (f64, f64, f64), pub (f64, f64, f64), pub (f64, f64, f64));
+#[derive(Debug, PartialEq, Clone)]
+pub struct Matrix3x3 (pub (f32, f32, f32), pub (f32, f32, f32), pub (f32, f32, f32));
 
 impl Matrix3x3 {
     //Creates a new Matrix3x3
-    pub fn new(row1: (f64, f64, f64), row2: (f64, f64, f64), row3: (f64, f64, f64)) -> Matrix3x3 {
+    pub fn new(row1: (f32, f32, f32), row2: (f32, f32, f32), row3: (f32, f32, f32)) -> Matrix3x3 {
         Matrix3x3(row1, row2, row3)
     }
 
@@ -248,7 +241,7 @@ impl Matrix3x3 {
     }
 
     //Finds the cofactor of a Matrix3x3
-    pub fn cofactor(matrix: &Matrix3x3, row: usize, column: usize) -> f64 {
+    pub fn cofactor(matrix: &Matrix3x3, row: usize, column: usize) -> f32 {
         let sub_matrix: Matrix2x2 = Matrix3x3::sub_matrix(matrix, row, column);
         let mut sign = -1.0;
         if (row + column) % 2 == 0 {
@@ -258,14 +251,14 @@ impl Matrix3x3 {
     }
 
     //Gets a value from a Matrix3x3
-    pub fn get(&self, row: usize, column: usize) -> f64 {
+    pub fn get(&self, row: usize, column: usize) -> f32 {
         let m = [[self.0.0, self.0.1, self.0.2], [self.1.0, self.1.1, self.1.2], [self.2.0, self.2.1, self.2.2]];
         m[row][column]
     }
 
     //Finds the determinant of a Matrix3x3
-    pub fn determinant(matrix: &Matrix3x3) -> f64 {
-        let mut determinant: f64 = 0.0;
+    pub fn determinant(matrix: &Matrix3x3) -> f32 {
+        let mut determinant: f32 = 0.0;
         for i in 0..3 {
             determinant = determinant + ((Matrix3x3::cofactor(matrix, 0, i) * matrix.get(0, i)));
         }
@@ -284,13 +277,6 @@ impl Matrix3x3 {
             let result = Matrix3x3((cofactor_matrix_t.0.0 / det, cofactor_matrix_t.0.1 / det, cofactor_matrix_t.0.2 / det), (cofactor_matrix_t.1.0 / det, cofactor_matrix_t.1.1 / det, cofactor_matrix_t.1.2 / det), (cofactor_matrix_t.2.0 / det, cofactor_matrix_t.2.1 / det, cofactor_matrix_t.2.2 / det));
             Some(result)
         }
-    }
-}
-
-impl Clone for Matrix3x3 {
-    //Clones a given Matrix4x4
-    fn clone(&self) -> Matrix3x3 {
-        Matrix3x3(self.0, self.1, self.2)
     }
 }
 
@@ -332,12 +318,12 @@ impl<'a> Mul<&'a Matrix3x3> for Matrix3x3 {
 }
 
 //Matrix2x2 is composed of nested tuples
-#[derive(Debug, PartialEq)]
-pub struct Matrix2x2 (pub (f64, f64), pub (f64, f64));
+#[derive(Debug, PartialEq, Clone)]
+pub struct Matrix2x2 (pub (f32, f32), pub (f32, f32));
 
 impl Matrix2x2 {
     //Creates a new Matrix2x2
-    pub fn new(row1: (f64, f64), row2: (f64, f64)) -> Matrix2x2 {
+    pub fn new(row1: (f32, f32), row2: (f32, f32)) -> Matrix2x2 {
         Matrix2x2(row1, row2)
     }
 
@@ -352,15 +338,8 @@ impl Matrix2x2 {
     }
 
     //Finds the determinant of a Matrix2x2
-    pub fn determinant(matrix: Matrix2x2) -> f64 {
+    pub fn determinant(matrix: Matrix2x2) -> f32 {
         (matrix.0.0 * matrix.1.1) - (matrix.1.0 * matrix.0.1)
-    }
-}
-
-impl Clone for Matrix2x2 {
-    //Clones a given Matrix2x2
-    fn clone(&self) -> Matrix2x2 {
-        Matrix2x2(self.0, self.1)
     }
 }
 

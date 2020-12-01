@@ -5,7 +5,7 @@ pub const WHITE: Color = Color(1.0, 1.0, 1.0);
 pub const BLACK: Color = Color(0.0, 0.0, 0.0);
 
 //Color is a wrapper for Tuple
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Color(pub f32, pub f32, pub f32);
 
 impl Color {
@@ -249,12 +249,5 @@ impl<'a> Mul<&'a Color> for Color {
     
     fn mul(self, other: &'a Color) -> Color {
         Color(self.0 * other.0, self.1 * other.1, self.2 * other.2)
-    }
-}
-
-//Clones Color 
-impl Clone for Color {
-    fn clone(&self) -> Color {
-        Color(self.0, self.1, self.2)
     }
 }

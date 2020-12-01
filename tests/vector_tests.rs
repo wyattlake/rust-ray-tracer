@@ -40,7 +40,7 @@ mod tests {
     #[test]
     fn magnitude() {
         let vec1 = Vec4::new(1.0, 2.0, 3.0, 0.0);
-        let result = (14.0_f64).sqrt();
+        let result = (14.0_f32).sqrt();
         assert_eq!(result, Vec4::magnitude(&vec1));
     }
 
@@ -85,7 +85,7 @@ mod tests {
     //Tests reflections about a 45 degree normal
     fn vector_reflection_slanted() {
         let vec1 = Vec4::new(0.0, -1.0, 0.0, 0.0);
-        let normal = Vec4::new(((2.0 as f64).sqrt())/2.0, ((2.0 as f64).sqrt())/2.0, 0.0, 0.0);
+        let normal = Vec4::new(((2.0 as f32).sqrt())/2.0, ((2.0 as f32).sqrt())/2.0, 0.0, 0.0);
         let vec2 = Vec4::reflect(&vec1, &normal);
         assert_eq!(vec2.round(), Vec4::new(1.0, 0.0, 0.0, 0.0));
     }

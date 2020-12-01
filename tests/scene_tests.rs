@@ -89,7 +89,7 @@ mod tests {
         let sphere = Rc::clone(&scene.get_objects()[0]);
         let intersection = Intersection::new(4.0, sphere);
         let comps = Comp::compute_vars(intersection, &ray);
-        let color = Scene::scene_lighting(&scene, comps, 5);
+        let color = Scene::scene_lighting(&scene, &comps, 5);
         assert_eq!(color.round(), Color::new(0.38063, 0.47583, 0.2855).round());
     }
 
@@ -103,7 +103,7 @@ mod tests {
         let sphere = Rc::clone(&scene.get_objects()[1]);
         let intersection = Intersection::new(0.5, sphere);
         let comps = Comp::compute_vars(intersection, &ray);
-        let color = Scene::scene_lighting(&scene, comps, 5);
+        let color = Scene::scene_lighting(&scene, &comps, 5);
         assert_eq!(color.round(), Color::new(0.1, 0.1, 0.1).round());
     }
 
@@ -170,7 +170,7 @@ mod tests {
         let intersection = Intersection::new(4.0, Rc::clone(&scene.get_objects()[1]));
 
         let comps = Comp::compute_vars(intersection, &ray);
-        let color = Scene::scene_lighting(&scene, comps, 5);
+        let color = Scene::scene_lighting(&scene, &comps, 5);
         assert_eq!(color, Color::new(0.1, 0.1, 0.1));
     }
 

@@ -18,10 +18,10 @@ mod tests {
     #[test]
     fn reflection_vector_test() {
         let shape = Plane::new();
-        let ray = Ray::new((0.0, 1.0, -1.0), (0.0, (-(2.0 as f64).sqrt()) / 2.0, ((2.0 as f64).sqrt()) / 2.0));
-        let intersection = Intersection::new((2.0 as f64).sqrt(), shape);
+        let ray = Ray::new((0.0, 1.0, -1.0), (0.0, (-(2.0 as f32).sqrt()) / 2.0, ((2.0 as f32).sqrt()) / 2.0));
+        let intersection = Intersection::new((2.0 as f32).sqrt(), shape);
         let comps = Comp::compute_vars(intersection, &ray);
-        assert_eq!(comps.r_vec, Vec4::new(0.0, ((2.0 as f64).sqrt()) / 2.0, ((2.0 as f64).sqrt()) / 2.0, 0.0))
+        assert_eq!(comps.r_vec, Vec4::new(0.0, ((2.0 as f32).sqrt()) / 2.0, ((2.0 as f32).sqrt()) / 2.0, 0.0))
     }
 
     //Tests reflected color when the ray hits an object which isn't reflective
@@ -56,8 +56,8 @@ mod tests {
         &shape_raw.get_mut_material().set_reflectivity(0.5);
         let shape = Rc::new(shape_raw);
         scene.add_object(shape);
-        let ray = Ray::new((0.0, 0.0, -3.0), (0.0, (-(2.0 as f64).sqrt()) / 2.0, ((2.0 as f64).sqrt()) / 2.0)); 
-        let intersection = Intersection::new((2 as f64).sqrt(), Rc::clone(&scene.get_objects()[2]));
+        let ray = Ray::new((0.0, 0.0, -3.0), (0.0, (-(2.0 as f32).sqrt()) / 2.0, ((2.0 as f32).sqrt()) / 2.0)); 
+        let intersection = Intersection::new((2 as f32).sqrt(), Rc::clone(&scene.get_objects()[2]));
         let comps = Comp::compute_vars(intersection, &ray);
         let color = reflected_color(&scene, &comps, 5);
         assert_eq!(color.round(), Color::new(0.1905, 0.2381, 0.1429).round());
@@ -72,10 +72,10 @@ mod tests {
         &shape_raw.get_mut_material().set_reflectivity(0.5);
         let shape = Rc::new(shape_raw);
         scene.add_object(shape);
-        let ray = Ray::new((0.0, 0.0, -3.0), (0.0, (-(2.0 as f64).sqrt()) / 2.0, ((2.0 as f64).sqrt()) / 2.0)); 
-        let intersection = Intersection::new((2 as f64).sqrt(), Rc::clone(&scene.get_objects()[2]));
+        let ray = Ray::new((0.0, 0.0, -3.0), (0.0, (-(2.0 as f32).sqrt()) / 2.0, ((2.0 as f32).sqrt()) / 2.0)); 
+        let intersection = Intersection::new((2 as f32).sqrt(), Rc::clone(&scene.get_objects()[2]));
         let comps = Comp::compute_vars(intersection, &ray);
-        let color = Scene::scene_lighting(&scene, comps, 5);
+        let color = Scene::scene_lighting(&scene, &comps, 5);
         assert_eq!(color.round(), Color::new(0.87687, 0.92453, 0.8293).round());
     }
 
@@ -88,8 +88,8 @@ mod tests {
         &shape_raw.get_mut_material().set_reflectivity(0.5);
         let shape = Rc::new(shape_raw);
         scene.add_object(shape);
-        let ray = Ray::new((0.0, 0.0, -3.0), (0.0, (-(2.0 as f64).sqrt()) / 2.0, ((2.0 as f64).sqrt()) / 2.0)); 
-        let intersection = Intersection::new((2 as f64).sqrt(), Rc::clone(&scene.get_objects()[2]));
+        let ray = Ray::new((0.0, 0.0, -3.0), (0.0, (-(2.0 as f32).sqrt()) / 2.0, ((2.0 as f32).sqrt()) / 2.0)); 
+        let intersection = Intersection::new((2 as f32).sqrt(), Rc::clone(&scene.get_objects()[2]));
         let comps = Comp::compute_vars(intersection, &ray);
         let color = reflected_color(&scene, &comps, 0);
         assert_eq!(color.round(), BLACK);

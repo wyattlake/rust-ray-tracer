@@ -6,8 +6,9 @@ use crate::ray_tracing::ray::Ray;
 use std::rc::Rc;
 
 //Stores values for lighting computations
+#[derive(Debug, PartialEq, Clone)]
 pub struct Comp {
-    pub t: f64,
+    pub t: f32,
     pub object: Rc<Object>,
     pub point: Vec4,
     pub e_vec: Vec4,
@@ -19,7 +20,7 @@ pub struct Comp {
 
 impl Comp {
     //Creates a new Comp
-    pub fn new(t: f64, object: Rc<Object>, point: Vec4, e_vec: Vec4, n_vec: Vec4, r_vec: Vec4, inside: bool, over_point: Vec4) -> Comp {
+    pub fn new(t: f32, object: Rc<Object>, point: Vec4, e_vec: Vec4, n_vec: Vec4, r_vec: Vec4, inside: bool, over_point: Vec4) -> Comp {
         Comp {
             t,
             object,

@@ -1,8 +1,8 @@
 use std::ops::*;
 
 //Vec4 is a wrapper for Tuple
-#[derive(Debug, PartialEq)]
-pub struct Vec4(pub f64, pub f64, pub f64, pub f64);
+#[derive(Debug, PartialEq, Clone)]
+pub struct Vec4(pub f32, pub f32, pub f32, pub f32);
 
 impl Vec4 {
     //Checks if a given Vec4 is a vector
@@ -13,7 +13,7 @@ impl Vec4 {
     }
 
     //Creates a new Vec4
-    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Vec4 {
+    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Vec4 {
         Vec4(x, y, z, w)
     }
 
@@ -23,7 +23,7 @@ impl Vec4 {
     }
 
     //Gets the magnitude of a Vec4
-    pub fn magnitude(vector: &Vec4) -> f64 {
+    pub fn magnitude(vector: &Vec4) -> f32 {
         Vec4::is_vector(&vector);
         ((vector.0 * vector.0) + (vector.1 * vector.1) + (vector.2 * vector.2)).sqrt()
     }
@@ -35,7 +35,7 @@ impl Vec4 {
     }
 
     //Finds the dot product of 2 Vec4
-    pub fn dot(vec1: &Vec4, vec2: &Vec4) -> f64 {
+    pub fn dot(vec1: &Vec4, vec2: &Vec4) -> f32 {
         Vec4::is_vector(&vec1);
         Vec4::is_vector(&vec2);
         (vec1.0 * vec2.0) + (vec1.1 * vec2.1) + (vec1.2 * vec2.2)
@@ -119,65 +119,65 @@ impl<'a> Sub<&'a Vec4> for Vec4 {
     }
 }
 
-//Vec4 * f64
-impl Mul<f64> for Vec4 {
+//Vec4 * f32
+impl Mul<f32> for Vec4 {
     type Output = Vec4;
     
-    fn mul(self, other: f64) -> Vec4 {
+    fn mul(self, other: f32) -> Vec4 {
         Vec4(self.0 * other, self.1 * other, self.2 * other, self.3 * other)
     }
 }
-//&Vec4 * &f64
-impl<'a, 'b> Mul<&'b f64> for &'a Vec4 {
+//&Vec4 * &f32
+impl<'a, 'b> Mul<&'b f32> for &'a Vec4 {
     type Output = Vec4;
     
-    fn mul(self, other: &'b f64) -> Vec4 {
+    fn mul(self, other: &'b f32) -> Vec4 {
         Vec4(self.0 * other, self.1 * other, self.2 * other, self.3 * other)
     }
 }
-//&Vec4 * f64
-impl<'a> Mul<f64> for &'a Vec4 {
+//&Vec4 * f32
+impl<'a> Mul<f32> for &'a Vec4 {
     type Output = Vec4;
     
-    fn mul(self, other: f64) -> Vec4 {
+    fn mul(self, other: f32) -> Vec4 {
         Vec4(self.0 * other, self.1 * other, self.2 * other, self.3 * other)
     }
 }
-//Vec4 * &f64
-impl<'a> Mul<&'a f64> for Vec4 {
+//Vec4 * &f32
+impl<'a> Mul<&'a f32> for Vec4 {
     type Output = Vec4;
     
-    fn mul(self, other: &'a f64) -> Vec4 {
+    fn mul(self, other: &'a f32) -> Vec4 {
         Vec4(self.0 * other, self.1 * other, self.2 * other, self.3 * other)
     }
 }
 
-//f64 * Vec4
-impl Mul<Vec4> for f64 {
+//f32 * Vec4
+impl Mul<Vec4> for f32 {
     type Output = Vec4;
     
     fn mul(self, other: Vec4) -> Vec4 {
         Vec4(other.0 * self, other.1 * self, other.2 * self, other.3 * self)
     }
 }
-//&f64 * &Vec4
-impl<'a, 'b> Mul<&'b Vec4> for &'a f64 {
+//&f32 * &Vec4
+impl<'a, 'b> Mul<&'b Vec4> for &'a f32 {
     type Output = Vec4;
     
     fn mul(self, other: &'b Vec4) -> Vec4 {
         Vec4(other.0 * self, other.1 * self, other.2 * self, other.3 * self)
     }
 }
-//&f64 * &Vec4
-impl<'a> Mul<Vec4> for &'a f64 {
+//&f32 * &Vec4
+impl<'a> Mul<Vec4> for &'a f32 {
     type Output = Vec4;
     
     fn mul(self, other: Vec4) -> Vec4 {
         Vec4(other.0 * self, other.1 * self, other.2 * self, other.3 * self)
     }
 }
-//f64 * &Vec4
-impl<'a> Mul<&'a Vec4> for f64 {
+//f32 * &Vec4
+impl<'a> Mul<&'a Vec4> for f32 {
     type Output = Vec4;
     
     fn mul(self, other: &'a Vec4) -> Vec4 {
@@ -215,12 +215,5 @@ impl<'a> Mul<&'a Vec4> for Vec4 {
     
     fn mul(self, other: &'a Vec4) -> Vec4 {
         Vec4((self.1 * other.2) - (self.2 * other.1), (self.2 * other.0) - (self.0 * other.2), (self.0 * other.1) - (self.1 * other.0), 0.0)
-    }
-}
-
-//Clones Vec4 
-impl Clone for Vec4 {
-    fn clone(&self) -> Vec4 {
-        Vec4(self.0, self.1, self.2, self.3)
     }
 }

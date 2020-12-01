@@ -20,7 +20,7 @@ pub fn _draw() {
 }
 
 //Converts the point coordinates to a pixel on the canvas
-fn _convert_pos(x: f64, y: f64) -> (i32, i32) {
+fn _convert_pos(x: f32, y: f32) -> (i32, i32) {
     let new_x = ((x * 35.0) + 50.0).round() as i32;
     let new_y = ((y * 35.0) + 50.0).round() as i32;
     println!("Printing pixel (x: {}, y: {})", &new_x, &new_y);
