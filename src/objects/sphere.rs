@@ -1,73 +1,85 @@
 use crate::core::matrix::Matrix4x4;
 use crate::core::vector::Vec4;
 use crate::ray_tracing::material::Material;
-use crate::objects::general::{ObjectMethods, Object};
+use crate::objects::object::*;
 use crate::ray_tracing::ray::Ray;
 use crate::ray_tracing::intersection::Intersection;
-use std::rc::Rc;
 
 //A sphere has a transform trait which keeps track of its transformations
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub struct Sphere {
-    transform: Matrix4x4,
-    material: Material,
+    pub transform: Matrix4x4,
+    inverse: Matrix4x4,
+    pub material: Material,
 }
 
-impl ObjectMethods for Sphere {
-    //Instantiates a Sphere with a Rc and an identity Matrix as its transform
-    fn new() -> Rc<Object> {
-        Rc::new(
-            Object::Sphere(Sphere {
-                transform: Matrix4x4::identity(),
-                material: Material::default()
-            })
-        )
+impl Sphere {
+    //Instantiates a sphere with an identity Matrix as its transform 
+    pub fn default() -> Sphere {
+        Sphere {
+            transform: Matrix4x4::identity(),
+            inverse: Matrix4x4::identity(), 
+            material: Material::default()
+        }
     }
 
-    //Instantiates a sphere with an identity Matrix as its transform 
-    fn new_raw() -> Object {
-        Object::Sphere(Sphere {
-            transform: Matrix4x4::identity(),
-            material: Material::default()
-        })
+    pub fn new(transform: Matrix4x4, material: Material) -> Sphere {
+        Sphere {
+            inverse: (&transform).inverse().unwrap(), 
+            transform,
+            material,
+        }
     }
+
 
     //Applies a transformation to a sphere
-    fn transform(&mut self, matrix: Matrix4x4) {
+    fn _transform(&mut self, matrix: Matrix4x4) {
         self.transform = matrix * &self.transform;
     }
 
     //Returns the sphere transform
-    fn get_transform(&self) -> &Matrix4x4 {
+    fn _get_transform(&self) -> &Matrix4x4 {
         &self.transform
     }
 
+    //Returns the sphere inverse 
+    fn _set_inverse(&mut self) {
+        self.inverse = self.transform.inverse().unwrap();
+    }
+
+    //Sets the material of the sphere
+    fn _set_material(&mut self, material: Material) {
+        self.material = material;
+    }
+
+    //Gets a mutable reference to the material
+    fn _get_mut_material(&mut self) -> &mut Material {
+        &mut self.material
+    }
+}
+
+impl Object for Sphere {
     //Returns the sphere material
     fn get_material(&self) -> &Material {
         &self.material
     }
 
-    //Sets the material of the sphere
-    fn set_material(&mut self, material: Material) {
-        self.material = material;
-    }
-
-    //Gets a mutable reference to the material
-    fn get_mut_material(&mut self) -> &mut Material {
-        &mut self.material
-    }
-
     //Intersects a ray with a sphere
-    fn intersect(object: &Rc<Object>, ray: &Ray) -> Option<Vec<Intersection>> {
-        let transformed_ray = Ray::transform(ray, &((object.get_transform()).inverse().unwrap()));
+    fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>> {
+        let transformed_ray = Ray::transform(ray, &self.inverse);
         let vector_to_unit_sphere = transformed_ray.get_origin() - Vec4::new(0.0, 0.0, 0.0, 1.0);
         let a = Vec4::dot(&transformed_ray.get_direction(), &transformed_ray.get_direction());
         let b = 2.0 * Vec4::dot(&transformed_ray.get_direction(), &vector_to_unit_sphere);
         let c = Vec4::dot(&vector_to_unit_sphere, &vector_to_unit_sphere) - 1.0;
         let discriminant = (b * b) - (4.0 * a * c);
+
         //If the discriminant is less than zero then the point is imaginary
         if discriminant >= 0.0 {
-            Some(vec![(Intersection::new((- b - (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object))), (Intersection::new((- b + (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object)))])
+            let t1 = (-b - discriminant.sqrt()) / a;
+            let i1 = Intersection::new(t1, Ray::position(ray, t1), &self.inverse, self.normal(&Ray::position(ray, t1)), self.get_material());
+            let t2 = (-b + discriminant.sqrt()) / a;
+            let i2 = Intersection::new(t2, Ray::position(ray, t2), &self.inverse, self.normal(&Ray::position(ray, t2)), self.get_material());
+            Some(vec![i1, i2])
         }
         else {
             None
@@ -75,12 +87,12 @@ impl ObjectMethods for Sphere {
     }
 
     //Finds the normal of a given point on a sphere
-    fn normal(object: &Rc<Object>, world_point: &Vec4) -> Vec4 {
+    fn normal(&self, world_point: &Vec4) -> Vec4 {
         //Applies inverse transformations to the point
-        let object_point = (object.get_transform()).inverse().unwrap() * world_point;
+        let object_point = &self.transform * world_point;
         let object_normal = object_point - Vec4::new(0.0, 0.0, 0.0, 1.0);
         //Computes the world normal
-        let mut world_normal = (object.get_transform()).inverse().unwrap().transpose() * object_normal; 
+        let mut world_normal = &self.inverse * object_normal; 
         world_normal.3 = 0.0;
         world_normal.normalize()
     }

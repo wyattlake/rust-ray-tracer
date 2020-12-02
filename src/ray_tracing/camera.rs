@@ -93,7 +93,7 @@ impl Camera {
     }
 
     //Renders a scene
-    pub fn render(camera: &Camera, scene: &Scene, canvas: &mut Canvas) {
+    pub fn render(camera: &Camera, scene: &'static Scene, canvas: &mut Canvas) {
         let mut counter = 0;
         let mut percent = 0;
         let pixels = &camera.hsize * &camera.vsize;
@@ -118,7 +118,7 @@ impl Camera {
     }
 
     //Renders a scene
-    pub fn render_supersampled(camera: &Camera, scene: &Scene, canvas: &mut Canvas) {
+    pub fn render_supersampled(camera: &Camera, scene: &'static Scene, canvas: &mut Canvas) {
         let mut counter = 0;
         let mut percent = 0;
         let pixels = &camera.hsize * &camera.vsize;
@@ -155,7 +155,7 @@ impl Camera {
     }
 
     //Renders a scene without lighting
-    pub fn quick_render(camera: &Camera, scene: &Scene, canvas: &mut Canvas) {
+    pub fn quick_render(camera: &Camera, scene: Scene, canvas: &mut Canvas) {
         let mut counter = 0;
         let mut percent = 0;
         let pixels = &camera.hsize * &camera.vsize;
@@ -163,7 +163,7 @@ impl Camera {
         for y in 0..camera.vsize {
             for x in 0..camera.hsize {
                 let ray = Camera::ray_towards_pixel(camera, x, y);
-                let color = Scene::compute_color_quick(ray, scene);
+                let color = Scene::compute_color_quick(ray, &scene);
                 if color != None {
                     canvas.set(color.unwrap().clone(), x, y);
                     if counter as f32 > percentage_update {

@@ -2,9 +2,9 @@ use crate::core::color::Color;
 use crate::misc::utils::clamp_float;
 use crate::ray_tracing::patterns::*;
 
-#[derive(Debug, PartialEq)]
 //A Material holds a bunch of properties for an object
 //Lighting properties are based on the Phong Reflection Model
+#[derive(Debug)]
 pub struct Material {
     color: Color,
     ambient: f32,
@@ -12,12 +12,12 @@ pub struct Material {
     specular: f32,
     shininess: f32,
     reflectivity: f32,
-    pattern: Option<Pattern>,
+    pub pattern: Option<Box<dyn Pattern>>,
 }
 
 impl Material {
     //Creates a new Material and clamps all the values
-    pub fn new(color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, reflectivity: f32, pattern: Option<Pattern>) -> Material {
+    pub fn new(color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, reflectivity: f32, pattern: Option<Box<dyn Pattern>>) -> Material {
         Material {
             color: color,
             ambient: clamp_float(ambient, 0.0, 1.0),
@@ -30,7 +30,7 @@ impl Material {
     }
 
     //Sets a material
-    pub fn set(&mut self, color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, reflectivity: f32, pattern: Option<Pattern>) {
+    pub fn set(&mut self, color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, reflectivity: f32, pattern: Option<Box<dyn Pattern>>) {
         self.color = color;
         self.ambient = clamp_float(ambient, 0.0, 1.0); 
         self.diffuse = clamp_float(diffuse, 0.0, 1.0);
@@ -114,18 +114,12 @@ impl Material {
     } 
 
     //Gets the pattern of a Material
-    pub fn get_pattern(&self) -> &Option<Pattern> {
+    pub fn get_pattern(&self) -> &Option<Box<dyn Pattern>> {
         &self.pattern
     }
 
     //Sets the pattern of a Material
-    pub fn set_pattern(&mut self, pattern: Pattern) {
+    pub fn set_pattern(&mut self, pattern: Box<dyn Pattern>) {
         self.pattern = Some(pattern);
-    } 
-}
-
-impl Clone for Material {
-    fn clone(&self) -> Material {
-        Material::new(self.color.clone(), self.ambient.clone(), self.diffuse.clone(), self.specular.clone(), self.shininess.clone(), self.reflectivity.clone(), self.pattern.clone())
     }
 }

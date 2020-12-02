@@ -1,4 +1,4 @@
 pub mod sphere;
 pub mod plane;
 
-pub mod general;
+pub mod object;

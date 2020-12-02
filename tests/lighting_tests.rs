@@ -2,7 +2,7 @@
 
 mod tests {
     use rust_ray_tracer::core::vector::Vec4;
-    use rust_ray_tracer::core::color::Color;
+    use rust_ray_tracer::core::color::*;
     use rust_ray_tracer::ray_tracing::lighting::*;
     use rust_ray_tracer::ray_tracing::scene::Scene;
     use rust_ray_tracer::objects::general::*;
@@ -18,7 +18,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 0.0, -10.0, 1.0));
-        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, false);
+        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, 1.0);
         assert_eq!(result.round(), Color::new(1.9, 1.9, 1.9).round());
     }
 
@@ -31,7 +31,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, ((2.0 as f32).sqrt())/2.0, -((2.0 as f32).sqrt())/2.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 0.0, -10.0, 1.0));
-        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, false);
+        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, 1.0);
         assert_eq!(result.round(), Color::new(1.0, 1.0, 1.0).round());
     }
 
@@ -44,7 +44,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 10.0, -10.0, 1.0));
-        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, false);
+        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, 1.0);
         assert_eq!(result.round(), Color::new(0.7364, 0.7364, 0.7364).round());
     }
 
@@ -57,7 +57,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, -((2.0 as f32).sqrt())/2.0, -((2.0 as f32).sqrt())/2.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 10.0, -10.0, 1.0));
-        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, false);
+        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, 1.0);
         assert_eq!(result.round(), Color::new(1.6364, 1.6364, 1.6364).round());
     }
 
@@ -70,7 +70,7 @@ mod tests {
         let e_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(0.0, 10.0, 10.0, 1.0));
-        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, false);
+        let result = lighting(&m, &object, &light, &position, &e_vec, &n_vec, 0.0);
         assert_eq!(result.round(), Color::new(0.1, 0.1, 0.1).round());
     }
 
@@ -80,7 +80,7 @@ mod tests {
         let scene = Scene::default();
         let light = &scene.get_light_sources()[0];
         let target = Vec4::new(0.0, 10.0, 0.0, 1.0);
-        assert_eq!(in_shadow(&light, &target, &scene), false);
+        assert_eq!(in_shadow(&light.get_position(), &target, &scene), false);
     }
 
     //Tests shadows when sphere blocks point from light source
@@ -89,7 +89,7 @@ mod tests {
         let scene = Scene::default();
         let light = &scene.get_light_sources()[0];
         let target = Vec4::new(10.0, -10.0, 10.0, 1.0);
-        assert_eq!(in_shadow(&light, &target, &scene), true);
+        assert_eq!(in_shadow(&light.get_position(), &target, &scene), true);
     }
 
     //Tests shadows when the point is in front of the light source
@@ -98,6 +98,22 @@ mod tests {
         let scene = Scene::default();
         let light = &scene.get_light_sources()[0];
         let target = Vec4::new(-20.0, 20.0, -20.0, 1.0);
-        assert_eq!(in_shadow(&light, &target, &scene), false);
+        assert_eq!(in_shadow(&light.get_position(), &target, &scene), false);
+    }
+
+    //Tests creating a new AreaLight
+    #[test]
+    fn create_area_light() {
+        let corner = Vec4::new(0.0, 0.0, 0.0, 1.0);
+        let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
+        let v2 = Vec4::new(0.0, 0.0, 1.0, 0.0);
+        let light = AreaLight::new(corner.clone(), v1, 4, v2.clone(), 2, WHITE);
+        assert_eq!(light.get_corner(), &corner);
+        assert_eq!(light.get_uvec(), &Vec4::new(0.5, 0.0, 0.0, 0.0));
+        assert_eq!(light.get_vvec(), &Vec4::new(0.0, 0.0, 0.5, 0.0));
+        assert_eq!(light.get_vsteps(), &2);
+        assert_eq!(light.get_usteps(), &4);
+        assert_eq!(light.get_samples(), &(8 as usize));
+        assert_eq!(light.get_intensity(), &Color::new(1.0, 1.0, 1.0));
     }
 }

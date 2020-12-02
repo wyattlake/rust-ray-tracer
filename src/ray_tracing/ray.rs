@@ -2,10 +2,9 @@ use crate::core::vector::*;
 use crate::ray_tracing::intersection::*;
 use crate::core::matrix::Matrix4x4;
 use crate::ray_tracing::scene::Scene;
-use crate::objects::general::Object;
-use std::rc::Rc;
 
 //A Ray has a origin (point) and a direction (vector)
+#[derive(Debug, PartialEq, Clone)]
 pub struct Ray {
     origin: Vec4,
     direction: Vec4,
@@ -39,7 +38,7 @@ impl Ray where {
     }
 
     //Calculates the position of a ray
-    pub fn position(ray: &Ray, t: &f32) -> Vec4 {
+    pub fn position(ray: &Ray, t: f32) -> Vec4 {
         ray.get_origin() + (ray.get_direction() * t)
     }
 
@@ -51,32 +50,16 @@ impl Ray where {
         }
     }
 
-    //Lists where a ray intersects with the unit sphere
-    pub fn intersect(object: Rc<Object>, ray: &Ray) -> Option<Vec<Intersection>> {
-        let transformed_ray = Ray::transform(ray, &((object.get_transform()).inverse().unwrap()));
-        let vector_to_unit_sphere = &transformed_ray.origin - Vec4::new(0.0, 0.0, 0.0, 1.0);
-        let a = Vec4::dot(&transformed_ray.direction, &transformed_ray.direction);
-        let b = 2.0 * Vec4::dot(&transformed_ray.direction, &vector_to_unit_sphere);
-        let c = Vec4::dot(&vector_to_unit_sphere, &vector_to_unit_sphere) - 1.0;
-        let discriminant = (b * b) - (4.0 * a * c);
-        if discriminant >= 0.0 {
-            Some(vec![(Intersection::new((- b - (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object))), (Intersection::new((- b + (discriminant.sqrt())) / (2.0 * a), Rc::clone(&object)))])
-        }
-        else {
-            None
-        }
-    }
-
     //Lists ray intersections within a scene
-    pub fn intersect_scene(scene: &Scene, ray: &Ray) -> Vec<Intersection> {
+    pub fn intersect_scene<'a>(scene: &'a Scene, ray: Ray) -> Vec<Intersection<'a>> {
         let objects = scene.get_objects();
         let mut intersections: Vec<Intersection> = vec![];
         for object in objects {
-            let object_intersections = Object::intersect(object, ray);
-            if object_intersections != None {
+            let object_intersections = object.intersect(&ray);
+            if !object_intersections.is_none() {
                 let unwrapped_intersections = object_intersections.unwrap();
-                for x in unwrapped_intersections{
-                    &intersections.push(x);
+                for x in unwrapped_intersections {
+                    intersections.push(x);
                 }
             }
         }

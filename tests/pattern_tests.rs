@@ -52,8 +52,8 @@ mod tests {
         let e_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let n_vec = Vec4::new(0.0, 0.0, -1.0, 0.0);
         let light = PointLight::new(WHITE, Vec4::new(0.0, 0.0, -10.0, 1.0));
-        let color1 = lighting(&material, &object, &light, &Vec4::new(0.9, 0.0, 0.0, 1.0), &e_vec, &n_vec, false);
-        let color2 = lighting(&material, &object, &light, &Vec4::new(1.1, 0.0, 0.0, 1.0), &e_vec, &n_vec, false);
+        let color1 = lighting(&material, &object, &light, &Vec4::new(0.9, 0.0, 0.0, 1.0), &e_vec, &n_vec, 0.0);
+        let color2 = lighting(&material, &object, &light, &Vec4::new(1.1, 0.0, 0.0, 1.0), &e_vec, &n_vec, 0.0);
         assert_eq!(color1, WHITE);
         assert_eq!(color2, BLACK);
     }
