@@ -22,6 +22,15 @@ impl Plane {
             material,
         }
     }
+
+    //Instantiates a Plane with an identity Matrix as its transform 
+    pub fn default() -> Plane {
+        Plane {
+            transform: Matrix4x4::identity(),
+            inverse: Matrix4x4::identity(), 
+            material: Material::default()
+        }
+    }
 }
 
 impl Object for Plane {

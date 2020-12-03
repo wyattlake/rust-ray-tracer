@@ -5,25 +5,32 @@ use rust_ray_tracer::objects::sphere::Sphere;
 use rust_ray_tracer::objects::plane::Plane;
 use rust_ray_tracer::core::canvas::Canvas;
 use rust_ray_tracer::ray_tracing::scene::Scene;
+use rust_ray_tracer::ray_tracing::patterns::*;
 use rust_ray_tracer::ray_tracing::camera::Camera;
 use rust_ray_tracer::ray_tracing::lighting::PointLight;
 use rust_ray_tracer::ray_tracing::material::Material;
 use std::time::Instant;
 
 fn main() {
-    let mut canvas = Canvas::new(300, 300);
+    let mut canvas = Canvas::new(1000, 500);
+
+    let mut material1 = Material::default();
+    material1.pattern = Some(Box::new(CheckerboardPattern::new(BLACK, WHITE, Matrix4x4::identity())));
+
+    let mut material2 = Material::default();
+    material2.reflectivity = 0.5;
 
     let scene: Scene = Scene {
         light_sources: vec![
             Box::new(PointLight::new(Color::new(1.0, 1.0, 1.0), Vec4::new(-10.0, 10.0, -10.0, 1.0)))
         ],
         objects: vec![
-            Box::new(Sphere::new(Matrix4x4::identity(), Material::default())),
-            Box::new(Plane::new(Matrix4x4::identity(), Material::default()))
+            Box::new(Sphere::new(Matrix4x4::translation(0.0, 1.0, 0.0), material2)),
+            Box::new(Plane::new(Matrix4x4::identity(), material1))
         ],
     };
 
-    let mut camera = Camera::new(300, 300, 45.0);
+    let mut camera = Camera::new(1000, 500, 45.0);
     let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
     let end_pos = Vec4::new(0.0, 1.0, 3.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);

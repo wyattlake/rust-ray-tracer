@@ -19,7 +19,7 @@ pub struct StripePattern {
 }
 
 impl StripePattern {
-    fn _new(color1: Color, color2: Color, transform: Matrix4x4) -> StripePattern {
+    pub fn new(color1: Color, color2: Color, transform: Matrix4x4) -> StripePattern {
         StripePattern {
             inverse: transform.inverse().unwrap(),
             colors: (color1, color2),
@@ -63,7 +63,7 @@ pub struct GradientPattern {
 
 impl GradientPattern {
     //Creates a new StripePattern
-    fn _new(color1: Color, color2: Color, transform: Matrix4x4) -> GradientPattern {
+    pub fn new(color1: Color, color2: Color, transform: Matrix4x4) -> GradientPattern {
         GradientPattern {
             inverse: transform.inverse().unwrap(),
             colors: (color1, color2),
@@ -113,7 +113,7 @@ pub struct RingPattern {
 
 impl RingPattern {
     //Creates a new StripePattern
-    fn _new(color1: Color, color2: Color, transform: Matrix4x4) -> RingPattern {
+    pub fn new(color1: Color, color2: Color, transform: Matrix4x4) -> RingPattern {
         RingPattern {
             inverse: transform.inverse().unwrap(),
             colors: (color1, color2),
@@ -155,7 +155,7 @@ pub struct CheckerboardPattern {
 
 impl CheckerboardPattern {
     //Creates a new StripePattern
-    fn _new(color1: Color, color2: Color, transform: Matrix4x4) -> CheckerboardPattern {
+    pub fn new(color1: Color, color2: Color, transform: Matrix4x4) -> CheckerboardPattern {
         CheckerboardPattern {
             inverse: transform.inverse().unwrap(),
             colors: (color1, color2),

@@ -13,7 +13,7 @@ mod tests {
     #[test]
     fn pixel_size() {
         let camera = Camera::new(200, 125, 90.0);
-        assert_eq!(camera.get_pixel_size(), &0.01)
+        assert_eq!(camera.pixel_size, 0.01)
     }
 
     //Tests creating a ray through the center of the camera's view

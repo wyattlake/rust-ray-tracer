@@ -7,12 +7,12 @@ use crate::core::color::Color;
 
 //The camera stores all the info relevant to how the scene is viewed
 pub struct Camera {
-    hsize: i32,
-    vsize: i32,
-    pixel_size: f32,
-    half_width: f32,
-    half_height: f32,
-    transform: Matrix4x4,
+    pub hsize: i32,
+    pub vsize: i32,
+    pub pixel_size: f32,
+    pub half_width: f32,
+    pub half_height: f32,
+    pub transform: Matrix4x4,
 }
 
 impl Camera {
