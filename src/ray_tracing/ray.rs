@@ -52,7 +52,7 @@ impl Ray where {
 
     //Lists ray intersections within a scene
     pub fn intersect_scene<'a>(scene: &'a Scene, ray: Ray) -> Vec<Intersection<'a>> {
-        let objects = scene.get_objects();
+        let objects = &scene.objects;
         let mut intersections: Vec<Intersection> = vec![];
         for object in objects {
             let object_intersections = object.intersect(&ray);
@@ -63,7 +63,7 @@ impl Ray where {
                 }
             }
         }
-        intersections.sort_by(|a, b| b.get_t().partial_cmp(&a.get_t()).unwrap());
+        intersections.sort_by(|a, b| b.t.partial_cmp(&a.t).unwrap());
         intersections.reverse();
         intersections
     }

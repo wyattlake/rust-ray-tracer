@@ -37,7 +37,7 @@ impl<'a> Comp<'a> {
 
     //Prepares vars for shading
     pub fn compute_vars(intersection: Intersection<'a>, ray: &'a Ray) -> Comp<'a> {
-        let t = intersection.get_t();
+        let t = intersection.t;
         let point = Ray::position(ray, t);
         
         let mut n_vec = intersection.normal.clone();
@@ -49,6 +49,6 @@ impl<'a> Comp<'a> {
             inside = true;
             n_vec = n_vec.negate();
         }
-        Comp::new(t, intersection.material, intersection.get_inverse().clone(), point, e_vec, n_vec, r_vec, inside, over_point)
+        Comp::new(t, intersection.material, intersection.object_inverse.clone(), point, e_vec, n_vec, r_vec, inside, over_point)
     }
 }

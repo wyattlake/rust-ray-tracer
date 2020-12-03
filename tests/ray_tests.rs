@@ -5,7 +5,8 @@ mod tests {
     use rust_ray_tracer::ray_tracing::ray::Ray;
     use rust_ray_tracer::core::matrix::Matrix4x4;
     use rust_ray_tracer::objects::sphere::Sphere;
-    use rust_ray_tracer::objects::general::{Object, ObjectMethods};
+    use rust_ray_tracer::ray_tracing::material::Material;
+    use rust_ray_tracer::objects::object::*;
     use std::rc::Rc;
 
     //Tests the ray position function
@@ -96,7 +97,7 @@ mod tests {
     #[test]
     fn ray_intersect_translated_sphere() {
         let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 0.0, 1.0));
-        let mut sphere = Sphere::new_raw();
+        let s = Sphere::new(Matrix4x4::identity(), Material::default());
         sphere.transform(Matrix4x4::translation(5.0, 0.0, 0.0));
         let sphere_ref = Rc::new(sphere);
         let result = Ray::intersect(sphere_ref, &ray);
@@ -106,7 +107,7 @@ mod tests {
     #[test]
     //Tests surface normals on the x axis
     fn surface_normal_x() {
-        let s = Sphere::new();
+        let s = Sphere::new(Matrix4x4::identity(), Material::default());
         let vector = Object::normal(&s, &Vec4::new(1.0, 0.0, 0.0, 1.0));
         assert_eq!(vector, Vec4::new(1.0, 0.0, 0.0, 0.0))
     }

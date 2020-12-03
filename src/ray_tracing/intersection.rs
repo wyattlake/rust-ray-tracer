@@ -5,9 +5,9 @@ use crate::ray_tracing::material::Material;
 //Intersection stores the time of intersection and an Rc to the Object
 #[derive(Debug, Clone)]
 pub struct Intersection<'a> {
-    t: f32,
-    hit: Vec4,
-    object_inverse: &'a Matrix4x4,
+    pub t: f32,
+    pub hit: Vec4,
+    pub object_inverse: &'a Matrix4x4,
     pub normal: Vec4,
     pub material: &'a Material,
 }
@@ -22,31 +22,6 @@ impl<'a> Intersection<'a> where {
             material,
             object_inverse,
         }
-    }
-
-    //Gets the t value of an intersection
-    pub fn get_t(&self) -> f32 {
-        self.t
-    }
-
-    //Gets the hit of an intersection
-    pub fn get_hit(&self) -> &Vec4 {
-        &self.hit
-    }
-
-    //Gets the normal of an intersection
-    pub fn get_normal(&self) -> &Vec4 {
-        &self.normal
-    }
-
-    //Gets the material of an intersection
-    pub fn get_material(&self) -> &Material {
-        self.material
-    }
-
-    //Gets the material of an intersection
-    pub fn get_inverse(&self) -> &Matrix4x4 {
-        self.object_inverse
     }
 
     //Finds which intersection is visible given a list of intersection

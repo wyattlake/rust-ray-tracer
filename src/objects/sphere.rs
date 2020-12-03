@@ -9,7 +9,7 @@ use crate::ray_tracing::intersection::Intersection;
 #[derive(Debug)]
 pub struct Sphere {
     pub transform: Matrix4x4,
-    inverse: Matrix4x4,
+    pub inverse: Matrix4x4,
     pub material: Material,
 }
 
@@ -25,36 +25,10 @@ impl Sphere {
 
     pub fn new(transform: Matrix4x4, material: Material) -> Sphere {
         Sphere {
-            inverse: (&transform).inverse().unwrap(), 
+            inverse: transform.inverse().unwrap(), 
             transform,
             material,
         }
-    }
-
-
-    //Applies a transformation to a sphere
-    fn _transform(&mut self, matrix: Matrix4x4) {
-        self.transform = matrix * &self.transform;
-    }
-
-    //Returns the sphere transform
-    fn _get_transform(&self) -> &Matrix4x4 {
-        &self.transform
-    }
-
-    //Returns the sphere inverse 
-    fn _set_inverse(&mut self) {
-        self.inverse = self.transform.inverse().unwrap();
-    }
-
-    //Sets the material of the sphere
-    fn _set_material(&mut self, material: Material) {
-        self.material = material;
-    }
-
-    //Gets a mutable reference to the material
-    fn _get_mut_material(&mut self) -> &mut Material {
-        &mut self.material
     }
 }
 
@@ -75,9 +49,9 @@ impl Object for Sphere {
 
         //If the discriminant is less than zero then the point is imaginary
         if discriminant >= 0.0 {
-            let t1 = (-b - discriminant.sqrt()) / a;
+            let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let i1 = Intersection::new(t1, Ray::position(ray, t1), &self.inverse, self.normal(&Ray::position(ray, t1)), self.get_material());
-            let t2 = (-b + discriminant.sqrt()) / a;
+            let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
             let i2 = Intersection::new(t2, Ray::position(ray, t2), &self.inverse, self.normal(&Ray::position(ray, t2)), self.get_material());
             Some(vec![i1, i2])
         }
@@ -89,10 +63,10 @@ impl Object for Sphere {
     //Finds the normal of a given point on a sphere
     fn normal(&self, world_point: &Vec4) -> Vec4 {
         //Applies inverse transformations to the point
-        let object_point = &self.transform * world_point;
+        let object_point = &self.inverse * world_point;
         let object_normal = object_point - Vec4::new(0.0, 0.0, 0.0, 1.0);
         //Computes the world normal
-        let mut world_normal = &self.inverse * object_normal; 
+        let mut world_normal = &self.inverse.transpose() * object_normal; 
         world_normal.3 = 0.0;
         world_normal.normalize()
     }

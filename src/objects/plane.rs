@@ -15,39 +15,13 @@ pub struct Plane {
 
 impl Plane {
     //Instantiates a Plane with an identity Matrix as its transform 
-    pub fn new() -> Plane {
+    pub fn new(transform: Matrix4x4, material: Material) -> Plane {
         Plane {
-            transform: Matrix4x4::identity(),
-            inverse: Matrix4x4::identity(),
-            material: Material::default()
+            inverse: transform.inverse().unwrap(),
+            transform,
+            material,
         }
     }
-
-    //Applies a transformation to a Plane
-    fn _transform(&mut self, matrix: Matrix4x4) {
-        self.transform = matrix * self._get_transform();
-    }
-
-    //Returns the Plane transform
-    fn _get_transform(&self) -> &Matrix4x4 {
-        &self.transform
-    }
-
-    //Returns the Plane inverse
-    fn _set_inverse(&mut self) {
-        self.inverse = self.transform.inverse().unwrap();
-    }
-
-    //Sets the material of the plane
-    fn _set_material(&mut self, material: Material) {
-        self.material = material;
-    }
-
-    //Gets a mutable reference to the material
-    fn _get_mut_material(&mut self) -> &mut Material {
-        &mut self.material
-    }
-    
 }
 
 impl Object for Plane {
