@@ -17,7 +17,7 @@ pub struct Camera {
 
 impl Camera {
     //Creates a new Camera
-    pub fn new(hsize: i32, vsize: i32, fov_degrees: f32) -> Camera {
+    pub fn new(hsize: usize, vsize: usize, fov_degrees: f32) -> Camera {
         let fov = fov_degrees.to_radians();
         let aspect_ratio = (hsize as f32) / (vsize as f32);
         let half_view = (fov/2.0).tan() as f32;
@@ -33,8 +33,8 @@ impl Camera {
         }
         let pixel_size = (_half_width * 2.0) / (hsize as f32);
         Camera {
-            hsize,
-            vsize,
+            hsize: (hsize as i32),
+            vsize: (vsize as i32),
             half_width: _half_width,
             half_height: _half_height,
             pixel_size,

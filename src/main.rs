@@ -12,7 +12,9 @@ use rust_ray_tracer::ray_tracing::material::Material;
 use std::time::Instant;
 
 fn main() {
-    let mut canvas = Canvas::new(1000, 500);
+    const WIDTH: usize = 300;
+    const HEIGHT: usize  = 150; 
+    let mut canvas = Canvas::new(WIDTH, HEIGHT);
 
     let mut material1 = Material::default();
     material1.pattern = Some(Box::new(CheckerboardPattern::new(BLACK, WHITE, Matrix4x4::identity())));
@@ -30,7 +32,7 @@ fn main() {
         ],
     };
 
-    let mut camera = Camera::new(1000, 500, 45.0);
+    let mut camera = Camera::new(WIDTH, HEIGHT, 45.0);
     let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
     let end_pos = Vec4::new(0.0, 1.0, 3.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);

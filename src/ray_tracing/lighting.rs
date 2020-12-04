@@ -55,8 +55,11 @@ impl AreaLight {
             intensity,
         }
     }
-}
 
+    pub fn point_on_light(&self, u: i32, v: i32) -> Vec4 {
+        &self.corner + (&self.uvec * ((u as f32) + 0.5)) + (&self.vvec * ((v as f32) + 0.5))
+    }   
+}
 //Light in space with no size
 #[derive(Debug, PartialEq)]
 pub struct PointLight {

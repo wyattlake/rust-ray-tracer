@@ -19,12 +19,12 @@ impl Material {
     //Creates a new Material and clamps all the values
     pub fn new(color: Color, ambient: f32, diffuse: f32, specular: f32, shininess: f32, reflectivity: f32, pattern: Option<Box<dyn Pattern>>) -> Material {
         Material {
-            color: color,
+            color,
             ambient: clamp_float(ambient, 0.0, 1.0),
             diffuse: clamp_float(diffuse, 0.0, 1.0),
             specular: clamp_float(specular, 0.0, 1.0),
             shininess: clamp_float(shininess, 1.0, 200.0),
-            reflectivity: reflectivity,
+            reflectivity,
             pattern,
         }
     }
