@@ -1,7 +1,7 @@
-//General structs and methods. Fields are public.
+//General structs and methods.
 pub mod core;
 
-//Structs built off of core specific to ray tracing. Fields are private.
+//Structs built off of core specific to ray tracing.
 pub mod ray_tracing;
 
 //Objects rendered with ray tracing

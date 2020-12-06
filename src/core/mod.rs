@@ -5,3 +5,5 @@ pub mod matrix;
 pub mod vector;
 
 pub mod comp;
+
+pub mod sequence;

@@ -39,7 +39,6 @@ impl Color {
     pub fn txt_string(&self) -> String {
         let fixed_color = self.clamp().convert();
         let mut character = "  ";
-        println!("{} ", (fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0);
         if ((fixed_color.0 + fixed_color.1 + fixed_color.2) / 765.0) == 1.0 {
             character = "@@";
         }
