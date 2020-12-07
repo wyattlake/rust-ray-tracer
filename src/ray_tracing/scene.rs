@@ -25,7 +25,12 @@ impl Scene {
     }
 
     //Lights a pixel in the scene
-    pub fn scene_lighting(scene: &Scene, comps: &Comp, remaining: i32, offset: &mut Sequence) -> Color {
+    pub fn scene_lighting(
+        scene: &Scene,
+        comps: &Comp,
+        remaining: i32,
+        offset: &mut Sequence,
+    ) -> Color {
         let mut color = Color::new(0.0, 0.0, 0.0);
         for light in &scene.light_sources {
             let light_intensity = light.light_intensity(&comps.over_point, &scene, offset);
@@ -45,11 +50,16 @@ impl Scene {
     }
 
     //Computes the color at a given point
-    pub fn compute_color(ray: Ray, scene: &Scene, remaining: i32, offset: &mut Sequence) -> Option<Color> {
+    pub fn compute_color(
+        ray: Ray,
+        scene: &Scene,
+        remaining: i32,
+        offset: &mut Sequence,
+    ) -> Option<Color> {
         let intersections = Ray::intersect_scene(&scene, ray.clone());
-        let hit = Intersection::hit(intersections);
+        let hit = Intersection::hit(intersections.clone());
         if !hit.is_none() {
-            let comps = Comp::compute_vars(hit.unwrap(), &ray);
+            let comps = Comp::compute_vars(hit.unwrap(), &ray, intersections);
             let color = Scene::scene_lighting(scene, &comps, remaining, offset);
             Some(color)
         } else {
@@ -67,7 +77,18 @@ impl Scene {
             objects: vec![
                 Box::new(Sphere::new(
                     Matrix4x4::identity(),
-                    Material::new(Color::new(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0, 0.0, None),
+                    Material::new(
+                        Color::new(0.8, 1.0, 0.6),
+                        0.1,
+                        0.7,
+                        0.2,
+                        200.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        true,
+                        None,
+                    ),
                 )),
                 Box::new(Sphere::new(
                     Matrix4x4::scaling(0.5, 0.5, 0.5),

@@ -28,10 +28,10 @@ fn main() {
         WHITE,
         Matrix4x4::identity(),
     )));
-
     //Defining a reflective material
     let mut material2 = Material::default();
     material2.reflectivity = 0.5;
+    material2.casts_shadows = false;
 
     //Setting up variables for an area light
     let corner = Vec4::new(-10.0, 10.0, -10.0, 1.0);
@@ -44,8 +44,11 @@ fn main() {
     let scene: Scene = Scene {
         light_sources: vec![Box::new(light)],
         objects: vec![
-            Box::new(Plane::new(Matrix4x4::identity(), Material::default())),
-            Box::new(Sphere::new(Matrix4x4::translation(0.0, 1.0, 0.0), Material::default())),
+            Box::new(Plane::new(Matrix4x4::identity(), material1)),
+            Box::new(Sphere::new(
+                Matrix4x4::translation(0.0, 1.0, 0.0),
+                material2,
+            )),
         ],
     };
 

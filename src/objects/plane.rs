@@ -47,7 +47,7 @@ impl Object for Plane {
         }
         else {
             let t = -transformed_ray.get_origin().1 / transformed_ray.get_direction().1;
-            let i = Intersection::new(t, Ray::position(ray, t), &self.inverse, self.normal(&Ray::position(ray, t)), self.get_material());
+            let i = Intersection::new(t, Ray::position(ray, t), &self.inverse, self.normal(&Ray::position(ray, t)), self.get_material(), &ObjectEnum::Plane);
             Some(vec![i])
         }
     }

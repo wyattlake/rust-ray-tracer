@@ -1,26 +1,36 @@
-use crate::core::vector::Vec4;
 use crate::core::matrix::Matrix4x4;
+use crate::core::vector::Vec4;
 use crate::ray_tracing::material::Material;
+use crate::objects::object::*;
 
 //Intersection stores the time of intersection and an Rc to the Object
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Intersection<'a> {
     pub t: f32,
     pub hit: Vec4,
     pub object_inverse: &'a Matrix4x4,
     pub normal: Vec4,
     pub material: &'a Material,
+    pub object_type: &'a ObjectEnum,
 }
 
-impl<'a> Intersection<'a> where {
+impl<'a> Intersection<'a> {
     //Creates a new intersection
-    pub fn new(t: f32, hit: Vec4, object_inverse: &'a Matrix4x4, normal: Vec4, material: &'a Material) -> Intersection<'a> {
+    pub fn new(
+        t: f32,
+        hit: Vec4,
+        object_inverse: &'a Matrix4x4,
+        normal: Vec4,
+        material: &'a Material,
+        object_type: &'a ObjectEnum,
+    ) -> Intersection<'a> {
         Intersection {
             t,
             hit,
             normal,
             material,
             object_inverse,
+            object_type,
         }
     }
 
@@ -34,11 +44,10 @@ impl<'a> Intersection<'a> where {
                 min_val = list[i as usize].t;
                 min_index = i;
             }
-        };
+        }
         if min_index != -1 {
             Some(list.remove(min_index as usize))
-        }
-        else {
+        } else {
             None
         }
     }

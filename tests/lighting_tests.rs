@@ -5,7 +5,10 @@ mod tests {
     use rust_ray_tracer::core::sequence::Sequence;
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::ray_tracing::lighting::*;
+    use rust_ray_tracer::objects::sphere::Sphere;
     use rust_ray_tracer::ray_tracing::scene::Scene;
+    use rust_ray_tracer::ray_tracing::material::Material;
+    use rust_ray_tracer::core::matrix::Matrix4x4;
 
     //Tests shadows when sphere does not block the light source from the point
     #[test]
@@ -89,5 +92,14 @@ mod tests {
         assert_eq!(sequence.next(), 1.0);
         assert_eq!(sequence.next(), 2.0);
         assert_eq!(sequence.next(), 3.0);
+    }
+
+    #[test]
+    //Tests n1 and n2 from comps
+    fn n1_n2_comps() {
+        let mut material = Material::default();
+        material.refractive_index = 1.5;
+        material.transparency = 1.0;
+        let a = Sphere::new(Matrix4x4::scaling(2.0, 2.0, 2.0), material);
     }
 }

@@ -133,7 +133,12 @@ impl PointLight {
 }
 
 //Creates a ray reflected off of a surface
-pub fn reflected_color(scene: &Scene, comps: &Comp, remaining: i32, offset: &mut Sequence) -> Color {
+pub fn reflected_color(
+    scene: &Scene,
+    comps: &Comp,
+    remaining: i32,
+    offset: &mut Sequence,
+) -> Color {
     if comps.material.reflectivity == 0.0 || remaining <= 0 {
         Color::new(0.0, 0.0, 0.0)
     } else {
@@ -193,7 +198,8 @@ pub fn lighting(
 
         //A negative light_dot_normal means the light is obstructed
         if light_dot_normal >= 0.0 {
-            diffuse_sum = diffuse_sum + &effective_color * material.diffuse * light_dot_normal * light_intensity;
+            diffuse_sum = diffuse_sum
+                + &effective_color * material.diffuse * light_dot_normal * light_intensity;
 
             //reflect_dot_eye represents the cosine of the angle between the reflection and eye vectors
             let reflect_vec = Vec4::reflect(&light_vec.negate(), &n_vec);
@@ -201,7 +207,8 @@ pub fn lighting(
             //A negative light_dot_normal means there is no specular lighting
             if reflect_dot_eye > 0.0 {
                 let factor = f32::powf(reflect_dot_eye as f32, material.shininess);
-                specular_sum = specular_sum + light.get_intensity() * &material.specular * factor * light_intensity;
+                specular_sum = specular_sum
+                    + light.get_intensity() * &material.specular * factor * light_intensity;
             }
         }
     }
@@ -220,7 +227,8 @@ pub fn in_shadow(light_position: &Vec4, point: &Vec4, scene: &Scene) -> bool {
     let ray_hit = Intersection::hit(intersections);
     let mut result = false;
     if !ray_hit.is_none() {
-        if ray_hit.unwrap().t < distance {
+        let unwrapped = ray_hit.unwrap();
+        if unwrapped.t < distance && unwrapped.material.casts_shadows == true {
             result = true;
         }
     }
