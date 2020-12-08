@@ -224,11 +224,11 @@ pub fn in_shadow(light_position: &Vec4, point: &Vec4, scene: &Scene) -> bool {
     let direction = (&vector).normalize();
     let shadow_ray = Ray::new_from_vec(Vec4::new(point.0, point.1, point.2, 1.0), direction);
     let intersections = Ray::intersect_scene(scene, shadow_ray);
-    let ray_hit = Intersection::hit(intersections);
+    let ray_hit = Intersection::hit(&intersections);
     let mut result = false;
     if !ray_hit.is_none() {
         let unwrapped = ray_hit.unwrap();
-        if unwrapped.t < distance && unwrapped.material.casts_shadows == true {
+        if unwrapped.t < distance && unwrapped.object.get_material().casts_shadows == true {
             result = true;
         }
     }

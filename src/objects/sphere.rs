@@ -4,9 +4,10 @@ use crate::objects::object::*;
 use crate::ray_tracing::intersection::Intersection;
 use crate::ray_tracing::material::Material;
 use crate::ray_tracing::ray::Ray;
+use std::any::Any;
 
 //A sphere has a transform trait which keeps track of its transformations
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sphere {
     pub transform: Matrix4x4,
     pub inverse: Matrix4x4,
@@ -50,6 +51,11 @@ impl Object for Sphere {
         &self.material
     }
 
+    //Returns the plane material
+    fn get_inverse(&self) -> &Matrix4x4 {
+        &self.inverse
+    }
+
     //Intersects a ray with a sphere
     fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>> {
         let transformed_ray = Ray::transform(ray, &self.inverse);
@@ -68,19 +74,15 @@ impl Object for Sphere {
             let i1 = Intersection::new(
                 t1,
                 Ray::position(ray, t1),
-                &self.inverse,
                 self.normal(&Ray::position(ray, t1)),
-                self.get_material(),
-                &ObjectEnum::Sphere
+                self,
             );
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
             let i2 = Intersection::new(
                 t2,
                 Ray::position(ray, t2),
-                &self.inverse,
                 self.normal(&Ray::position(ray, t2)),
-                self.get_material(),
-                &ObjectEnum::Sphere
+                self,
             );
             Some(vec![i1, i2])
         } else {
@@ -98,4 +100,10 @@ impl Object for Sphere {
         world_normal.3 = 0.0;
         world_normal.normalize()
     }
+
+    fn eq(&self, other: &dyn Object) -> bool {
+        other.as_any().downcast_ref::<Self>().map_or(false, |x| x == self)
+    }
+
+    fn as_any(&self) -> &dyn Any { self }
 }

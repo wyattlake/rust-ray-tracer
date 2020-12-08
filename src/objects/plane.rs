@@ -5,8 +5,9 @@ use crate::ray_tracing::material::Material;
 use crate::ray_tracing::ray::Ray;
 use crate::ray_tracing::intersection::Intersection;
 use crate::misc::utils::*;
+use std::any::Any;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Plane {
     pub transform: Matrix4x4,
     pub inverse: Matrix4x4,
@@ -39,6 +40,11 @@ impl Object for Plane {
         &self.material
     }
 
+    //Returns the plane matrix
+    fn get_inverse(&self) -> &Matrix4x4 {
+        &self.inverse
+    }
+
     //Intersects a ray with a plane
     fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>> {
         let transformed_ray = Ray::transform(ray, &self.inverse);
@@ -47,7 +53,7 @@ impl Object for Plane {
         }
         else {
             let t = -transformed_ray.get_origin().1 / transformed_ray.get_direction().1;
-            let i = Intersection::new(t, Ray::position(ray, t), &self.inverse, self.normal(&Ray::position(ray, t)), self.get_material(), &ObjectEnum::Plane);
+            let i = Intersection::new(t, Ray::position(ray, t), self.normal(&Ray::position(ray, t)), self);
             Some(vec![i])
         }
     }
@@ -56,4 +62,10 @@ impl Object for Plane {
     fn normal(&self, _world_point: &Vec4) -> Vec4 {
         Vec4::new(0.0, 1.0, 0.0, 0.0)
     }
+
+    fn eq(&self, other: &dyn Object) -> bool {
+        other.as_any().downcast_ref::<Self>().map_or(false, |x| x == self)
+    }
+
+    fn as_any(&self) -> &dyn Any { self }
 }

@@ -8,7 +8,7 @@ use crate::ray_tracing::ray::Ray;
 
 //Stores values for lighting computations
 #[derive(Debug)]
-pub struct Comp<'a> {
+pub struct Comp {
     pub t: f32,
     pub point: Vec4,
     pub object_inverse: Matrix4x4, //Object's inverse matrix
@@ -17,16 +17,16 @@ pub struct Comp<'a> {
     pub r_vec: Vec4,               //Reflection vector
     pub inside: bool,
     pub over_point: Vec4, //Position of intersection adjusted along normal with EPSILON_BUMP
-    pub material: &'a Material,
+    pub material: Material,
     pub n1: f32, //Refraction index of the object the ray is passing form
     pub n2: f32, //Refraction index of the object the ray is passing to
 }
 
-impl<'a> Comp<'a> {
+impl Comp {
     //Creates a new Comp
     pub fn new(
         t: f32,
-        material: &'a Material,
+        material: Material,
         object_inverse: Matrix4x4,
         point: Vec4,
         e_vec: Vec4,
@@ -36,7 +36,7 @@ impl<'a> Comp<'a> {
         over_point: Vec4,
         n1: f32,
         n2: f32,
-    ) -> Comp<'a> {
+    ) -> Comp {
         Comp {
             t,
             material,
@@ -54,10 +54,10 @@ impl<'a> Comp<'a> {
 
     //Prepares vars for shading
     pub fn compute_vars(
-        intersection: Intersection<'a>,
-        ray: &'a Ray,
-        intersection_list: Vec<Intersection>,
-    ) -> Comp<'a> {
+        intersection: Intersection,
+        ray: &Ray,
+        intersection_list: &Vec<Intersection>,
+    ) -> Comp {
         let t = intersection.t;
         let point = Ray::position(ray, t);
         let mut n_vec = intersection.normal.clone();
@@ -72,41 +72,34 @@ impl<'a> Comp<'a> {
         let mut n1 = 1.0;
         let mut n2 = 1.0;
 
-        let mut containers: Vec<(&Matrix4x4, &Material, &ObjectEnum)> = vec![];
+        let mut containers: Vec<&dyn Object> = vec![];
         for i in intersection_list {
-            if i == intersection {
+            if i == &intersection {
                 if !containers.is_empty() {
-                    n1 = containers.last().unwrap().1.refractive_index;
+                    n1 = containers.last().unwrap().get_material().refractive_index;
                 }
             }
 
-            let mut has_object = false;
-            let mut index = 0;
-            let mut remove_index = 0;
-            for x in &containers {
-                if i.object_inverse == x.0 && i.material == x.1 && i.object_type == x.2 {
-                    has_object = true;
-                    remove_index = index;
-                }
-                index += 1;
+            let intersection_object = i.object.clone();
+
+            let before_len = containers.len();
+
+            containers.retain(|object| !(&intersection_object == object));
+
+            if containers.len() == before_len {
+                containers.push(intersection_object);
             }
 
-            if has_object {
-                containers.remove(remove_index);
-            } else {
-                containers.push((&i.object_inverse, &i.material, &i.object_type));
-            }
-
-            if i == intersection {
+            if i == &intersection {
                 if !containers.is_empty() {
-                    n2 = containers.last().unwrap().1.refractive_index;
+                    n2 = containers.last().unwrap().get_material().refractive_index;
                 }
             }
         }
         Comp::new(
             t,
-            intersection.material,
-            intersection.object_inverse.clone(),
+            intersection.object.get_material().clone(),
+            intersection.object.get_inverse().clone(),
             point,
             e_vec,
             n_vec,

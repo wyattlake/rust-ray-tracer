@@ -51,7 +51,7 @@ impl Ray where {
     }
 
     //Lists ray intersections within a scene
-    pub fn intersect_scene<'a>(scene: &'a Scene, ray: Ray) -> Vec<Intersection<'a>> {
+    pub fn intersect_scene<'a>(scene: &'a Scene, ray: Ray) -> Vec<Intersection> {
         let objects = &scene.objects;
         let mut intersections: Vec<Intersection> = vec![];
         for object in objects {

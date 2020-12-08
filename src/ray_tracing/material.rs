@@ -4,7 +4,7 @@ use crate::ray_tracing::patterns::*;
 
 //A Material holds a bunch of properties for an object
 //Lighting properties are based on the Phong Reflection Model
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Material {
     pub color: Color,
     pub ambient: f32,
@@ -83,16 +83,4 @@ impl Material {
     }
 }
 
-impl PartialEq for Material {
-    fn eq(&self, other: &Material) -> bool {
-        self.color == other.color
-            && self.ambient == other.ambient
-            && self.diffuse == other.diffuse
-            && self.specular == other.specular
-            && self.shininess == other.shininess
-            && self.reflectivity == other.reflectivity
-            && self.transparency == other.transparency
-            && self.refractive_index == other.refractive_index
-            && self.casts_shadows == other.casts_shadows
-    }
-}
+

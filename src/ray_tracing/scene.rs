@@ -36,7 +36,7 @@ impl Scene {
             let light_intensity = light.light_intensity(&comps.over_point, &scene, offset);
             color = color
                 + lighting(
-                    comps.material,
+                    &comps.material,
                     &comps.object_inverse,
                     &light,
                     &comps.over_point,
@@ -57,9 +57,9 @@ impl Scene {
         offset: &mut Sequence,
     ) -> Option<Color> {
         let intersections = Ray::intersect_scene(&scene, ray.clone());
-        let hit = Intersection::hit(intersections.clone());
+        let hit = Intersection::hit(&intersections);
         if !hit.is_none() {
-            let comps = Comp::compute_vars(hit.unwrap(), &ray, intersections);
+            let comps = Comp::compute_vars(hit.unwrap(), &ray, &intersections);
             let color = Scene::scene_lighting(scene, &comps, remaining, offset);
             Some(color)
         } else {
@@ -102,10 +102,10 @@ impl Scene {
     //Gets the color without any lighting calculations
     pub fn compute_color_quick(ray: Ray, scene: &Scene) -> Option<Color> {
         let intersections = Ray::intersect_scene(scene, ray);
-        let hit = Intersection::hit(intersections);
+        let hit = Intersection::hit(&intersections);
         if !hit.is_none() {
             let unwrapped = hit.unwrap();
-            let color = &unwrapped.material.color;
+            let color = &unwrapped.object.get_material().color;
             Some(color.clone())
         } else {
             None

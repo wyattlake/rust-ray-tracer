@@ -1,17 +1,13 @@
-use crate::core::matrix::Matrix4x4;
 use crate::core::vector::Vec4;
-use crate::ray_tracing::material::Material;
 use crate::objects::object::*;
 
 //Intersection stores the time of intersection and an Rc to the Object
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Intersection<'a> {
     pub t: f32,
     pub hit: Vec4,
-    pub object_inverse: &'a Matrix4x4,
     pub normal: Vec4,
-    pub material: &'a Material,
-    pub object_type: &'a ObjectEnum,
+    pub object: &'a dyn Object,
 }
 
 impl<'a> Intersection<'a> {
@@ -19,26 +15,22 @@ impl<'a> Intersection<'a> {
     pub fn new(
         t: f32,
         hit: Vec4,
-        object_inverse: &'a Matrix4x4,
         normal: Vec4,
-        material: &'a Material,
-        object_type: &'a ObjectEnum,
-    ) -> Intersection<'a> {
+        object: &'a dyn Object,
+    ) -> Intersection {
         Intersection {
             t,
             hit,
             normal,
-            material,
-            object_inverse,
-            object_type,
+            object,
         }
     }
 
     //Finds which intersection is visible given a list of intersection
-    pub fn hit(list_1: Vec<Intersection<'a>>) -> Option<Intersection<'a>> {
-        let mut list = list_1.clone();
+    pub fn hit(list_ref: &'a Vec<Intersection>) -> Option<Intersection<'a>> {
+        let mut list = list_ref.clone();
         let mut min_val = f32::MAX;
-        let mut min_index = -1;
+        let mut min_index: i32 = -1;
         for i in 0..(list.len() as i32) {
             if list[i as usize].t < min_val && list[i as usize].t > 0.0 {
                 min_val = list[i as usize].t;

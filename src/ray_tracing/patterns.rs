@@ -2,12 +2,44 @@ use crate::core::color::Color;
 use crate::core::vector::Vec4;
 use crate::core::matrix::Matrix4x4;
 use std::fmt::Debug;
+use std::any::Any;
 
 //Generic enum pattern which matches to specific patterns
-pub trait Pattern: Debug {
+pub trait Pattern: Debug + PatternClone {
+    //Gets the color at a point on the pattern
     fn color_at(&self, point: &Vec4) -> Color;
+    
+    //Transforms a pattern
     fn transform(&mut self, matrix: Matrix4x4);
+
+    //Finds the color on a pattern given the transformations of the matrix the pattern is on
     fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color;
+
+    //Methods used to allow PartialEq between objects
+    fn eq(&self, other: &dyn Pattern) -> bool;
+    fn as_any(&self) -> &dyn Any;
+}
+
+impl<'a, 'b> PartialEq<dyn Pattern+'b> for dyn Pattern+'a {
+    fn eq(&self, other: &(dyn Pattern+'b)) -> bool {
+        Pattern::eq(self, other)
+    }
+}
+
+pub trait PatternClone {
+    fn clone_box(&self) -> Box<dyn Pattern>;
+}
+
+impl<T> PatternClone for T where T: 'static + Pattern + Clone, {
+    fn clone_box(&self) -> Box<dyn Pattern> {
+        Box::new(self.clone())
+    }
+}
+
+impl Clone for Box<dyn Pattern> {
+    fn clone(&self) -> Box<dyn Pattern> {
+        self.clone_box()
+    }
 }
 
 //A striped pattern
@@ -51,6 +83,12 @@ impl Pattern for StripePattern  {
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
+
+    fn eq(&self, other: &dyn Pattern) -> bool {
+        other.as_any().downcast_ref::<Self>().map_or(false, |x| x == self)
+    }
+
+    fn as_any(&self) -> &dyn Any { self }
 }
 
 //A gradient pattern
@@ -101,6 +139,12 @@ impl Pattern for GradientPattern  {
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
+
+    fn eq(&self, other: &dyn Pattern) -> bool {
+        other.as_any().downcast_ref::<Self>().map_or(false, |x| x == self)
+    }
+
+    fn as_any(&self) -> &dyn Any { self }
 }
 
 //A ring pattern
@@ -144,6 +188,12 @@ impl Pattern for RingPattern  {
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
+
+    fn eq(&self, other: &dyn Pattern) -> bool {
+        other.as_any().downcast_ref::<Self>().map_or(false, |x| x == self)
+    }
+
+    fn as_any(&self) -> &dyn Any { self }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -187,4 +237,10 @@ impl Pattern for CheckerboardPattern  {
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
+
+    fn eq(&self, other: &dyn Pattern) -> bool {
+        other.as_any().downcast_ref::<Self>().map_or(false, |x| x == self)
+    }
+
+    fn as_any(&self) -> &dyn Any { self }
 }
