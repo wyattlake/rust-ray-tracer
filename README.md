@@ -2,4 +2,4 @@
 
 A ray tracer written in Rust following The Ray Tracer Challenge by Jamis Buck.
 
-![Ray Traced Sphere](https://i.imgur.com/ihPbEok.png)
+![Ray Traced Sphere](https://i.imgur.com/X6TcOxj.png)
