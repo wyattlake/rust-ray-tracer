@@ -5,17 +5,17 @@ use rust_ray_tracer::core::sequence::Sequence;
 use rust_ray_tracer::core::vector::Vec4;
 use rust_ray_tracer::objects::plane::Plane;
 use rust_ray_tracer::objects::sphere::Sphere;
-use rust_ray_tracer::ray_tracing::camera::Camera;
-use rust_ray_tracer::ray_tracing::lighting::*;
-use rust_ray_tracer::ray_tracing::material::Material;
-use rust_ray_tracer::ray_tracing::patterns::*;
-use rust_ray_tracer::ray_tracing::scene::Scene;
+use rust_ray_tracer::world::camera::Camera;
+use rust_ray_tracer::world::lighting::*;
+use rust_ray_tracer::materials::material::Material;
+use rust_ray_tracer::materials::patterns::*;
+use rust_ray_tracer::world::scene::Scene;
 use std::time::Instant;
 
 fn main() {
     //Width and height of the scene
-    const WIDTH: usize = 1500;
-    const HEIGHT: usize = 750;
+    const WIDTH: usize = 300;
+    const HEIGHT: usize = 150;
 
     //Canvas where color is stored
     let mut canvas = Canvas::new(WIDTH, HEIGHT);
@@ -45,17 +45,19 @@ fn main() {
     material4.reflectivity = 0.5;
     material4.color = Color::new_255(26, 65, 219);
 
-    //Setting up variables for an area light
-    let corner = Vec4::new(-10.0, 10.0, -10.0, 1.0);
-    let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
-    let v2 = Vec4::new(0.0, 2.0, 0.0, 0.0);
-    let light = AreaLight::new(corner, v1, 10, v2, 10, WHITE);
+    // //Setting up variables for an area light
+    // let corner = Vec4::new(-10.0, 10.0, -10.0, 1.0);
+    // let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
+    // let v2 = Vec4::new(0.0, 2.0, 0.0, 0.0);
+    // let light = AreaLight::new(corner, v1, 10, v2, 10, WHITE);
+
+    let point_light = PointLight::new(WHITE, Vec4::new(-10.0, 10.0, -10.0, 1.0));
 
     let mut seq = Sequence::new(vec![1.0, 0.9, 0.3, 0.1, 0.5, 1.2]);
 
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {
-        light_sources: vec![Box::new(light)],
+        light_sources: vec![Box::new(point_light)],
         objects: vec![
             Box::new(Plane::new(Matrix4x4::identity(), material1)),
             Box::new(Sphere::new(
@@ -85,7 +87,7 @@ fn main() {
     println!("Render started...");
     let now = Instant::now();
 
-    Camera::render_supersampled(&camera, &scene, &mut canvas, &mut seq);
+    Camera::render(&camera, &scene, &mut canvas, &mut seq);
 
     let duration = now.elapsed();
     println!("Image successfully rendered");

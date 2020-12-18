@@ -1,11 +1,11 @@
 #[cfg(test)]
 
 mod tests {
-    use rust_ray_tracer::ray_tracing::camera::Camera;
+    use rust_ray_tracer::world::camera::Camera;
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::core::matrix::Matrix4x4;
     use rust_ray_tracer::misc::axis::Axis;
-    use rust_ray_tracer::ray_tracing::scene::Scene;
+    use rust_ray_tracer::world::scene::Scene;
     use rust_ray_tracer::core::canvas::Canvas;
     use rust_ray_tracer::core::color::Color;
     use rust_ray_tracer::core::sequence::Sequence;

@@ -4,7 +4,7 @@ use crate::core::matrix::Matrix4x4;
 use crate::core::sequence::Sequence;
 use crate::core::vector::Vec4;
 use crate::ray_tracing::ray::Ray;
-use crate::ray_tracing::scene::Scene;
+use crate::world::scene::Scene;
 
 //The camera stores all the info relevant to how the scene is viewed
 pub struct Camera {

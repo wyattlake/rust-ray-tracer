@@ -5,11 +5,11 @@ mod tests {
     use rust_ray_tracer::misc::utils::*;
     use rust_ray_tracer::core::sequence::Sequence;
     use rust_ray_tracer::core::vector::Vec4;
-    use rust_ray_tracer::ray_tracing::lighting::*;
+    use rust_ray_tracer::world::lighting::*;
     use rust_ray_tracer::objects::sphere::Sphere;
     use rust_ray_tracer::objects::object::*;
-    use rust_ray_tracer::ray_tracing::scene::Scene;
-    use rust_ray_tracer::ray_tracing::material::Material;
+    use rust_ray_tracer::world::scene::Scene;
+    use rust_ray_tracer::materials::material::Material;
     use rust_ray_tracer::core::matrix::Matrix4x4;
     use rust_ray_tracer::ray_tracing::ray::Ray;
     use rust_ray_tracer::core::comp::Comp;
@@ -198,5 +198,12 @@ mod tests {
         if comps.point.2 > comps.under_point.2 {
             panic!("Under point test failed");
         }
+    }
+
+    #[test]
+    //Test refracted color of an opaque surface
+    fn refraction_on_opaque() {
+        let scene = Scene::default();
+
     }
 }

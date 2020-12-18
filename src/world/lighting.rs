@@ -4,9 +4,9 @@ use crate::core::matrix::Matrix4x4;
 use crate::core::sequence::Sequence;
 use crate::core::vector::Vec4;
 use crate::ray_tracing::intersection::Intersection;
-use crate::ray_tracing::material::Material;
+use crate::materials::material::*;
 use crate::ray_tracing::ray::Ray;
-use crate::ray_tracing::scene::Scene;
+use crate::world::scene::Scene;
 
 //A Light is either a PointLight or an AreaLight
 pub trait Light {

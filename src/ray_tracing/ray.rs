@@ -1,7 +1,7 @@
 use crate::core::vector::*;
 use crate::ray_tracing::intersection::*;
 use crate::core::matrix::Matrix4x4;
-use crate::ray_tracing::scene::Scene;
+use crate::world::scene::*;
 
 //A Ray has a origin (point) and a direction (vector)
 #[derive(Debug, PartialEq, Clone)]

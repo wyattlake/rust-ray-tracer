@@ -1,6 +1,6 @@
 use crate::core::color::Color;
 use crate::misc::utils::clamp_float;
-use crate::ray_tracing::patterns::*;
+use crate::materials::patterns::*;
 
 //A Material holds a bunch of properties for an object
 //Lighting properties are based on the Phong Reflection Model

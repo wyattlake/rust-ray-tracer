@@ -6,7 +6,7 @@ mod tests {
     use rust_ray_tracer::misc::axis::Axis;
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::objects::object::*;
-    use rust_ray_tracer::ray_tracing::material::Material;
+    use rust_ray_tracer::materials::material::Material;
 
     #[test]
     //Tests surface normals on the x axis

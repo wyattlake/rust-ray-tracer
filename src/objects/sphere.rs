@@ -2,7 +2,7 @@ use crate::core::matrix::Matrix4x4;
 use crate::core::vector::Vec4;
 use crate::objects::object::*;
 use crate::ray_tracing::intersection::Intersection;
-use crate::ray_tracing::material::Material;
+use crate::materials::material::*;
 use crate::ray_tracing::ray::Ray;
 use std::any::Any;
 

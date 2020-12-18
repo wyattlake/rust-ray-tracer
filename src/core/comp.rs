@@ -3,7 +3,7 @@ use crate::core::vector::Vec4;
 use crate::misc::utils::*;
 use crate::objects::object::*;
 use crate::ray_tracing::intersection::Intersection;
-use crate::ray_tracing::material::Material;
+use crate::materials::material::Material;
 use crate::ray_tracing::ray::Ray;
 
 //Stores values for lighting computations

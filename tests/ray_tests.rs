@@ -5,7 +5,7 @@ mod tests {
     use rust_ray_tracer::ray_tracing::ray::Ray;
     use rust_ray_tracer::core::matrix::Matrix4x4;
     use rust_ray_tracer::objects::sphere::Sphere;
-    use rust_ray_tracer::ray_tracing::material::Material;
+    use rust_ray_tracer::materials::material::Material;
     use rust_ray_tracer::objects::object::*;
 
     //Tests ray translation

@@ -1,7 +1,7 @@
 #[cfg(test)]
 
 mod tests {
-    use rust_ray_tracer::ray_tracing::patterns::*;
+    use rust_ray_tracer::materials::patterns::*;
     use rust_ray_tracer::core::color::*;
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::core::matrix::Matrix4x4;
