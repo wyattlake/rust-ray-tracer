@@ -6,9 +6,13 @@ mod tests {
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::ray_tracing::lighting::*;
     use rust_ray_tracer::objects::sphere::Sphere;
+    use rust_ray_tracer::objects::object::*;
     use rust_ray_tracer::ray_tracing::scene::Scene;
     use rust_ray_tracer::ray_tracing::material::Material;
     use rust_ray_tracer::core::matrix::Matrix4x4;
+    use rust_ray_tracer::ray_tracing::ray::Ray;
+    use rust_ray_tracer::core::comp::Comp;
+    use rust_ray_tracer::ray_tracing::intersection::Intersection;
 
     //Tests shadows when sphere does not block the light source from the point
     #[test]
@@ -97,9 +101,76 @@ mod tests {
     #[test]
     //Tests n1 and n2 from comps
     fn n1_n2_comps() {
-        let mut material = Material::default();
-        material.refractive_index = 1.5;
-        material.transparency = 1.0;
-        let a = Sphere::new(Matrix4x4::scaling(2.0, 2.0, 2.0), material);
+        let mut material1 = Material::default();
+        material1.refractive_index = 1.5;
+        let a = Sphere::new(Matrix4x4::scaling(2.0, 2.0, 2.0), material1);
+
+        let mut material2 = Material::default();
+        material2.refractive_index = 2.0;
+        let b = Sphere::new(Matrix4x4::translation(0.0, 0.0, -0.25), material2);
+
+        let mut material3 = Material::default();
+        material3.refractive_index = 2.5;
+        let c = Sphere::new(Matrix4x4::translation(0.0, 0.0, 0.25), material3);
+
+        let ray = Ray::new((0.0, 0.0, -4.0), (0.0, 0.0, 1.0));
+
+        let interesections = vec![
+            Intersection::new(
+                2.0,
+                Ray::position(&ray, 2.0),
+                a.normal(&Ray::position(&ray, 2.0)),
+                &a,
+            ),
+            Intersection::new(
+                2.75,
+                Ray::position(&ray, 2.75),
+                b.normal(&Ray::position(&ray, 2.75)),
+                &b,
+            ),
+            Intersection::new(
+                3.25,
+                Ray::position(&ray, 3.25),
+                c.normal(&Ray::position(&ray, 3.25)),
+                &c,
+            ),
+            Intersection::new(
+                4.75,
+                Ray::position(&ray, 4.75),
+                b.normal(&Ray::position(&ray, 4.75)),
+                &b,
+            ),
+            Intersection::new(
+                5.25,
+                Ray::position(&ray, 5.25),
+                c.normal(&Ray::position(&ray, 5.25)),
+                &c,
+            ),
+            Intersection::new(
+                6.0,
+                Ray::position(&ray, 6.0),
+                a.normal(&Ray::position(&ray, 6.0)),
+                &a,
+            )
+        ];
+
+        let mut comp_list = vec![];
+
+        for x in interesections.clone() {
+            comp_list.push(Comp::compute_vars(x, &ray, &interesections));
+        }
+
+        assert_eq!(comp_list[0].n1, 1.0);
+        assert_eq!(comp_list[0].n2, 1.5);
+        assert_eq!(comp_list[1].n1, 1.5);
+        assert_eq!(comp_list[1].n2, 2.0);
+        assert_eq!(comp_list[2].n1, 2.0);
+        assert_eq!(comp_list[2].n2, 2.5);
+        assert_eq!(comp_list[3].n1, 2.5);
+        assert_eq!(comp_list[3].n2, 2.5);
+        assert_eq!(comp_list[4].n1, 2.5);
+        assert_eq!(comp_list[4].n2, 1.5);
+        assert_eq!(comp_list[5].n1, 1.5);
+        assert_eq!(comp_list[5].n2, 1.0);
     }
 }

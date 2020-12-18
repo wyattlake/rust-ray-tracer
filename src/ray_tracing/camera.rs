@@ -120,7 +120,7 @@ impl Camera {
     }
 
     //Renders a scene
-    pub fn render_supersampled(camera: &Camera, scene: &mut Scene, canvas: &mut Canvas, light_offset: &mut Sequence) {
+    pub fn render_supersampled(camera: &Camera, scene: &Scene, canvas: &mut Canvas, light_offset: &mut Sequence) {
         let mut counter = 0;
         let mut percent = 0;
         let pixels = &camera.hsize * &camera.vsize;

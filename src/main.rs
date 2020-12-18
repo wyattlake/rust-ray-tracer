@@ -14,8 +14,8 @@ use std::time::Instant;
 
 fn main() {
     //Width and height of the scene
-    const WIDTH: usize = 300;
-    const HEIGHT: usize = 150;
+    const WIDTH: usize = 1500;
+    const HEIGHT: usize = 750;
 
     //Canvas where color is stored
     let mut canvas = Canvas::new(WIDTH, HEIGHT);
@@ -28,17 +28,30 @@ fn main() {
         WHITE,
         Matrix4x4::identity(),
     )));
+    material1.reflectivity = 0.5;
+
     //Defining a reflective material
     let mut material2 = Material::default();
     material2.reflectivity = 0.5;
-    material2.casts_shadows = false;
+    material2.color = Color::new_255(184, 26, 219);
+
+    //Defining a reflective material
+    let mut material3 = Material::default();
+    material3.reflectivity = 0.5;
+    material3.color = Color::new_255(237, 67, 33);
+
+    //Defining a reflective material
+    let mut material4 = Material::default();
+    material4.reflectivity = 0.5;
+    material4.color = Color::new_255(26, 65, 219);
 
     //Setting up variables for an area light
     let corner = Vec4::new(-10.0, 10.0, -10.0, 1.0);
     let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
     let v2 = Vec4::new(0.0, 2.0, 0.0, 0.0);
+    let light = AreaLight::new(corner, v1, 10, v2, 10, WHITE);
+
     let mut seq = Sequence::new(vec![1.0, 0.9, 0.3, 0.1, 0.5, 1.2]);
-    let light = AreaLight::new(corner, v1, 8, v2, 8, WHITE);
 
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {
@@ -46,8 +59,16 @@ fn main() {
         objects: vec![
             Box::new(Plane::new(Matrix4x4::identity(), material1)),
             Box::new(Sphere::new(
-                Matrix4x4::translation(0.0, 1.0, 0.0),
-                material2,
+                Matrix4x4::translation(0.15, 1.0, 0.0),
+                material2.clone(),
+            )),
+            Box::new(Sphere::new(
+                Matrix4x4::translation(1.7, 0.5, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5),
+                material3,
+            )),
+            Box::new(Sphere::new(
+                Matrix4x4::translation(-1.8, 0.75, 0.0) * Matrix4x4::scaling(0.75, 0.75, 0.75),
+                material4,
             )),
         ],
     };
@@ -64,7 +85,7 @@ fn main() {
     println!("Render started...");
     let now = Instant::now();
 
-    Camera::render(&camera, &scene, &mut canvas, &mut seq);
+    Camera::render_supersampled(&camera, &scene, &mut canvas, &mut seq);
 
     let duration = now.elapsed();
     println!("Image successfully rendered");
@@ -72,5 +93,5 @@ fn main() {
         "{} milliseconds elapsed.",
         duration.as_secs() * 1000 + u64::from(duration.subsec_millis())
     );
-    Canvas::write_file(canvas, "result");
+    Canvas::write_file(canvas, "image");
 }

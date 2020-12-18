@@ -24,6 +24,7 @@ pub trait Object: Debug + ObjectClone {
     fn as_any(&self) -> &dyn Any;
 }
 
+//Traits for objects
 impl<'a, 'b> PartialEq<dyn Object+'b> for dyn Object+'a {
     fn eq(&self, other: &(dyn Object+'b)) -> bool {
         Object::eq(self, other)
