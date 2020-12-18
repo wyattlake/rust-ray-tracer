@@ -17,6 +17,7 @@ pub struct Comp {
     pub r_vec: Vec4,               //Reflection vector
     pub inside: bool,
     pub over_point: Vec4, //Position of intersection adjusted along normal with EPSILON_BUMP
+    pub under_point: Vec4, //Position of intersectino pushed slightly below the object surface via EPSILON_BUMP
     pub material: Material,
     pub n1: f32, //Refraction index of the object the ray is passing form
     pub n2: f32, //Refraction index of the object the ray is passing to
@@ -34,6 +35,7 @@ impl Comp {
         r_vec: Vec4,
         inside: bool,
         over_point: Vec4,
+        under_point: Vec4,
         n1: f32,
         n2: f32,
     ) -> Comp {
@@ -47,6 +49,7 @@ impl Comp {
             r_vec,
             inside,
             over_point,
+            under_point,
             n1,
             n2,
         }
@@ -65,6 +68,7 @@ impl Comp {
         let r_vec = Vec4::reflect(ray.get_direction(), &n_vec);
         let mut inside = false;
         let over_point = &point + (&n_vec.normalize() * EPSILON_BUMP);
+        let under_point = &point - (&n_vec.normalize() * EPSILON_BUMP);
         if Vec4::dot(&n_vec, &e_vec) < 0.0 {
             inside = true;
             n_vec = n_vec.negate();
@@ -106,6 +110,7 @@ impl Comp {
             r_vec,
             inside,
             over_point,
+            under_point,
             n1,
             n2,
         )

@@ -2,6 +2,7 @@
 
 mod tests {
     use rust_ray_tracer::core::color::*;
+    use rust_ray_tracer::misc::utils::*;
     use rust_ray_tracer::core::sequence::Sequence;
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::ray_tracing::lighting::*;
@@ -172,5 +173,30 @@ mod tests {
         assert_eq!(comp_list[4].n2, 1.5);
         assert_eq!(comp_list[5].n1, 1.5);
         assert_eq!(comp_list[5].n2, 1.0);
+    }
+
+    #[test]
+    //Tests comp under_point
+    fn under_point() {
+        let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 0.0, 1.0));
+
+        let mut object = Sphere::glass();
+        object.transform = Matrix4x4::translation(0.0, 0.0, 1.0);
+
+        let i = Intersection::new(
+            5.0,
+            Ray::position(&ray, 5.0),
+            object.normal(&Ray::position(&ray, 5.0)),
+            &object,
+        );
+
+        let comps = Comp::compute_vars(i.clone(), &ray, &vec![i]);
+        if comps.under_point.2 > EPSILON_BUMP / 2.0 {
+            panic!("Under point test failed");
+        }
+
+        if comps.point.2 > comps.under_point.2 {
+            panic!("Under point test failed");
+        }
     }
 }
