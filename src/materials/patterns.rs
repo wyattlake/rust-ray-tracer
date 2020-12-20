@@ -42,6 +42,48 @@ impl Clone for Box<dyn Pattern> {
     }
 }
 
+//A tesing pattern which sets the rgb values to coordinates
+#[derive(Debug, PartialEq, Clone)]
+pub struct TestPattern {
+    transform: Matrix4x4,
+    inverse: Matrix4x4,
+}
+
+impl TestPattern {
+    pub fn new(transform: Matrix4x4) -> TestPattern {
+        TestPattern {
+            inverse: transform.inverse().unwrap(),
+            transform,
+        }
+    }
+}
+
+impl Pattern for TestPattern  {
+    //Creates a new TestPattern
+    //Gets the color at a specific point
+    fn color_at(&self, point: &Vec4) -> Color {
+        Color::new(point.0, point.1, point.2)
+    }
+
+    //Transforms the pattern
+    fn transform(&mut self, matrix: Matrix4x4) {
+        self.transform = &self.transform * matrix;
+    }
+
+    //Gets the color at a specific point taking into account pattern and object transformations
+    fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
+        let object_point = object_inverse * point;
+        let pattern_point = &self.inverse * object_point;
+        self.color_at(&pattern_point)
+    }
+
+    fn eq(&self, other: &dyn Pattern) -> bool {
+        other.as_any().downcast_ref::<Self>().map_or(false, |x| x == self)
+    }
+
+    fn as_any(&self) -> &dyn Any { self }
+}
+
 //A striped pattern
 #[derive(Debug, PartialEq, Clone)]
 pub struct StripePattern {

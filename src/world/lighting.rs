@@ -160,6 +160,48 @@ pub fn reflected_color(
     }
 }
 
+//Finds the refracted color at a certain point
+pub fn refracted_color(scene: &Scene, comps: &Comp, remaining: i32, offset: &mut Sequence,) -> Color {
+    //Ratio between refraction indices
+    let n_ratio = comps.n1 / comps.n2;
+    let cos_i = Vec4::dot(&comps.e_vec, &comps.n_vec);
+    //sin2_t is used to detect internal refraction
+    let sin2_t = n_ratio.powi(2) * (1.0 - cos_i.powi(2));
+    if comps.material.transparency == 0.0 || remaining == 0 || sin2_t > 1.0 {
+        return BLACK;
+    }
+    let cos_t = (1.0 - sin2_t).sqrt();
+    let direction = &comps.n_vec * (n_ratio * cos_i - cos_t) - &comps.e_vec * n_ratio;
+    let refract_ray = Ray::new_from_vec(comps.over_point.clone(), direction);
+    let color = Scene::compute_color(refract_ray, scene, remaining - 1, offset);
+    if color != None {
+        color.unwrap() * comps.material.transparency
+    } else {
+        Color::new(0.0, 0.0, 0.0)
+    }
+}
+
+//Approximates reflectance
+pub fn schlick(comps: &Comp) -> f32 {
+   let mut cos = Vec4::dot(&comps.e_vec, &comps.n_vec);
+
+    if comps.n1 > comps.n2 {
+        //Ratio between refraction indices
+        let n_ratio = comps.n1 / comps.n2;
+        let cos_i = Vec4::dot(&comps.e_vec, &comps.n_vec);
+        //sin2_t is used to detect internal refraction
+        let sin2_t = (n_ratio * n_ratio) * (1.0 - (cos_i * cos_i));
+        if sin2_t > 1.0 {
+            return 1.0;
+        }
+        let cos_t = (1.0 - sin2_t).sqrt();
+        cos = cos_t;
+    }
+
+    let r0 = ((comps.n1 - comps.n2) / (comps.n1 + comps.n2)).powi(2);
+    r0 + (1.0 - r0) * ((1.0 - cos).powi(5))
+}
+
 //Computes a color given all the variables of the environment
 pub fn lighting(
     material: &Material,
@@ -194,12 +236,11 @@ pub fn lighting(
         let light_vec = (light_position - point).normalize();
 
         //light_dot_normal represents the cosine between the light and normal vectors
-        let light_dot_normal = Vec4::dot(&light_vec, n_vec);
+        let light_dot_normal = Vec4::dot(&light_vec, &n_vec);
 
         //A negative light_dot_normal means the light is obstructed
         if light_dot_normal >= 0.0 {
-            diffuse_sum = diffuse_sum
-                + &effective_color * material.diffuse * light_dot_normal * light_intensity;
+            diffuse_sum = diffuse_sum + (&effective_color * material.diffuse * light_dot_normal * light_intensity);
 
             //reflect_dot_eye represents the cosine of the angle between the reflection and eye vectors
             let reflect_vec = Vec4::reflect(&light_vec.negate(), &n_vec);

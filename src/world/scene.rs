@@ -46,7 +46,9 @@ impl Scene {
                 );
         }
         let reflected = reflected_color(&scene, comps, remaining, offset);
-        color + reflected
+        let refracted = refracted_color(&scene, comps, remaining, offset);
+        
+        color + reflected + refracted
     }
 
     //Computes the color at a given point

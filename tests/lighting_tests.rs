@@ -7,6 +7,7 @@ mod tests {
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::world::lighting::*;
     use rust_ray_tracer::objects::sphere::Sphere;
+    //use rust_ray_tracer::objects::plane::Plane;
     use rust_ray_tracer::objects::object::*;
     use rust_ray_tracer::world::scene::Scene;
     use rust_ray_tracer::materials::material::Material;
@@ -14,6 +15,7 @@ mod tests {
     use rust_ray_tracer::ray_tracing::ray::Ray;
     use rust_ray_tracer::core::comp::Comp;
     use rust_ray_tracer::ray_tracing::intersection::Intersection;
+    use rust_ray_tracer::materials::patterns::*;
 
     //Tests shadows when sphere does not block the light source from the point
     #[test]
@@ -204,6 +206,269 @@ mod tests {
     //Test refracted color of an opaque surface
     fn refraction_on_opaque() {
         let scene = Scene::default();
-
+        let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 0.0, 1.0));
+        let intersections = vec![
+            Intersection::new(
+                4.0,
+                Ray::position(&ray, 4.0),
+                scene.objects[0].normal(&Ray::position(&ray, 4.0)),
+                &*scene.objects[0],
+            ),
+            Intersection::new(
+                6.0,
+                Ray::position(&ray, 6.0),
+                scene.objects[0].normal(&Ray::position(&ray, 6.0)),
+                &*scene.objects[0],
+            )
+        ];
+        let comps = Comp::compute_vars(intersections[0].clone(), &ray, &intersections);
+        let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
+        assert_eq!(color, BLACK);
     }
+
+    #[test]
+    //Test refracted color over recursion limit
+    fn refraction_under_recursion_limit() {
+        let scene = Scene {
+            light_sources: vec![Box::new(PointLight::new(
+                Color::new(1.0, 1.0, 1.0),
+                Vec4::new(-10.0, 10.0, -10.0, 1.0),
+            ))],
+            objects: vec![
+                Box::new(Sphere::new(
+                    Matrix4x4::identity(),
+                    Material::new(
+                        Color::new(0.8, 1.0, 0.6),
+                        0.1,
+                        0.7,
+                        0.2,
+                        200.0,
+                        0.0,
+                        1.0,
+                        1.5,
+                        true,
+                        None,
+                    ),
+                )),
+                Box::new(Sphere::new(
+                    Matrix4x4::scaling(0.5, 0.5, 0.5),
+                    Material::default(),
+                )),
+            ],
+        };
+
+        let ray = Ray::new((0.0, 0.0, -5.0), (0.0, 0.0, 1.0));
+
+        let intersections = vec![
+            Intersection::new(
+                4.0,
+                Ray::position(&ray, 4.0),
+                scene.objects[0].normal(&Ray::position(&ray, 4.0)),
+                &*scene.objects[0],
+            ),
+            Intersection::new(
+                6.0,
+                Ray::position(&ray, 6.0),
+                scene.objects[0].normal(&Ray::position(&ray, 6.0)),
+                &*scene.objects[0],
+            )
+        ];
+
+        let comps = Comp::compute_vars(intersections[0].clone(), &ray, &intersections);
+        let color = refracted_color(&scene, &comps, 0, &mut Sequence::blank());
+        assert_eq!(color, BLACK);
+    }
+
+    #[test]
+    //Test refracted color with total internal refraction
+    //Total internal refraction occurs when a light ray enters a new medium with a lower refractive index at an acute angle
+    fn refraction_total_internal_refraction() {
+        let scene = Scene {
+            light_sources: vec![Box::new(PointLight::new(
+                Color::new(1.0, 1.0, 1.0),
+                Vec4::new(-10.0, 10.0, -10.0, 1.0),
+            ))],
+            objects: vec![
+                Box::new(Sphere::new(
+                    Matrix4x4::identity(),
+                    Material::new(
+                        Color::new(0.8, 1.0, 0.6),
+                        0.1,
+                        0.7,
+                        0.2,
+                        200.0,
+                        0.0,
+                        1.0,
+                        1.5,
+                        true,
+                        None,
+                    ),
+                )),
+                Box::new(Sphere::new(
+                    Matrix4x4::scaling(0.5, 0.5, 0.5),
+                    Material::default(),
+                )),
+            ],
+        };
+
+        let ray = Ray::new((0.0, 0.0, (2.0 as f32).sqrt() / 2.0), (0.0, 1.0, 0.0));
+
+        let intersections = vec![
+            Intersection::new(
+                -(2.0 as f32).sqrt() / 2.0,
+                Ray::position(&ray, -(2.0 as f32).sqrt() / 2.0),
+                scene.objects[0].normal(&Ray::position(&ray, -(2.0 as f32).sqrt() / 2.0)),
+                &*scene.objects[0],
+            ),
+            Intersection::new(
+                (2.0 as f32).sqrt() / 2.0,
+                Ray::position(&ray, (2.0 as f32).sqrt() / 2.0),
+                scene.objects[0].normal(&Ray::position(&ray, (2.0 as f32).sqrt() / 2.0)),
+                &*scene.objects[0],
+            )
+        ];
+
+        let comps = Comp::compute_vars(intersections[1].clone(), &ray, &intersections);
+        let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
+        assert_eq!(color, BLACK);
+    }
+
+    #[test]
+    //Test refracted color calculation
+    fn refracted_color_test() {
+        let mut material = Material::default();
+        material.transparency = 1.0;
+        material.refractive_index = 1.5;
+        let scene = Scene {
+            light_sources: vec![Box::new(PointLight::new(
+                Color::new(1.0, 1.0, 1.0),
+                Vec4::new(-10.0, 10.0, -10.0, 1.0),
+            ))],
+            objects: vec![
+                Box::new(Sphere::new(
+                    Matrix4x4::identity(),
+                    Material::new(
+                        Color::new(0.8, 1.0, 0.6),
+                        1.0,
+                        0.7,
+                        0.2,
+                        200.0,
+                        0.0,
+                        1.0,
+                        1.5,
+                        true,
+                        Some(Box::new(TestPattern::new(Matrix4x4::identity()))),
+                    ),
+                )),
+                Box::new(Sphere::new(
+                    Matrix4x4::scaling(0.5, 0.5, 0.5),
+                    material,
+                )),
+            ],
+        };
+
+        let ray = Ray::new((0.0, 0.0, 0.1), (0.0, 1.0, 0.0));
+
+        let intersections = vec![
+            Intersection::new(
+                -0.9899,
+                Ray::position(&ray, -0.9899),
+                scene.objects[0].normal(&Ray::position(&ray, -0.9899)),
+                &*scene.objects[0],
+            ),
+            Intersection::new(
+                -0.4899,
+                Ray::position(&ray, -0.4899),
+                scene.objects[1].normal(&Ray::position(&ray, -0.4899)),
+                &*scene.objects[1],
+            ),
+            Intersection::new(
+                0.4899,
+                Ray::position(&ray, 0.4899),
+                scene.objects[1].normal(&Ray::position(&ray, 0.4899)),
+                &*scene.objects[1],
+            ),
+            Intersection::new(
+                0.9899,
+                Ray::position(&ray, 0.9899),
+                scene.objects[0].normal(&Ray::position(&ray, 0.9899)),
+                &*scene.objects[0],
+            )
+        ];
+
+        let comps = Comp::compute_vars(intersections[2].clone(), &ray, &intersections);
+        let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
+        assert_eq!(color.round(), Color(0.0, 0.99888, 0.04724).round());
+    }
+
+    // #[test]
+    // //Tests color with refraction
+    // fn color_with_refraction() {
+    //     let mut material = Material::default();
+    //     material.transparency = 1.0;
+    //     material.refractive_index = 1.5;
+
+    //     let floor = Plane::default();
+       
+    //     let scene = Scene {
+    //         light_sources: vec![Box::new(PointLight::new(
+    //             Color::new(1.0, 1.0, 1.0),
+    //             Vec4::new(-10.0, 10.0, -10.0, 1.0),
+    //         ))],
+    //         objects: vec![
+    //             Box::new(Sphere::new(
+    //                 Matrix4x4::identity(),
+    //                 Material::new(
+    //                     Color::new(0.8, 1.0, 0.6),
+    //                     0.1,
+    //                     0.7,
+    //                     0.2,
+    //                     200.0,
+    //                     0.0,
+    //                     0.0,
+    //                     0.0,
+    //                     true,
+    //                     None,
+    //                 ),
+    //             )),
+    //             Box::new(Sphere::new(
+    //                 Matrix4x4::scaling(0.5, 0.5, 0.5),
+    //                 Material::default(),
+    //             )),
+    //         ],
+    //     };
+
+    //     let ray = Ray::new((0.0, 0.0, 0.1), (0.0, 1.0, 0.0));
+
+    //     let intersections = vec![
+    //         Intersection::new(
+    //             -0.9899,
+    //             Ray::position(&ray, -0.9899),
+    //             scene.objects[0].normal(&Ray::position(&ray, -0.9899)),
+    //             &*scene.objects[0],
+    //         ),
+    //         Intersection::new(
+    //             -0.4899,
+    //             Ray::position(&ray, -0.4899),
+    //             scene.objects[1].normal(&Ray::position(&ray, -0.4899)),
+    //             &*scene.objects[1],
+    //         ),
+    //         Intersection::new(
+    //             0.4899,
+    //             Ray::position(&ray, 0.4899),
+    //             scene.objects[1].normal(&Ray::position(&ray, 0.4899)),
+    //             &*scene.objects[1],
+    //         ),
+    //         Intersection::new(
+    //             0.9899,
+    //             Ray::position(&ray, 0.9899),
+    //             scene.objects[0].normal(&Ray::position(&ray, 0.9899)),
+    //             &*scene.objects[0],
+    //         )
+    //     ];
+
+    //     let comps = Comp::compute_vars(intersections[2].clone(), &ray, &intersections);
+    //     let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
+    //     assert_eq!(color.round(), Color(0.0, 0.99888, 0.04724).round());
+    // }
 }

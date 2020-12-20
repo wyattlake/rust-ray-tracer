@@ -6,10 +6,18 @@ pub struct Sequence {
 }
 
 impl Sequence {
-    //Creates a new Sequence{{}}
+    //Creates a new Sequence
     pub fn new(list: Vec<f32>) -> Sequence {
         Sequence {
             contents: list,
+            current_index: 0,
+        }
+    }
+
+    //Creates a blank sequence
+    pub fn blank() -> Sequence {
+        Sequence {
+            contents: vec![0.5],
             current_index: 0,
         }
     }

@@ -60,7 +60,9 @@ impl Object for Plane {
 
     //The normal of a plane is always a vector pointing directly upwards
     fn normal(&self, _world_point: &Vec4) -> Vec4 {
-        Vec4::new(0.0, 1.0, 0.0, 0.0)
+        let mut result = &self.inverse.transpose()  * Vec4::new(0.0, 1.0, 0.0, 0.0);
+        result.3 = 0.0;
+        result
     }
 
     fn eq(&self, other: &dyn Object) -> bool {
