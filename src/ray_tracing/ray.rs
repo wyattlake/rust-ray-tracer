@@ -6,8 +6,8 @@ use crate::world::scene::*;
 //A Ray has a origin (point) and a direction (vector)
 #[derive(Debug, PartialEq, Clone)]
 pub struct Ray {
-    origin: Vec4,
-    direction: Vec4,
+    pub origin: Vec4,
+    pub direction: Vec4,
 }
 
 impl Ray where {
@@ -27,26 +27,16 @@ impl Ray where {
         }
     }
 
-    //Gets the origin of a ray
-    pub fn get_origin(&self) -> &Vec4 {
-        &self.origin
-    }
-
-    //Gets the direction of a ray
-    pub fn get_direction(&self) -> &Vec4 {
-        &self.direction
-    }
-
     //Calculates the position of a ray
     pub fn position(ray: &Ray, t: f32) -> Vec4 {
-        ray.get_origin() + (ray.get_direction() * t)
+        &ray.origin + (&ray.direction * t)
     }
 
         //Creates a new Ray transformed by a matrix
     pub fn transform(ray: &Ray, matrix: &Matrix4x4) -> Ray {
         Ray {
-            origin: matrix * ray.get_origin(),
-            direction: matrix * ray.get_direction(),
+            origin: matrix * &ray.origin,
+            direction: matrix * &ray.direction,
         }
     }
 

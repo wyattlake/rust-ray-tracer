@@ -22,8 +22,8 @@ mod tests {
     fn center_ray() {
         let camera = Camera::new(201, 101, 90.0);
         let ray = Camera::ray_towards_pixel(&camera, 100, 50);
-        assert_eq!(ray.get_origin(), &Vec4::new(0.0, 0.0, 0.0, 1.0));
-        assert_eq!(ray.get_direction().round(), Vec4::new(0.0, 0.0, -1.0, 0.0));
+        assert_eq!(ray.origin, Vec4::new(0.0, 0.0, 0.0, 1.0));
+        assert_eq!(ray.direction.round(), Vec4::new(0.0, 0.0, -1.0, 0.0));
     }
 
     //Tests creating a ray towards the corner of the camera's view
@@ -31,8 +31,8 @@ mod tests {
     fn corner_ray() {
         let camera = Camera::new(201, 101, 90.0);
         let ray = Camera::ray_towards_pixel(&camera, 0, 0);
-        assert_eq!(ray.get_origin(), &Vec4::new(0.0, 0.0, 0.0, 1.0));
-        assert_eq!(ray.get_direction().round(), Vec4::new(0.66519, 0.33259, -0.66851, 0.0).round());
+        assert_eq!(ray.origin, Vec4::new(0.0, 0.0, 0.0, 1.0));
+        assert_eq!(ray.direction.round(), Vec4::new(0.66519, 0.33259, -0.66851, 0.0).round());
     }
 
     //Tests creating a transformed ray
@@ -41,8 +41,8 @@ mod tests {
         let mut camera = Camera::new(201, 101, 90.0);
         camera.transform(Matrix4x4::rotation(Axis::Y, 45.0) * Matrix4x4::translation(0.0, -2.0, 5.0));
         let ray = Camera::ray_towards_pixel(&camera, 100, 50);
-        assert_eq!(ray.get_origin(), &Vec4::new(0.0, 2.0, -5.0000005, 1.0));
-        assert_eq!(ray.get_direction().round(), Vec4::new((2 as f32).sqrt() / 2.0, 0.0, - (2 as f32).sqrt() / 2.0, 0.0).round());
+        assert_eq!(ray.origin, Vec4::new(0.0, 2.0, -5.0000005, 1.0));
+        assert_eq!(ray.direction.round(), Vec4::new((2 as f32).sqrt() / 2.0, 0.0, - (2 as f32).sqrt() / 2.0, 0.0).round());
     }
 
     //Tests rendering a scene

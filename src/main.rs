@@ -4,7 +4,7 @@ use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::sequence::Sequence;
 use rust_ray_tracer::core::vector::Vec4;
 use rust_ray_tracer::objects::plane::Plane;
-use rust_ray_tracer::objects::sphere::Sphere;
+use rust_ray_tracer::objects::cube::Cube;
 use rust_ray_tracer::world::camera::Camera;
 use rust_ray_tracer::world::lighting::*;
 use rust_ray_tracer::misc::axis::Axis;
@@ -15,8 +15,8 @@ use std::time::Instant;
 
 fn main() {
     //Width and height of the scene
-    const WIDTH: usize = 300;
-    const HEIGHT: usize = 150;
+    const WIDTH: usize = 1500;
+    const HEIGHT: usize = 750;
 
     //Canvas where color is stored
     let mut canvas = Canvas::new(WIDTH, HEIGHT);
@@ -30,30 +30,10 @@ fn main() {
 
     //Defining a reflective material
     let mut material2 = Material::default();
-    material2.transparency = 1.0;
-    material2.color = BLACK;
-    material2.refractive_index = 1.5;
-
-    //Defining a reflective material
-    let mut material3 = Material::default();
-    material3.reflectivity = 0.3;
-    material3.color = Color::new_255(237, 67, 33);
-
-    //Defining a reflective material
-    let mut material4 = Material::default();
-    material4.reflectivity = 0.3;
-    material4.color = Color::new_255(26, 65, 219);
-
-    let mut glass = Material::default();
-    glass.refractive_index = 1.5;
-    glass.transparency = 1.0;
-    glass.color = BLACK;
-
-    // //Setting up variables for an area light
-    // let corner = Vec4::new(-10.0, 10.0, -10.0, 1.0);
-    // let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
-    // let v2 = Vec4::new(0.0, 2.0, 0.0, 0.0);
-    // let light = AreaLight::new(corner, v1, 10, v2, 10, WHITE);
+    material2.color = Color::new(0.3, 0.3, 0.3);
+    material2.reflectivity = 0.9;
+    material2.transparency = 0.99;
+    material2.refractive_index = 1.1;
 
     let point_light = PointLight::new(Color(1.0, 1.0, 1.0), Vec4::new(-10.0, 10.0, -5.0, 1.0));
 
@@ -64,22 +44,17 @@ fn main() {
         light_sources: vec![Box::new(point_light)],
         objects: vec![
             Box::new(Plane::new(Matrix4x4::translation(0.0, 0.0, 8.0) * Matrix4x4::rotation(Axis::X, 90.0), material1.clone())),
-            Box::new(Sphere::new(
-                Matrix4x4::translation(0.15, 1.1, 0.0),
-                material2.clone(),
+            Box::new(Cube::new(
+                Matrix4x4::translation(0.0, 1.0, 0.0) * Matrix4x4::rotation(Axis::Y, -30.0) * Matrix4x4::rotation(Axis::X, -45.0),
+                material2,
             )),
-            //Box::new(Plane::new(Matrix4x4::rotation(Axis::X, 90.0), glass))
         ],
     };
-
-    for x in &scene.objects {
-        println!("index: {}", x.get_material().refractive_index);
-    }
     
     //Creates a camera and defines its properties
     let mut camera = Camera::new(WIDTH, HEIGHT, 40.0);
     let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
-    let end_pos = Vec4::new(0.0, 1.0, 3.0, 1.0);
+    let end_pos = Vec4::new(0.0, 1.1, 3.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 
     //Transforms the view according to the camera transformation
@@ -88,7 +63,7 @@ fn main() {
     println!("Render started...");
     let now = Instant::now();
 
-    Camera::render(&camera, &scene, &mut canvas, &mut seq);
+    Camera::render_supersampled(&camera, &scene, &mut canvas, &mut seq);
 
     let duration = now.elapsed();
     println!("Image successfully rendered");

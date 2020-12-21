@@ -48,19 +48,19 @@ impl Object for Plane {
     //Intersects a ray with a plane
     fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>> {
         let transformed_ray = Ray::transform(ray, &self.inverse);
-        if transformed_ray.get_direction().1.abs() <= EPSILON_BUMP {
+        if transformed_ray.origin.1.abs() <= EPSILON_BUMP {
             None 
         }
         else {
-            let t = -transformed_ray.get_origin().1 / transformed_ray.get_direction().1;
-            let i = Intersection::new(t, Ray::position(ray, t), self.normal(&Ray::position(ray, t)), self);
+            let t = -&transformed_ray.origin.1 / &transformed_ray.direction.1;
+            let i = Intersection::new(t, Ray::position(&ray, t), self.normal(&Ray::position(&ray, t)), self);
             Some(vec![i])
         }
     }
 
     //The normal of a plane is always a vector pointing directly upwards
     fn normal(&self, _world_point: &Vec4) -> Vec4 {
-        let mut result = &self.inverse.transpose()  * Vec4::new(0.0, 1.0, 0.0, 0.0);
+        let mut result = &self.inverse.transpose() * Vec4::new(0.0, 1.0, 0.0, 0.0);
         result.3 = 0.0;
         result
     }

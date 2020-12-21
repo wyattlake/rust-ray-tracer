@@ -64,8 +64,8 @@ impl Comp {
         let t = intersection.t;
         let point = Ray::position(ray, t);
         let mut n_vec = intersection.normal.clone();
-        let e_vec = ray.get_direction().negate();
-        let r_vec = Vec4::reflect(ray.get_direction(), &n_vec);
+        let e_vec = ray.direction.negate();
+        let r_vec = Vec4::reflect(&ray.direction, &n_vec);
         let mut inside = false;
         if Vec4::dot(&n_vec, &e_vec) < 0.0 {
             inside = true;

@@ -59,12 +59,12 @@ impl Object for Sphere {
     //Intersects a ray with a sphere
     fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>> {
         let transformed_ray = Ray::transform(ray, &self.inverse);
-        let vector_to_unit_sphere = transformed_ray.get_origin() - Vec4::new(0.0, 0.0, 0.0, 1.0);
+        let vector_to_unit_sphere = &transformed_ray.origin - Vec4::new(0.0, 0.0, 0.0, 1.0);
         let a = Vec4::dot(
-            &transformed_ray.get_direction(),
-            &transformed_ray.get_direction(),
+            &transformed_ray.direction,
+            &transformed_ray.direction,
         );
-        let b = 2.0 * Vec4::dot(&transformed_ray.get_direction(), &vector_to_unit_sphere);
+        let b = 2.0 * Vec4::dot(&transformed_ray.direction, &vector_to_unit_sphere);
         let c = Vec4::dot(&vector_to_unit_sphere, &vector_to_unit_sphere) - 1.0;
         let discriminant = (b * b) - (4.0 * a * c);
 
@@ -73,15 +73,15 @@ impl Object for Sphere {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let i1 = Intersection::new(
                 t1,
-                Ray::position(ray, t1),
-                self.normal(&Ray::position(ray, t1)),
+                Ray::position(&ray, t1),
+                self.normal(&Ray::position(&ray, t1)),
                 self,
             );
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
             let i2 = Intersection::new(
                 t2,
-                Ray::position(ray, t2),
-                self.normal(&Ray::position(ray, t2)),
+                Ray::position(&ray, t2),
+                self.normal(&Ray::position(&ray, t2)),
                 self,
             );
             Some(vec![i1, i2])
