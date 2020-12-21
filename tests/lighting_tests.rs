@@ -7,7 +7,7 @@ mod tests {
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::world::lighting::*;
     use rust_ray_tracer::objects::sphere::Sphere;
-    //use rust_ray_tracer::objects::plane::Plane;
+    use rust_ray_tracer::objects::plane::Plane;
     use rust_ray_tracer::objects::object::*;
     use rust_ray_tracer::world::scene::Scene;
     use rust_ray_tracer::materials::material::Material;
@@ -354,8 +354,8 @@ mod tests {
                         0.2,
                         200.0,
                         0.0,
+                        0.0,
                         1.0,
-                        1.5,
                         true,
                         Some(Box::new(TestPattern::new(Matrix4x4::identity()))),
                     ),
@@ -398,77 +398,71 @@ mod tests {
 
         let comps = Comp::compute_vars(intersections[2].clone(), &ray, &intersections);
         let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
-        assert_eq!(color.round(), Color(0.0, 0.99888, 0.04724).round());
+        assert_eq!(color.round(), Color(0.0, 0.9989, 0.0472).round());
     }
 
-    // #[test]
-    // //Tests color with refraction
-    // fn color_with_refraction() {
-    //     let mut material = Material::default();
-    //     material.transparency = 1.0;
-    //     material.refractive_index = 1.5;
+    #[test]
+    //Tests color with refraction
+    fn color_with_refraction() {
+        let mut material = Material::default();
+        material.transparency = 1.0;
+        material.refractive_index = 1.5;
 
-    //     let floor = Plane::default();
+        let mut floor_material = Material::default();
+        floor_material.transparency = 0.5;
+        floor_material.refractive_index = 1.5;
+
+        let floor = Plane::new(Matrix4x4::translation(0.0, -1.0, 0.0), floor_material);
+
+        let mut ball_material = Material::default();
+        ball_material.color = Color::new(1.0, 0.0, 0.0);
+        ball_material.ambient = 0.5;
+
+        let ball = Sphere::new(Matrix4x4::translation(0.0, -3.5, -0.5), ball_material);
        
-    //     let scene = Scene {
-    //         light_sources: vec![Box::new(PointLight::new(
-    //             Color::new(1.0, 1.0, 1.0),
-    //             Vec4::new(-10.0, 10.0, -10.0, 1.0),
-    //         ))],
-    //         objects: vec![
-    //             Box::new(Sphere::new(
-    //                 Matrix4x4::identity(),
-    //                 Material::new(
-    //                     Color::new(0.8, 1.0, 0.6),
-    //                     0.1,
-    //                     0.7,
-    //                     0.2,
-    //                     200.0,
-    //                     0.0,
-    //                     0.0,
-    //                     0.0,
-    //                     true,
-    //                     None,
-    //                 ),
-    //             )),
-    //             Box::new(Sphere::new(
-    //                 Matrix4x4::scaling(0.5, 0.5, 0.5),
-    //                 Material::default(),
-    //             )),
-    //         ],
-    //     };
+        let scene = Scene {
+            light_sources: vec![Box::new(PointLight::new(
+                Color::new(1.0, 1.0, 1.0),
+                Vec4::new(-10.0, 10.0, -10.0, 1.0),
+            ))],
+            objects: vec![
+                Box::new(Sphere::new(
+                    Matrix4x4::identity(),
+                    Material::new(
+                        Color::new(0.8, 1.0, 0.6),
+                        0.1,
+                        0.7,
+                        0.2,
+                        200.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        true,
+                        None,
+                    ),
+                )),
+                Box::new(Sphere::new(
+                    Matrix4x4::scaling(0.5, 0.5, 0.5),
+                    Material::default(),
+                )),
+                Box::new(floor),
+                Box::new(ball),
+            ],
+        };
 
-    //     let ray = Ray::new((0.0, 0.0, 0.1), (0.0, 1.0, 0.0));
+        let ray = Ray::new((0.0, 0.0, -3.0), (0.0, -((2.0 as f32).sqrt() / 2.0), (2.0 as f32).sqrt() / 2.0));
 
-    //     let intersections = vec![
-    //         Intersection::new(
-    //             -0.9899,
-    //             Ray::position(&ray, -0.9899),
-    //             scene.objects[0].normal(&Ray::position(&ray, -0.9899)),
-    //             &*scene.objects[0],
-    //         ),
-    //         Intersection::new(
-    //             -0.4899,
-    //             Ray::position(&ray, -0.4899),
-    //             scene.objects[1].normal(&Ray::position(&ray, -0.4899)),
-    //             &*scene.objects[1],
-    //         ),
-    //         Intersection::new(
-    //             0.4899,
-    //             Ray::position(&ray, 0.4899),
-    //             scene.objects[1].normal(&Ray::position(&ray, 0.4899)),
-    //             &*scene.objects[1],
-    //         ),
-    //         Intersection::new(
-    //             0.9899,
-    //             Ray::position(&ray, 0.9899),
-    //             scene.objects[0].normal(&Ray::position(&ray, 0.9899)),
-    //             &*scene.objects[0],
-    //         )
-    //     ];
+        let intersections = vec![
+            Intersection::new(
+                (2.0 as f32).sqrt(),
+                Ray::position(&ray, (2.0 as f32).sqrt()),
+                scene.objects[2].normal(&Ray::position(&ray, (2.0 as f32).sqrt())),
+                &*scene.objects[2],
+            ),
+        ];
 
-    //     let comps = Comp::compute_vars(intersections[2].clone(), &ray, &intersections);
-    //     let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
-    //     assert_eq!(color.round(), Color(0.0, 0.99888, 0.04724).round());
-    // }
+        let comps = Comp::compute_vars(intersections[0].clone(), &ray, &intersections);
+        let color = Scene::scene_lighting(&scene, &comps, 5, &mut Sequence::blank());
+        assert_eq!(color.round(), Color(0.93642, 0.68642, 0.68642).round());
+    }
 }

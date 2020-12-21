@@ -45,8 +45,16 @@ impl Scene {
                     light_intensity,
                 );
         }
-        let reflected = reflected_color(&scene, comps, remaining, offset);
-        let refracted = refracted_color(&scene, comps, remaining, offset);
+
+        let mut reflected = reflected_color(&scene, comps, remaining, offset);
+        let mut refracted = refracted_color(&scene, comps, remaining, offset);
+
+        let reflectance = schlick(comps);
+
+        if comps.material.reflectivity > 0.0 && comps.material.transparency > 0.0 {
+            reflected = reflected * reflectance;
+            refracted = refracted * (1.0 - reflectance);
+        }
         
         color + reflected + refracted
     }
@@ -87,7 +95,7 @@ impl Scene {
                         200.0,
                         0.0,
                         0.0,
-                        0.0,
+                        1.0,
                         true,
                         None,
                     ),

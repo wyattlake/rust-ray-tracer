@@ -24,14 +24,15 @@ fn main() {
     let mut material1 = Material::default();
 
     //Defining a checkerboard material
-    material1.pattern = Some(Box::new(TestPattern::new(Matrix4x4::identity())));
+    material1.pattern = Some(Box::new(CheckerboardPattern::new(WHITE, BLACK, Matrix4x4::identity())));
     material1.diffuse = 0.8;
     material1.casts_shadows = false;
 
     //Defining a reflective material
     let mut material2 = Material::default();
-    material2.reflectivity = 0.3;
-    material2.color = Color::new_255(168, 57, 237);
+    material2.transparency = 1.0;
+    material2.color = BLACK;
+    material2.refractive_index = 1.5;
 
     //Defining a reflective material
     let mut material3 = Material::default();
@@ -42,6 +43,11 @@ fn main() {
     let mut material4 = Material::default();
     material4.reflectivity = 0.3;
     material4.color = Color::new_255(26, 65, 219);
+
+    let mut glass = Material::default();
+    glass.refractive_index = 1.5;
+    glass.transparency = 1.0;
+    glass.color = BLACK;
 
     // //Setting up variables for an area light
     // let corner = Vec4::new(-10.0, 10.0, -10.0, 1.0);
@@ -57,27 +63,22 @@ fn main() {
     let scene: Scene = Scene {
         light_sources: vec![Box::new(point_light)],
         objects: vec![
-            Box::new(Plane::new(Matrix4x4::identity(), material1.clone())),
-            Box::new(Plane::new(Matrix4x4::translation(0.0, 1.0, 8.0) * Matrix4x4::rotation(Axis::X, 90.0), material1.clone())),
-            Box::new(Plane::new(Matrix4x4::translation(0.0, 0.0, -10.0) * Matrix4x4::rotation(Axis::X, 90.0), material1.clone())),
+            Box::new(Plane::new(Matrix4x4::translation(0.0, 0.0, 8.0) * Matrix4x4::rotation(Axis::X, 90.0), material1.clone())),
             Box::new(Sphere::new(
-                Matrix4x4::translation(0.15, 1.0, 0.0),
+                Matrix4x4::translation(0.15, 1.1, 0.0),
                 material2.clone(),
             )),
-            Box::new(Sphere::new(
-                Matrix4x4::translation(1.7, 0.5, -1.0) * Matrix4x4::scaling(0.5, 0.5, 0.5),
-                material3,
-            )),
-            Box::new(Sphere::new(
-                Matrix4x4::translation(-1.8, 0.75, 0.0) * Matrix4x4::scaling(0.75, 0.75, 0.75),
-                material4,
-            )),
+            //Box::new(Plane::new(Matrix4x4::rotation(Axis::X, 90.0), glass))
         ],
     };
 
+    for x in &scene.objects {
+        println!("index: {}", x.get_material().refractive_index);
+    }
+    
     //Creates a camera and defines its properties
     let mut camera = Camera::new(WIDTH, HEIGHT, 40.0);
-    let start_pos = Vec4::new(0.0, 1.5, -8.0, 1.0);
+    let start_pos = Vec4::new(0.0, 1.5, -7.0, 1.0);
     let end_pos = Vec4::new(0.0, 1.0, 3.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 

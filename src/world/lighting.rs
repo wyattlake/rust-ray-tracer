@@ -162,17 +162,20 @@ pub fn reflected_color(
 
 //Finds the refracted color at a certain point
 pub fn refracted_color(scene: &Scene, comps: &Comp, remaining: i32, offset: &mut Sequence,) -> Color {
+    if remaining <= 0 || comps.material.transparency == 0.0 {
+        return BLACK;
+    }
     //Ratio between refraction indices
     let n_ratio = comps.n1 / comps.n2;
     let cos_i = Vec4::dot(&comps.e_vec, &comps.n_vec);
     //sin2_t is used to detect internal refraction
-    let sin2_t = n_ratio.powi(2) * (1.0 - cos_i.powi(2));
-    if comps.material.transparency == 0.0 || remaining == 0 || sin2_t > 1.0 {
+    let sin2_t = (n_ratio.powi(2)) * (1.0 - (cos_i.powi(2)));
+    if sin2_t > 1.0 {
         return BLACK;
     }
     let cos_t = (1.0 - sin2_t).sqrt();
-    let direction = &comps.n_vec * (n_ratio * cos_i - cos_t) - &comps.e_vec * n_ratio;
-    let refract_ray = Ray::new_from_vec(comps.over_point.clone(), direction);
+    let direction = (&comps.n_vec * (n_ratio * cos_i - cos_t)) - (&comps.e_vec * n_ratio);
+    let refract_ray = Ray::new_from_vec(comps.under_point.clone(), direction);
     let color = Scene::compute_color(refract_ray, scene, remaining - 1, offset);
     if color != None {
         color.unwrap() * comps.material.transparency

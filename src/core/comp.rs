@@ -67,12 +67,15 @@ impl Comp {
         let e_vec = ray.get_direction().negate();
         let r_vec = Vec4::reflect(ray.get_direction(), &n_vec);
         let mut inside = false;
-        let over_point = &point + (&n_vec.normalize() * EPSILON_BUMP);
-        let under_point = &point - (&n_vec.normalize() * EPSILON_BUMP);
         if Vec4::dot(&n_vec, &e_vec) < 0.0 {
             inside = true;
             n_vec = n_vec.negate();
         }
+        let offset = &n_vec * EPSILON_BUMP;
+        let over_point = &point + &offset;
+        let under_point = &point - &offset;
+
+        
         let mut n1 = 1.0;
         let mut n2 = 1.0;
 
