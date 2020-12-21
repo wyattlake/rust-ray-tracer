@@ -92,14 +92,14 @@ impl Object for Cube {
                 vec![
                     Intersection::new(
                         tmin,
-                        Ray::position(&transformed_ray, tmin),
-                        self.normal(&Ray::position(&transformed_ray, tmin)),
+                        Ray::position(&ray, tmin),
+                        self.normal(&Ray::position(&ray, tmin)),
                         self,
                     ),
                     Intersection::new(
                         tmax,
-                        Ray::position(&transformed_ray, tmax),
-                        self.normal(&Ray::position(&transformed_ray, tmax)),
+                        Ray::position(&ray, tmax),
+                        self.normal(&Ray::position(&ray, tmax)),
                         self,
                     ),
                 ]
@@ -109,17 +109,18 @@ impl Object for Cube {
 
     //Finds the normal on a given point on a cube
     fn normal(&self, world_point: &Vec4) -> Vec4 {
-        let coords = [world_point.0.abs(), world_point.1.abs(), world_point.2.abs()];
+        let transformed_point = &self.inverse * world_point;
+        let coords = [transformed_point.0.abs(), transformed_point.1.abs(), transformed_point.2.abs()];
         let max_coord = coords.iter().fold(-f32::INFINITY, |a, &b| a.max(b));
         let result;
-        if max_coord == world_point.0.abs() {
-            result = Vec4(world_point.0, 0.0, 0.0, 0.0);
+        if max_coord == transformed_point.0.abs() {
+            result = Vec4(transformed_point.0, 0.0, 0.0, 0.0);
         }
-        else if max_coord == world_point.1.abs() {
-            result = Vec4(0.0, world_point.1, 0.0, 0.0);
+        else if max_coord == transformed_point.1.abs() {
+            result = Vec4(0.0, transformed_point.1, 0.0, 0.0);
         }
         else {
-            result = Vec4(0.0, 0.0, world_point.2, 0.0);
+            result = Vec4(0.0, 0.0, transformed_point.2, 0.0);
         }
         let mut world_normal = &self.inverse.transpose() * result;
         world_normal.3 = 0.0;

@@ -8,7 +8,6 @@ mod tests {
     use rust_ray_tracer::world::scene::Scene;
     use rust_ray_tracer::core::canvas::Canvas;
     use rust_ray_tracer::core::color::Color;
-    use rust_ray_tracer::core::sequence::Sequence;
 
     //Tests the pixel size of a new camera
     #[test]
@@ -55,7 +54,7 @@ mod tests {
         let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
         camera.transform(Matrix4x4::view_transform(start_pos, end_pos, up_vec));
         let mut canvas = Canvas::new(11, 11);
-        Camera::render(&camera, &scene, &mut canvas, &mut Sequence::new(vec![0.0]));
+        Camera::render(&camera, &scene, &mut canvas);
         assert_eq!(canvas.get(5, 5).unwrap().round(), Color::new(0.38072, 0.47583, 0.2855).round());
     }
 }

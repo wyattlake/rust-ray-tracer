@@ -60,36 +60,7 @@ mod tests {
         assert_eq!(light.get_intensity(), &Color::new(1.0, 1.0, 1.0));
     }
 
-    #[test]
-    //Tests the light_intensity function of an AreaLight
-    fn area_light_intensity() {
-        let scene = Scene::default();
-        let corner = Vec4::new(-0.5, -0.5, -5.0, 1.0);
-        let v1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
-        let v2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
-        let mut list = Sequence::new(vec![0.5]);
-        let light = AreaLight::new(corner, v1, 2, v2, 2, Color::new(1.0, 1.0, 1.0));
-        assert_eq!(
-            &light.light_intensity(&Vec4::new(0.0, 0.0, 2.0, 1.0), &scene, &mut list),
-            &0.0
-        );
-        assert_eq!(
-            &light.light_intensity(&Vec4::new(1.0, -1.0, 2.0, 1.0), &scene, &mut list),
-            &0.25
-        );
-        assert_eq!(
-            &light.light_intensity(&Vec4::new(1.5, 0.0, 2.0, 1.0), &scene, &mut list),
-            &0.5
-        );
-        assert_eq!(
-            &light.light_intensity(&Vec4::new(1.25, 1.25, 3.0, 1.0), &scene, &mut list),
-            &0.75
-        );
-        assert_eq!(
-            &light.light_intensity(&Vec4::new(0.0, 0.0, -2.0, 1.0), &scene, &mut list),
-            &1.0
-        );
-    }
+
 
     #[test]
     //Tests the Sequence struct
@@ -222,7 +193,7 @@ mod tests {
             )
         ];
         let comps = Comp::compute_vars(intersections[0].clone(), &ray, &intersections);
-        let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
+        let color = refracted_color(&scene, &comps, 5);
         assert_eq!(color, BLACK);
     }
 
@@ -275,7 +246,7 @@ mod tests {
         ];
 
         let comps = Comp::compute_vars(intersections[0].clone(), &ray, &intersections);
-        let color = refracted_color(&scene, &comps, 0, &mut Sequence::blank());
+        let color = refracted_color(&scene, &comps, 0);
         assert_eq!(color, BLACK);
     }
 
@@ -329,7 +300,7 @@ mod tests {
         ];
 
         let comps = Comp::compute_vars(intersections[1].clone(), &ray, &intersections);
-        let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
+        let color = refracted_color(&scene, &comps, 5);
         assert_eq!(color, BLACK);
     }
 
@@ -397,7 +368,7 @@ mod tests {
         ];
 
         let comps = Comp::compute_vars(intersections[2].clone(), &ray, &intersections);
-        let color = refracted_color(&scene, &comps, 5, &mut Sequence::blank());
+        let color = refracted_color(&scene, &comps, 5);
         assert_eq!(color.round(), Color(0.0, 0.9989, 0.0472).round());
     }
 
@@ -462,7 +433,7 @@ mod tests {
         ];
 
         let comps = Comp::compute_vars(intersections[0].clone(), &ray, &intersections);
-        let color = Scene::scene_lighting(&scene, &comps, 5, &mut Sequence::blank());
+        let color = Scene::scene_lighting(&scene, &comps, 5);
         assert_eq!(color.round(), Color(0.93642, 0.68642, 0.68642).round());
     }
 }

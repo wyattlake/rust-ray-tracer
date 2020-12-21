@@ -1,7 +1,6 @@
 use crate::core::color::Color;
 use crate::core::comp::Comp;
 use crate::core::matrix::Matrix4x4;
-use crate::core::sequence::Sequence;
 use crate::core::vector::Vec4;
 use crate::objects::object::*;
 use crate::objects::sphere::Sphere;
@@ -29,11 +28,10 @@ impl Scene {
         scene: &Scene,
         comps: &Comp,
         remaining: i32,
-        offset: &mut Sequence,
     ) -> Color {
         let mut color = Color::new(0.0, 0.0, 0.0);
         for light in &scene.light_sources {
-            let light_intensity = light.light_intensity(&comps.over_point, &scene, offset);
+            let light_intensity = light.light_intensity(&comps.over_point, &scene);
             color = color
                 + lighting(
                     &comps.material,
@@ -46,8 +44,8 @@ impl Scene {
                 );
         }
 
-        let mut reflected = reflected_color(&scene, comps, remaining, offset);
-        let mut refracted = refracted_color(&scene, comps, remaining, offset);
+        let mut reflected = reflected_color(&scene, comps, remaining);
+        let mut refracted = refracted_color(&scene, comps, remaining);
 
         let reflectance = schlick(comps);
 
@@ -64,13 +62,12 @@ impl Scene {
         ray: Ray,
         scene: &Scene,
         remaining: i32,
-        offset: &mut Sequence,
     ) -> Option<Color> {
         let intersections = Ray::intersect_scene(&scene, ray.clone());
         let hit = Intersection::hit(&intersections);
         if !hit.is_none() {
             let comps = Comp::compute_vars(hit.unwrap(), &ray, &intersections);
-            let color = Scene::scene_lighting(scene, &comps, remaining, offset);
+            let color = Scene::scene_lighting(scene, &comps, remaining);
             Some(color)
         } else {
             None

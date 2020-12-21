@@ -1,12 +1,12 @@
 use crate::core::color::*;
 use crate::core::comp::Comp;
 use crate::core::matrix::Matrix4x4;
-use crate::core::sequence::Sequence;
 use crate::core::vector::Vec4;
 use crate::ray_tracing::intersection::Intersection;
 use crate::materials::material::*;
 use crate::ray_tracing::ray::Ray;
 use crate::world::scene::Scene;
+use rand::Rng;
 
 //A Light is either a PointLight or an AreaLight
 pub trait Light {
@@ -14,9 +14,9 @@ pub trait Light {
 
     fn get_position(&self) -> &Vec4;
 
-    fn get_positions(&self, offset: &mut Sequence) -> Vec<Vec4>;
+    fn get_positions(&self) -> Vec<Vec4>;
 
-    fn light_intensity(&self, point: &Vec4, scene: &Scene, offset: &mut Sequence) -> f32;
+    fn light_intensity(&self, point: &Vec4, scene: &Scene) -> f32;
 }
 
 //An area light is an array of lights which produce soft shadows
@@ -40,21 +40,21 @@ impl Light for AreaLight {
         &self.corner
     }
 
-    fn get_positions(&self, offset: &mut Sequence) -> Vec<Vec4> {
+    fn get_positions(&self) -> Vec<Vec4> {
         let mut vec = vec![];
         for v in 0..self.vsteps {
             for u in 0..self.usteps {
-                vec.push(self.point_on_light(u, v, offset));
+                vec.push(self.point_on_light(u, v));
             }
         }
         vec
     }
 
-    fn light_intensity(&self, point: &Vec4, scene: &Scene, offset: &mut Sequence) -> f32 {
+    fn light_intensity(&self, point: &Vec4, scene: &Scene) -> f32 {
         let mut total = 0.0;
         for v in 0..self.vsteps {
             for u in 0..self.usteps {
-                let light_position = self.point_on_light(u, v, offset);
+                let light_position = self.point_on_light(u, v);
                 if !in_shadow(&light_position, point, scene) {
                     total += 1.0;
                 }
@@ -85,10 +85,11 @@ impl AreaLight {
         }
     }
 
-    pub fn point_on_light(&self, u: usize, v: usize, offset: &mut Sequence) -> Vec4 {
+    pub fn point_on_light(&self, u: usize, v: usize) -> Vec4 {
+        let mut rng = rand::thread_rng();
         &self.corner
-            + &self.uvec * ((u as f32) + (offset.next()))
-            + &self.vvec * ((v as f32) + (offset.next()))
+            + &self.uvec * ((u as f32) + rng.gen_range(-0.5, 0.5))
+            + &self.vvec * ((v as f32) + rng.gen_range(-0.5, 0.5))
     }
 }
 
@@ -108,12 +109,12 @@ impl Light for PointLight {
         &self.position
     }
 
-    fn get_positions(&self, _offset: &mut Sequence) -> Vec<Vec4> {
+    fn get_positions(&self) -> Vec<Vec4> {
         vec![self.position.clone()]
     }
 
     //Finds the intensity of a PointLight at a given point
-    fn light_intensity(&self, point: &Vec4, scene: &Scene, _offset: &mut Sequence) -> f32 {
+    fn light_intensity(&self, point: &Vec4, scene: &Scene) -> f32 {
         if in_shadow(&self.position, point, scene) == true {
             0.0
         } else {
@@ -137,7 +138,6 @@ pub fn reflected_color(
     scene: &Scene,
     comps: &Comp,
     remaining: i32,
-    offset: &mut Sequence,
 ) -> Color {
     if comps.material.reflectivity == 0.0 || remaining <= 0 {
         Color::new(0.0, 0.0, 0.0)
@@ -151,7 +151,7 @@ pub fn reflected_color(
             ),
             Vec4::new(comps.r_vec.0, comps.r_vec.1, comps.r_vec.2, 0.0),
         );
-        let color = Scene::compute_color(reflected_ray, scene, remaining - 1, offset);
+        let color = Scene::compute_color(reflected_ray, scene, remaining - 1);
         if color != None {
             color.unwrap() * comps.material.reflectivity
         } else {
@@ -161,7 +161,7 @@ pub fn reflected_color(
 }
 
 //Finds the refracted color at a certain point
-pub fn refracted_color(scene: &Scene, comps: &Comp, remaining: i32, offset: &mut Sequence,) -> Color {
+pub fn refracted_color(scene: &Scene, comps: &Comp, remaining: i32) -> Color {
     if remaining <= 0 || comps.material.transparency == 0.0 {
         return BLACK;
     }
@@ -176,7 +176,7 @@ pub fn refracted_color(scene: &Scene, comps: &Comp, remaining: i32, offset: &mut
     let cos_t = (1.0 - sin2_t).sqrt();
     let direction = (&comps.n_vec * (n_ratio * cos_i - cos_t)) - (&comps.e_vec * n_ratio);
     let refract_ray = Ray::new_from_vec(comps.under_point.clone(), direction);
-    let color = Scene::compute_color(refract_ray, scene, remaining - 1, offset);
+    let color = Scene::compute_color(refract_ray, scene, remaining - 1);
     if color != None {
         color.unwrap() * comps.material.transparency
     } else {
@@ -234,7 +234,7 @@ pub fn lighting(
     let mut specular_sum = BLACK;
 
     //Iterate through lights
-    for light_position in light.get_positions(&mut Sequence::new(vec![0.5])) {
+    for light_position in light.get_positions() {
         //Finds the direction to the light source
         let light_vec = (light_position - point).normalize();
 
@@ -257,7 +257,7 @@ pub fn lighting(
         }
     }
 
-    let light_count: f32 = 1.0 / (light.get_positions(&mut Sequence::new(vec![0.5])).len() as f32);
+    let light_count: f32 = 1.0 / (light.get_positions().len() as f32);
     ambient + (diffuse_sum * light_count) + (specular_sum * light_count)
 }
 

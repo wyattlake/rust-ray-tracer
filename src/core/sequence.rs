@@ -2,7 +2,7 @@
 #[derive(Debug, PartialEq)]
 pub struct Sequence {
     pub contents: Vec<f32>,
-    current_index: usize,
+    pub current_index: usize,
 }
 
 impl Sequence {

@@ -1,7 +1,6 @@
 use crate::core::canvas::Canvas;
 use crate::core::color::Color;
 use crate::core::matrix::Matrix4x4;
-use crate::core::sequence::Sequence;
 use crate::core::vector::Vec4;
 use crate::ray_tracing::ray::Ray;
 use crate::world::scene::Scene;
@@ -96,7 +95,7 @@ impl Camera {
     }
 
     //Renders a scene
-    pub fn render(camera: &Camera, scene: &Scene, canvas: &mut Canvas, light_offset: &mut Sequence) {
+    pub fn render(camera: &Camera, scene: &Scene, canvas: &mut Canvas) {
         let mut counter = 0;
         let mut percent = 0;
         let pixels = &camera.hsize * &camera.vsize;
@@ -104,7 +103,7 @@ impl Camera {
         for y in 0..camera.vsize {
             for x in 0..camera.hsize {
                 let ray = Camera::ray_towards_pixel(camera, x, y);
-                let color = Scene::compute_color(ray, scene, 5, light_offset);
+                let color = Scene::compute_color(ray, scene, 5);
                 if color != None {
                     canvas.set(color.unwrap().clone(), x, y);
                 }
@@ -120,7 +119,7 @@ impl Camera {
     }
 
     //Renders a scene
-    pub fn render_supersampled(camera: &Camera, scene: &Scene, canvas: &mut Canvas, light_offset: &mut Sequence) {
+    pub fn render_supersampled(camera: &Camera, scene: &Scene, canvas: &mut Canvas) {
         let mut counter = 0;
         let mut percent = 0;
         let pixels = &camera.hsize * &camera.vsize;
@@ -133,11 +132,11 @@ impl Camera {
                 let ray4 = Camera::ray_towards_pixel_raw(camera, x, y, 1.0, 0.0);
                 let ray5 = Camera::ray_towards_pixel_raw(camera, x, y, 1.0, 1.0);
                 let mut list = vec![
-                    Scene::compute_color(ray1, scene, 5, light_offset),
-                    Scene::compute_color(ray2, scene, 5, light_offset),
-                    Scene::compute_color(ray3, scene, 5, light_offset),
-                    Scene::compute_color(ray4, scene, 5, light_offset),
-                    Scene::compute_color(ray5, scene, 5, light_offset),
+                    Scene::compute_color(ray1, scene, 5),
+                    Scene::compute_color(ray2, scene, 5),
+                    Scene::compute_color(ray3, scene, 5),
+                    Scene::compute_color(ray4, scene, 5),
+                    Scene::compute_color(ray5, scene, 5),
                 ];
                 let mut result = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..5 {
