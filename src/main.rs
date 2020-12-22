@@ -2,8 +2,9 @@ use rust_ray_tracer::core::canvas::Canvas;
 use rust_ray_tracer::core::color::*;
 use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::vector::Vec4;
+use rust_ray_tracer::misc::axis::Axis;
 use rust_ray_tracer::objects::plane::Plane;
-use rust_ray_tracer::objects::cylinder::Cylinder;
+use rust_ray_tracer::objects::cone::Cone;
 use rust_ray_tracer::objects::cube::Cube;
 use rust_ray_tracer::objects::sphere::Sphere;
 use rust_ray_tracer::world::camera::Camera;
@@ -24,7 +25,7 @@ fn main() {
     let corner = Vec4::new(-1.0, 2.0, 4.0, 1.0);
     let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
     let v2 = Vec4::new(0.0, 2.0, 0.0, 0.0);
-    let light = AreaLight::new(corner, v1, 1, v2, 1, Color(1.5, 1.5, 1.5));
+    let light = AreaLight::new(corner, v1, 2, v2, 2, Color(1.5, 1.5, 1.5));
 
     //Surrounding the light in a cube
     let mut light_cube_material = Material::default();
@@ -61,9 +62,9 @@ fn main() {
     blue_material.ambient = 0.1;
     blue_material.specular = 0.0;
     blue_material.diffuse = 0.6;
-    blue_material.reflectivity = 0.3;
+    //blue_material.reflectivity = 0.3;
 
-    let blue_sphere = Cylinder::new(Matrix4x4::translation(-0.25, 0.33, 0.0) * Matrix4x4::scaling(0.33, 0.33, 0.33), blue_material, 0.0, 0.5, true);
+    let blue_sphere = Cone::new(Matrix4x4::translation(-0.2, 0.7, 1.0), blue_material, -1.0, 0.0, false);
 
     //Creating a red sphere
     let mut glass_material = Material::default();

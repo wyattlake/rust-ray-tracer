@@ -8,7 +8,7 @@ impl Vec4 {
     //Checks if a given Vec4 is a vector
     fn is_vector(vector: &Vec4) {
         if vector.3 != 0.0 {
-            panic!("Vec4 cannot be a point")
+            panic!("Vec4 {:?} cannot be a point", vector)
         }
     }
 
