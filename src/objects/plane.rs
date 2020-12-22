@@ -48,7 +48,7 @@ impl Object for Plane {
     //Intersects a ray with a plane
     fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>> {
         let transformed_ray = Ray::transform(ray, &self.inverse);
-        if transformed_ray.origin.1.abs() <= EPSILON_BUMP {
+        if transformed_ray.origin.1.abs() < EPSILON_BUMP {
             None 
         }
         else {

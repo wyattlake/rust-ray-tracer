@@ -3,6 +3,7 @@ use rust_ray_tracer::core::color::*;
 use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::vector::Vec4;
 use rust_ray_tracer::objects::plane::Plane;
+use rust_ray_tracer::objects::cylinder::Cylinder;
 use rust_ray_tracer::objects::cube::Cube;
 use rust_ray_tracer::objects::sphere::Sphere;
 use rust_ray_tracer::world::camera::Camera;
@@ -23,7 +24,7 @@ fn main() {
     let corner = Vec4::new(-1.0, 2.0, 4.0, 1.0);
     let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
     let v2 = Vec4::new(0.0, 2.0, 0.0, 0.0);
-    let light = AreaLight::new(corner, v1, 5, v2, 5, Color(1.5, 1.5, 1.5));
+    let light = AreaLight::new(corner, v1, 1, v2, 1, Color(1.5, 1.5, 1.5));
 
     //Surrounding the light in a cube
     let mut light_cube_material = Material::default();
@@ -54,7 +55,7 @@ fn main() {
 
     let red_sphere = Sphere::new(Matrix4x4::translation(0.5, 0.5, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), red_material);
 
-    //Creating a red sphere
+    //Creating a blue sphere
     let mut blue_material = Material::default();
     blue_material.color = Color(0.5, 0.5, 1.0);
     blue_material.ambient = 0.1;
@@ -62,7 +63,7 @@ fn main() {
     blue_material.diffuse = 0.6;
     blue_material.reflectivity = 0.3;
 
-    let blue_sphere = Sphere::new(Matrix4x4::translation(-0.25, 0.33, 0.0) * Matrix4x4::scaling(0.33, 0.33, 0.33), blue_material);
+    let blue_sphere = Cylinder::new(Matrix4x4::translation(-0.25, 0.33, 0.0) * Matrix4x4::scaling(0.33, 0.33, 0.33), blue_material, 0.0, 0.5, true);
 
     //Creating a red sphere
     let mut glass_material = Material::default();
@@ -70,8 +71,8 @@ fn main() {
     glass_material.ambient = 0.1;
     glass_material.specular = 0.0;
     glass_material.diffuse = 0.6;
-    glass_material.reflectivity = 0.3;
-    let cube = Cube::new(Matrix4x4::translation(0.2, 0.43, -0.1) * Matrix4x4::scaling(0.2, 0.43, 0.06), glass_material);
+    // glass_material.reflectivity = 0.3;
+    let cube = Sphere::new(Matrix4x4::translation(0.2, 0.43, -0.1) * Matrix4x4::scaling(0.2, 0.43, 0.06), glass_material);
 
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {
@@ -79,14 +80,14 @@ fn main() {
         objects: vec![
             Box::new(light_cube),
             Box::new(plane),
-            // Box::new(red_sphere),
-            // Box::new(blue_sphere),
-            Box::new(cube)
+            Box::new(red_sphere),
+            Box::new(blue_sphere),
+            // Box::new(cube)
         ],
     };
     
     //Creates a camera and defines its properties
-    let mut camera = Camera::new(WIDTH, HEIGHT, 40.0);
+    let mut camera = Camera::new(WIDTH, HEIGHT, 45.0);
     let start_pos = Vec4::new(-3.0, 1.0, 2.5, 1.0);
     let end_pos = Vec4::new(0.0, 0.5, 0.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
@@ -97,7 +98,7 @@ fn main() {
     println!("Render started...");
     let now = Instant::now();
 
-    Camera::render_supersampled(&camera, &scene, &mut canvas);
+    Camera::render(&camera, &scene, &mut canvas);
 
     let duration = now.elapsed();
     println!("Image successfully rendered");

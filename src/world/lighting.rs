@@ -44,7 +44,7 @@ impl Light for AreaLight {
         let mut vec = vec![];
         for v in 0..self.vsteps {
             for u in 0..self.usteps {
-                vec.push(self.point_on_light(u, v));
+                vec.push(self.point_on_light(u, v, false));
             }
         }
         vec
@@ -54,7 +54,7 @@ impl Light for AreaLight {
         let mut total = 0.0;
         for v in 0..self.vsteps {
             for u in 0..self.usteps {
-                let light_position = self.point_on_light(u, v);
+                let light_position = self.point_on_light(u, v, true);
                 if !in_shadow(&light_position, point, scene) {
                     total += 1.0;
                 }
@@ -85,11 +85,18 @@ impl AreaLight {
         }
     }
 
-    pub fn point_on_light(&self, u: usize, v: usize) -> Vec4 {
+    pub fn point_on_light(&self, u: usize, v: usize, jitter: bool) -> Vec4 {
         let mut rng = rand::thread_rng();
-        &self.corner
+        if jitter {
+            &self.corner
             + &self.uvec * ((u as f32) + rng.gen_range(-0.5, 0.5))
             + &self.vvec * ((v as f32) + rng.gen_range(-0.5, 0.5))
+        }
+        else {
+            &self.corner
+            + &self.uvec * ((u as f32) + 0.5)
+            + &self.vvec * ((v as f32) + 0.5)
+        }
     }
 }
 
