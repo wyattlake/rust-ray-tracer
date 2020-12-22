@@ -79,26 +79,29 @@ impl Object for Cylinder {
                 t2 = temp;
             }
             let mut intersections = vec![];
+            
+            //Modifies intersection slightly to prevent acne
+            let bump = 0.00005;
 
-            let y1 = ray.origin.1 + t1 * ray.direction.1;
+            let y1 = transformed_ray.origin.1 + (t1 * transformed_ray.direction.1);
             if self.minimum < y1 && y1 < self.maximum {
                 intersections.push(
                     Intersection::new(
-                        t1,
-                        Ray::position(&ray, t1),
-                        self.normal(&Ray::position(&ray, t1)),
+                        t1 - bump,
+                        Ray::position(&ray, t1 - bump),
+                        self.normal(&Ray::position(&ray, t1 - bump)),
                         self,
                     )
                 );
             }
 
-            let y2 = ray.origin.1 + t2 * ray.direction.1;
+            let y2 = transformed_ray.origin.1 + (t2 * transformed_ray.direction.1);
             if self.minimum < y2 && y2 < self.maximum {
                 intersections.push(
                     Intersection::new(
-                        t2,
-                        Ray::position(&ray, t2),
-                        self.normal(&Ray::position(&ray, t2)),
+                        t2 - bump,
+                        Ray::position(&ray, t2 - bump),
+                        self.normal(&Ray::position(&ray, t2 - bump)),
                         self,
                     )
                 );
@@ -113,7 +116,7 @@ impl Object for Cylinder {
                 }
             }
             else {
-                let t1 = (self.minimum - ray.origin.1) / ray.direction.1;
+                let t1 = (self.minimum - transformed_ray.origin.1) / transformed_ray.direction.1;
                 if Cylinder::check_cap(&transformed_ray, t1) {
                     intersections.push(
                         Intersection::new(
@@ -124,7 +127,7 @@ impl Object for Cylinder {
                         )
                     );
                 }
-                let t2 = (self.maximum - ray.origin.1) / ray.direction.1;
+                let t2 = (self.maximum - transformed_ray.origin.1) / transformed_ray.direction.1;
                 if Cylinder::check_cap(&transformed_ray, t2) {
                     intersections.push(
                         Intersection::new(

@@ -15,8 +15,8 @@ use std::time::Instant;
 
 fn main() {
     //Width and height of the scene
-    const WIDTH: usize = 1000;
-    const HEIGHT: usize = 500;
+    const WIDTH: usize = 300;
+    const HEIGHT: usize = 150;
 
     //Canvas where color is stored
     let mut canvas = Canvas::new(WIDTH, HEIGHT);
@@ -25,7 +25,9 @@ fn main() {
     let corner = Vec4::new(-1.0, 2.0, 4.0, 1.0);
     let v1 = Vec4::new(2.0, 0.0, 0.0, 0.0);
     let v2 = Vec4::new(0.0, 2.0, 0.0, 0.0);
-    let light = AreaLight::new(corner, v1, 2, v2, 2, Color(1.5, 1.5, 1.5));
+    let light = AreaLight::new(corner, v1, 1, v2, 1, Color(1.5, 1.5, 1.5));
+
+    let light = PointLight::new(Color(1.5, 1.5, 1.5), Vec4(-1.0, 2.0, 4.0, 1.0));
 
     //Surrounding the light in a cube
     let mut light_cube_material = Material::default();
@@ -64,7 +66,7 @@ fn main() {
     blue_material.diffuse = 0.6;
     //blue_material.reflectivity = 0.3;
 
-    let blue_sphere = Cone::new(Matrix4x4::translation(-0.2, 0.7, 1.0), blue_material, -1.0, 0.0, false);
+    let blue_sphere = Cone::new(Matrix4x4::translation(-0.2, 0.33, 1.0) * Matrix4x4::rotation(Axis::Y, -90.0) * Matrix4x4::rotation(Axis::X, 20.0) * Matrix4x4::scaling(0.33, 0.33, 0.33), blue_material, 0.0, 1.0, true);
 
     //Creating a red sphere
     let mut glass_material = Material::default();

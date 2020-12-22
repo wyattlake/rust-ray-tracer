@@ -94,14 +94,16 @@ impl Object for Cone {
                     t1 = t2;
                     t2 = temp;
                 }
+
+                let bump = 0.0003;
     
                 let y1 = transformed_ray.origin.1 + t1 * transformed_ray.direction.1;
                 if self.minimum < y1 && y1 < self.maximum {
                     intersections.push(
                         Intersection::new(
-                            t1,
-                            Ray::position(&ray, t1),
-                            self.normal(&Ray::position(&ray, t1)),
+                            t1 - bump,
+                            Ray::position(&ray, t1 - bump),
+                            self.normal(&Ray::position(&ray, t1 - bump)),
                             self,
                         )
                     );
@@ -111,9 +113,9 @@ impl Object for Cone {
                 if self.minimum < y2 && y2 < self.maximum {
                     intersections.push(
                         Intersection::new(
-                            t2,
-                            Ray::position(&ray, t2),
-                            self.normal(&Ray::position(&ray, t2)),
+                            t2 - bump,
+                            Ray::position(&ray, t2 - bump),
+                            self.normal(&Ray::position(&ray, t2 - bump)),
                             self,
                         )
                     );
@@ -129,8 +131,8 @@ impl Object for Cone {
                 }
             }
             else {
-                let t1 = (self.minimum - ray.origin.1) / ray.direction.1;
-                if Cone::check_cap(&transformed_ray, t1, self.minimum) {
+                let t1 = (self.minimum - transformed_ray.origin.1) / transformed_ray.direction.1;
+                if Cone::check_cap(&transformed_ray, t1, self.minimum.abs()) {
                     intersections.push(
                         Intersection::new(
                             t1,
@@ -140,8 +142,8 @@ impl Object for Cone {
                         )
                     );
                 }
-                let t2 = (self.maximum - ray.origin.1) / ray.direction.1;
-                if Cone::check_cap(&transformed_ray, t2, self.maximum) {
+                let t2 = (self.maximum - transformed_ray.origin.1) / transformed_ray.direction.1;
+                if Cone::check_cap(&transformed_ray, t2, self.maximum.abs()) {
                     intersections.push(
                         Intersection::new(
                             t2,
@@ -174,7 +176,7 @@ impl Object for Cone {
             result = Vec4(0.0, -1.0, 0.0, 0.0);
         }
         else {
-            let mut y;
+            let y;
             if object_point.1 > 0.0 {
                 y = -(object_point.0.powi(2) + object_point.2.powi(2)).sqrt()
             }
