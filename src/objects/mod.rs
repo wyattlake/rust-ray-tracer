@@ -7,4 +7,6 @@ pub mod triangle;
 
 pub mod group;
 
+pub mod parser;
+
 pub mod object;
