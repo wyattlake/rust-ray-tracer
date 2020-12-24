@@ -3,6 +3,7 @@ use crate::core::vector::Vec4;
 use crate::objects::object::*;
 use crate::ray_tracing::intersection::Intersection;
 use crate::materials::material::*;
+use crate::objects::group::Group;
 use crate::ray_tracing::ray::Ray;
 use std::any::Any;
 
@@ -12,6 +13,7 @@ pub struct Sphere {
     pub transform: Matrix4x4,
     pub inverse: Matrix4x4,
     pub material: Material,
+    pub parent_inverses: Vec<Matrix4x4>,
 }
 
 impl Sphere {
@@ -21,6 +23,7 @@ impl Sphere {
             transform: Matrix4x4::identity(),
             inverse: Matrix4x4::identity(),
             material: Material::default(),
+            parent_inverses: vec![],
         }
     }
 
@@ -33,6 +36,7 @@ impl Sphere {
             transform: Matrix4x4::identity(),
             inverse: Matrix4x4::identity(),
             material: material,
+            parent_inverses: vec![],
         }
     }
 
@@ -41,6 +45,7 @@ impl Sphere {
             inverse: transform.inverse().unwrap(),
             transform,
             material,
+            parent_inverses: vec![],
         }
     }
 }
@@ -93,12 +98,27 @@ impl Object for Sphere {
     //Finds the normal of a given point on a sphere
     fn normal(&self, world_point: &Vec4) -> Vec4 {
         //Applies inverse transformations to the point
-        let object_point = &self.inverse * world_point;
+        let group_point = world_to_object(&self.parent_inverses, world_point);
+        let object_point = &self.inverse * group_point;
         let object_normal = object_point - Vec4::new(0.0, 0.0, 0.0, 1.0);
         //Computes the world normal
         let mut world_normal = &self.inverse.transpose() * object_normal;
         world_normal.3 = 0.0;
-        world_normal.normalize()
+        let world_normal = world_normal.normalize();
+        normal_to_world(&self.parent_inverses, &world_normal)
+    }
+
+    fn get_parent_inverses(&self) -> &Vec<Matrix4x4> {
+        &self.parent_inverses
+    }
+
+    fn push_parent_inverse(&mut self, inverse: Matrix4x4) {
+        self.parent_inverses.push(inverse);
+    }
+
+    fn add_to_group(mut self, group: &mut Group) {
+        self.push_parent_inverse(group.get_inverse().clone());
+        group.objects.push(Box::new(self));
     }
 
     fn eq(&self, other: &dyn Object) -> bool {

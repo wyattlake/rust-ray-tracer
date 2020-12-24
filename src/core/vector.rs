@@ -48,7 +48,7 @@ impl Vec4 {
 
     //Rounds a vector (used for testing)
     pub fn round(&self) -> Vec4 {
-        Vec4::new(self.0.round(), self.1.round(), self.2.round(), 0.0)
+        Vec4::new((self.0 * 100.0).round() / 100.0, (self.1 * 100.0).round() / 100.0, (self.2 * 100.0).round() / 100.0, self.3.round())
     }
 }
 

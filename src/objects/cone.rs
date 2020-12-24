@@ -4,6 +4,7 @@ use crate::objects::object::*;
 use crate::materials::material::*;
 use crate::ray_tracing::ray::Ray;
 use crate::ray_tracing::intersection::Intersection;
+use crate::objects::group::Group;
 use crate::misc::utils::*;
 use std::any::Any;
 
@@ -15,6 +16,7 @@ pub struct Cone {
     pub minimum: f32,
     pub maximum: f32,
     pub capped: bool,
+    pub parent_inverses: Vec<Matrix4x4>,
 }
 
 impl Cone {
@@ -27,6 +29,7 @@ impl Cone {
             minimum,
             maximum,
             capped,
+            parent_inverses: vec![],
         }
     }
 
@@ -39,6 +42,7 @@ impl Cone {
             minimum: -std::f32::INFINITY,
             maximum: std::f32::INFINITY,
             capped: false,
+            parent_inverses: vec![],
         }
     }
 
@@ -188,6 +192,19 @@ impl Object for Cone {
         let mut world_normal = &self.inverse.transpose() * result;
         world_normal.3 = 0.0;
         world_normal.normalize()
+    }
+
+    fn get_parent_inverses(&self) -> &Vec<Matrix4x4> {
+        &self.parent_inverses
+    }
+
+    fn push_parent_inverse(&mut self, inverse: Matrix4x4) {
+        self.parent_inverses.push(inverse);
+    }
+
+    fn add_to_group(mut self, group: &mut Group) {
+        self.push_parent_inverse(group.get_inverse().clone());
+        group.objects.push(Box::new(self));
     }
 
     fn eq(&self, other: &dyn Object) -> bool {

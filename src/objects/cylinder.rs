@@ -4,6 +4,7 @@ use crate::objects::object::*;
 use crate::materials::material::*;
 use crate::ray_tracing::ray::Ray;
 use crate::ray_tracing::intersection::Intersection;
+use crate::objects::group::Group;
 use crate::misc::utils::*;
 use std::any::Any;
 
@@ -15,6 +16,7 @@ pub struct Cylinder {
     pub minimum: f32,
     pub maximum: f32,
     pub capped: bool,
+    pub parent_inverses: Vec<Matrix4x4>,
 }
 
 impl Cylinder {
@@ -27,6 +29,7 @@ impl Cylinder {
             minimum,
             maximum,
             capped,
+            parent_inverses: vec![],
         }
     }
 
@@ -39,6 +42,7 @@ impl Cylinder {
             minimum: -std::f32::INFINITY,
             maximum: std::f32::INFINITY,
             capped: false,
+            parent_inverses: vec![],
         }
     }
 
@@ -151,7 +155,8 @@ impl Object for Cylinder {
 
     //Finds the normal on a given point on a cylinder
     fn normal(&self, world_point: &Vec4) -> Vec4 {
-        let object_point = &self.inverse * world_point;
+        let group_point = world_to_object(&self.parent_inverses, world_point);
+        let object_point = &self.inverse * group_point;
         let distance = object_point.0.powi(2) + object_point.2.powi(2);
         let result;
         if distance < 1.0  && world_point.1 >= self.maximum - EPSILON_BUMP {
@@ -165,7 +170,21 @@ impl Object for Cylinder {
         }
         let mut world_normal = &self.inverse.transpose() * result;
         world_normal.3 = 0.0;
-        world_normal.normalize()
+        let world_normal = world_normal.normalize();
+        normal_to_world(&self.parent_inverses, &world_normal)
+    }
+
+    fn get_parent_inverses(&self) -> &Vec<Matrix4x4> {
+        &self.parent_inverses
+    }
+
+    fn push_parent_inverse(&mut self, inverse: Matrix4x4) {
+        self.parent_inverses.push(inverse);
+    }
+
+    fn add_to_group(mut self, group: &mut Group) {
+        self.push_parent_inverse(group.get_inverse().clone());
+        group.objects.push(Box::new(self));
     }
 
     fn eq(&self, other: &dyn Object) -> bool {
