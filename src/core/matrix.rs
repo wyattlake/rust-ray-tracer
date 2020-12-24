@@ -3,6 +3,8 @@ use std::fmt::Debug;
 use crate::core::vector::*;
 use crate::misc::axis::*;
 
+pub const IDENTITY: Matrix4x4 = Matrix4x4((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0));
+
 //Matrix4x4 is composed of nested tuples
 #[derive(Debug, PartialEq, Clone)]
 pub struct Matrix4x4 (pub (f32, f32, f32, f32), pub (f32, f32, f32, f32), pub (f32, f32, f32, f32), (f32, f32, f32, f32));
