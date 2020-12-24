@@ -59,7 +59,13 @@ impl<'a> Object for Group {
             let object_intersections = object.intersect(&transformed_ray);
             if object_intersections != None {
                 for intersection in object_intersections.unwrap() {
-                    intersections.push(intersection);
+                    let new_intersection = Intersection::new(
+                        intersection.t,
+                        Ray::position(&transformed_ray, intersection.t),
+                        (intersection.object).normal(&Ray::position(&ray, intersection.t)),
+                        intersection.object,
+                    );
+                    intersections.push(new_intersection);
                 }
             }
         }

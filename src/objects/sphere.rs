@@ -97,14 +97,17 @@ impl Object for Sphere {
 
     //Finds the normal of a given point on a sphere
     fn normal(&self, world_point: &Vec4) -> Vec4 {
+        println!("world_point: {:?}", world_point);
         //Applies inverse transformations to the point
         let group_point = world_to_object(&self.parent_inverses, world_point);
+        println!("group_point: {:?}", group_point);
         let object_point = &self.inverse * group_point;
         let object_normal = object_point - Vec4::new(0.0, 0.0, 0.0, 1.0);
         //Computes the world normal
         let mut world_normal = &self.inverse.transpose() * object_normal;
         world_normal.3 = 0.0;
         let world_normal = world_normal.normalize();
+        println!();
         normal_to_world(&self.parent_inverses, &world_normal)
     }
 

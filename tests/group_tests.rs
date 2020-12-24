@@ -104,4 +104,19 @@ mod tests {
         let normal = s_clone.normal(&Vec4(1.7321, 1.1547, -5.5774, 1.0));
         assert_eq!(normal.round(), Vec4(0.2857, 0.4286, -0.8571, 0.0).round());
     }
+
+    #[test]
+    //Additional group tests
+    fn additional_group_tests() {
+        let sphere = Sphere::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
+        let mut g1 = Group::new(Matrix4x4::translation(0.0, 0.5, 0.0), Material::default());
+        sphere.add_to_group(&mut g1);
+        let sphere_clone = Sphere::new(Matrix4x4::translation(0.0, 0.5, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
+        let ray = Ray::new((0.0, 0.5, -5.0), (0.0, 0.0, 1.0));
+        let intersections1 = g1.intersect(&ray);
+        let intersections2 = sphere_clone.intersect(&ray);
+        println!("{:?}", intersections1.unwrap()[0].normal);
+        println!("{:?}", intersections2.unwrap()[0].normal);
+        assert_eq!(1, 2);
+    }
 }

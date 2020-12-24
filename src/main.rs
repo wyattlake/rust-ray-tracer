@@ -80,8 +80,8 @@ fn main() {
     // glass_material.reflectivity = 0.3;
     let cube = Sphere::new(Matrix4x4::translation(0.2, 0.43, -0.1) * Matrix4x4::scaling(0.2, 0.43, 0.06), glass_material);
 
-    let cylinder = Sphere::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
-    let mut g1 = Group::new(Matrix4x4::translation(0.0, 0.5, 0.0), Material::default());
+    let cylinder = Sphere::new(Matrix4x4::translation(0.0, 0.5, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
+    let mut g1 = Group::new(Matrix4x4::translation(0.0, 0.0, 0.0), Material::default());
     cylinder.add_to_group(&mut g1);
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {

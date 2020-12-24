@@ -369,7 +369,7 @@ mod tests {
 
         let comps = Comp::compute_vars(intersections[2].clone(), &ray, &intersections);
         let color = refracted_color(&scene, &comps, 5);
-        assert_eq!(color.round(), Color(0.0, 0.9989, 0.0472).round());
+        assert_eq!(color.round(), Color(0.0, 0.9988, 0.0472).round());
     }
 
     #[test]
