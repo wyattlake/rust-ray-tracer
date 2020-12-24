@@ -72,9 +72,9 @@ fn main() {
 
     let cone1 = Cone::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.3, 0.5, 0.3), blue_material.clone(), -1.0, 0.0, true);
     let cone2 = Cone::new(Matrix4x4::translation(0.0, 0.2, 0.0) * Matrix4x4::scaling(0.3, 0.5, 0.3), blue_material.clone(), -1.0, 0.0, true);
-    let cone3 = Cone::new(Matrix4x4::translation(0.0, 0.4, 0.0) * Matrix4x4::scaling(0.3, 0.5, 0.3), blue_material, -1.0, 0.0, true);
+    let cone3 = Cone::new(Matrix4x4::translation(0.0, 0.4, 0.0) * Matrix4x4::scaling(0.3, 0.5, 0.3), blue_material.clone(), -1.0, 0.0, true);
 
-    let mut group = Group::new(Matrix4x4::translation(0.0, 0.7, 0.0), Material::default());
+    let mut group = Group::new(Matrix4x4::translation(0.0, 0.7, 0.0), blue_material);
 
     let mut trunk_material = Material::default();
     trunk_material.color = Color::new_255(145, 78, 45);
@@ -95,7 +95,7 @@ fn main() {
     
     let mirror = Cube::new(Matrix4x4::translation(1.5, 0.9, 0.4) * Matrix4x4::rotation(Axis::Y, 0.0) * Matrix4x4::scaling(0.05, 1.0, 0.5), mirror_material);
 
-    let triangle = Triangle::default();
+    let triangle = Triangle::new(Vec4(-1.0, 0.0, 0.0, 1.0), Vec4(2.0, 0.0, 0.0, 1.0), Vec4(0.0, 2.0, 0.0, 1.0), Material::default());
 
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {
@@ -106,7 +106,7 @@ fn main() {
             Box::new(group),
             Box::new(trunk),
             Box::new(mirror),
-            Box::new(triangle),
+            //Box::new(triangle),
         ],
     };
     

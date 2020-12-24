@@ -27,6 +27,10 @@ pub trait Object: Debug + ObjectClone {
     fn get_parent_inverses(&self) -> &Vec<Matrix4x4>;
     fn push_parent_inverse(&mut self, inverse: Matrix4x4);
 
+    //Modifiers for the parent material field
+    fn get_parent_material(&self) -> &Option<Material>;
+    fn set_parent_material(&mut self, material: &Material);
+
     //Methods used to allow PartialEq between objects
     fn eq(&self, other: &dyn Object) -> bool;
     fn as_any(&self) -> &dyn Any;

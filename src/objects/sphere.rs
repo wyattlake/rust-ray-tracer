@@ -14,6 +14,7 @@ pub struct Sphere {
     pub inverse: Matrix4x4,
     pub material: Material,
     pub parent_inverses: Vec<Matrix4x4>,
+    pub parent_material: Option<Material>,
 }
 
 impl Sphere {
@@ -24,6 +25,7 @@ impl Sphere {
             inverse: Matrix4x4::identity(),
             material: Material::default(),
             parent_inverses: vec![],
+            parent_material: None,
         }
     }
 
@@ -37,6 +39,7 @@ impl Sphere {
             inverse: Matrix4x4::identity(),
             material: material,
             parent_inverses: vec![],
+            parent_material: None,
         }
     }
 
@@ -46,6 +49,7 @@ impl Sphere {
             transform,
             material,
             parent_inverses: vec![],
+            parent_material: None,
         }
     }
 }
@@ -116,8 +120,17 @@ impl Object for Sphere {
         self.parent_inverses.push(inverse);
     }
 
+    fn get_parent_material(&self) -> &Option<Material> {
+        &self.parent_material
+    }
+
+    fn set_parent_material(&mut self, material: &Material) {
+        self.parent_material = Some(material.clone());
+    }
+
     fn add_to_group(mut self, group: &mut Group) {
         self.push_parent_inverse(group.get_inverse().clone());
+        self.set_parent_material(&group.material);
         group.objects.push(Box::new(self));
     }
 

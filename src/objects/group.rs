@@ -13,6 +13,7 @@ pub struct Group {
     pub material: Material,
     pub objects: Vec<Box<dyn Object>>,
     parent_inverses: Vec<Matrix4x4>,
+    pub parent_material: Option<Material>,
 }
 
 impl Group {
@@ -24,6 +25,7 @@ impl Group {
             material,
             objects: vec![],
             parent_inverses: vec![],
+            parent_material: None,
         };
         group
     }
@@ -36,6 +38,7 @@ impl Group {
             material: Material::default(),
             objects: vec![],
             parent_inverses: vec![],
+            parent_material: None,
         }
     }
 }
@@ -91,8 +94,20 @@ impl<'a> Object for Group {
         }
     }
 
+    fn get_parent_material(&self) -> &Option<Material> {
+        &self.parent_material
+    }
+
+    fn set_parent_material(&mut self, material: &Material) {
+        self.parent_material = Some(material.clone());
+        for child in &mut self.objects {
+            child.set_parent_material(&material);
+        }
+    }
+
     fn add_to_group(mut self, group: &mut Group) {
         self.push_parent_inverse(group.get_inverse().clone());
+        self.set_parent_material(&group.material);
         group.objects.push(Box::new(self));
     }
 

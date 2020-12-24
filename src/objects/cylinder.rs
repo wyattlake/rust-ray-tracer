@@ -17,6 +17,7 @@ pub struct Cylinder {
     pub maximum: f32,
     pub capped: bool,
     pub parent_inverses: Vec<Matrix4x4>,
+    pub parent_material: Option<Material>,
 }
 
 impl Cylinder {
@@ -30,6 +31,7 @@ impl Cylinder {
             maximum,
             capped,
             parent_inverses: vec![],
+            parent_material: None,
         }
     }
 
@@ -43,6 +45,7 @@ impl Cylinder {
             maximum: std::f32::INFINITY,
             capped: false,
             parent_inverses: vec![],
+            parent_material: None,
         }
     }
 
@@ -182,8 +185,17 @@ impl Object for Cylinder {
         self.parent_inverses.push(inverse);
     }
 
+    fn get_parent_material(&self) -> &Option<Material> {
+        &self.parent_material
+    }
+
+    fn set_parent_material(&mut self, material: &Material) {
+        self.parent_material = Some(material.clone());
+    }
+
     fn add_to_group(mut self, group: &mut Group) {
         self.push_parent_inverse(group.get_inverse().clone());
+        self.set_parent_material(&group.material);
         group.objects.push(Box::new(self));
     }
 

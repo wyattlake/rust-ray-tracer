@@ -79,6 +79,14 @@ impl Comp {
         let mut n1 = 1.0;
         let mut n2 = 1.0;
 
+        let object_material;
+        if intersection.object.get_parent_material() != &None {
+            object_material = intersection.object.get_parent_material().as_ref().unwrap().clone()
+        }
+        else {
+            object_material = intersection.object.get_material().clone();
+        }
+
         let mut containers: Vec<&dyn Object> = vec![];
         for i in intersection_list {
             if i == &intersection {
@@ -105,7 +113,7 @@ impl Comp {
         }
         Comp::new(
             t,
-            intersection.object.get_material().clone(),
+            object_material,
             intersection.object.get_inverse().clone(),
             point,
             e_vec,
