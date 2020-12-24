@@ -2,7 +2,7 @@ use rust_ray_tracer::core::canvas::Canvas;
 use rust_ray_tracer::core::color::*;
 use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::vector::Vec4;
-//use rust_ray_tracer::misc::axis::Axis;
+use rust_ray_tracer::misc::axis::Axis;
 use rust_ray_tracer::objects::plane::Plane;
 use rust_ray_tracer::objects::cone::Cone;
 use rust_ray_tracer::objects::group::Group;
@@ -18,8 +18,8 @@ use std::time::Instant;
 
 fn main() {
     //Width and height of the scene
-    const WIDTH: usize = 300;
-    const HEIGHT: usize = 150;
+    const WIDTH: usize = 200;
+    const HEIGHT: usize = 200;
 
     //Canvas where color is stored
     let mut canvas = Canvas::new(WIDTH, HEIGHT);
@@ -80,9 +80,50 @@ fn main() {
     // glass_material.reflectivity = 0.3;
     let cube = Sphere::new(Matrix4x4::translation(0.2, 0.43, -0.1) * Matrix4x4::scaling(0.2, 0.43, 0.06), glass_material);
 
-    let cylinder = Sphere::new(Matrix4x4::translation(0.0, 0.5, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
-    let mut g1 = Group::new(Matrix4x4::translation(0.0, 0.0, 0.0), Material::default());
-    cylinder.add_to_group(&mut g1);
+    let c1 = Cylinder::new(Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(0.1, 0.5, 0.1), Material::default(), -0.5, 0.0, true);
+    let s1 = Sphere::new(Matrix4x4::scaling(0.1, 0.1, 0.1), Material::default());
+    let mut g1 = Group::new(Matrix4x4::translation(0.43, 0.0, 0.0), Material::default());
+    c1.add_to_group(&mut g1);
+    s1.add_to_group(&mut g1);
+    
+    let c2 = Cylinder::new(Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(0.1, 0.5, 0.1), Material::default(), -0.5, 0.0, true);
+    let s2 = Sphere::new(Matrix4x4::translation(0.0, 0.0, -0.25) * Matrix4x4::scaling(0.1, 0.1, 0.1), Material::default());
+    let mut g2 = Group::new(Matrix4x4::translation(0.43, 0.0, 0.0) * Matrix4x4::rotation(Axis::Y, 120.0), Material::default());
+    c2.add_to_group(&mut g2);
+    s2.add_to_group(&mut g2); 
+
+    let c3 = Cylinder::new(Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(0.1, 0.5, 0.1), Material::default(), -0.5, 0.0, true);
+    let s3 = Sphere::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.1, 0.1, 0.1), Material::default());
+    let mut g3 = Group::new(Matrix4x4::rotation(Axis::Y, 240.0), Material::default());
+    c3.add_to_group(&mut g3);
+    s3.add_to_group(&mut g3); 
+
+    let c4 = Cylinder::new(Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(0.1, 0.5, 0.1), Material::default(), -0.5, 0.0, true);
+    let s4 = Sphere::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.1, 0.1, 0.1), Material::default());
+    let mut g4 = Group::new(Matrix4x4::translation(0.0, 0.0, -0.25) * Matrix4x4::rotation(Axis::Y, 180.0), Material::default());
+    c4.add_to_group(&mut g4);
+    s4.add_to_group(&mut g4); 
+
+    let c5 = Cylinder::new(Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(0.1, 0.5, 0.1), Material::default(), -0.5, 0.0, true);
+    let s5 = Sphere::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.1, 0.1, 0.1), Material::default());
+    let mut g5 = Group::new(Matrix4x4::translation(0.2, 0.0, -0.38) * Matrix4x4::rotation(Axis::Y, 120.0), Material::default());
+    c5.add_to_group(&mut g5);
+    s5.add_to_group(&mut g5); 
+
+    let c6 = Cylinder::new(Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(0.1, 0.5, 0.1), Material::default(), -0.5, 0.0, true);
+    let s6 = Sphere::new(Matrix4x4::translation(0.0, 0.0, -0.25) * Matrix4x4::scaling(0.1, 0.1, 0.1), Material::default());
+    let mut g6 = Group::new(Matrix4x4::translation(0.21, 0.0, -0.4) * Matrix4x4::rotation(Axis::Y, 240.0), Material::default());
+    c6.add_to_group(&mut g6);
+    s6.add_to_group(&mut g6);
+
+    let mut hexagon = Group::new(Matrix4x4::translation(0.0, 0.5, 0.0), Material::default());
+    g1.add_to_group(&mut hexagon);
+    g2.add_to_group(&mut hexagon);
+    g3.add_to_group(&mut hexagon);
+    g4.add_to_group(&mut hexagon);
+    g5.add_to_group(&mut hexagon);
+    g6.add_to_group(&mut hexagon);
+
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {
         light_sources: vec![Box::new(light)],
@@ -92,7 +133,7 @@ fn main() {
             // Box::new(red_sphere),
             // Box::new(blue_sphere),
             // Box::new(cube)
-            Box::new(g1),
+            Box::new(hexagon),
         ],
     };
     

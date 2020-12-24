@@ -115,8 +115,6 @@ mod tests {
         let ray = Ray::new((0.0, 0.5, -5.0), (0.0, 0.0, 1.0));
         let intersections1 = g1.intersect(&ray);
         let intersections2 = sphere_clone.intersect(&ray);
-        println!("{:?}", intersections1.unwrap()[0].normal);
-        println!("{:?}", intersections2.unwrap()[0].normal);
-        assert_eq!(1, 2);
+        assert_eq!(intersections1.unwrap()[0].normal, intersections2.unwrap()[0].normal);
     }
 }

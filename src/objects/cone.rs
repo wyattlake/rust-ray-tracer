@@ -170,7 +170,8 @@ impl Object for Cone {
 
     //Finds the normal on a given point on a cone
     fn normal(&self, world_point: &Vec4) -> Vec4 {
-        let object_point = &self.inverse * world_point;
+        let group_point = world_to_object(&self.parent_inverses, world_point);
+        let object_point = &self.inverse * group_point;
         let distance = object_point.0.powi(2) + object_point.2.powi(2);
         let result;
         if distance < 1.0  && object_point.1 >= self.maximum - EPSILON_BUMP {
@@ -191,7 +192,7 @@ impl Object for Cone {
         }
         let mut world_normal = &self.inverse.transpose() * result;
         world_normal.3 = 0.0;
-        world_normal.normalize()
+        normal_to_world(&self.parent_inverses, &world_normal.normalize())
     }
 
     fn get_parent_inverses(&self) -> &Vec<Matrix4x4> {

@@ -66,7 +66,7 @@ impl Object for Plane {
     fn normal(&self, _world_point: &Vec4) -> Vec4 {
         let mut result = &self.inverse.transpose() * Vec4::new(0.0, 1.0, 0.0, 0.0);
         result.3 = 0.0;
-        result
+        normal_to_world(&self.parent_inverses, &result.normalize())
     }
 
     fn get_parent_inverses(&self) -> &Vec<Matrix4x4> {

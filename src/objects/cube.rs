@@ -113,7 +113,8 @@ impl Object for Cube {
 
     //Finds the normal on a given point on a cube
     fn normal(&self, world_point: &Vec4) -> Vec4 {
-        let transformed_point = &self.inverse * world_point;
+        let group_point = world_to_object(&self.parent_inverses, world_point);
+        let transformed_point = &self.inverse * group_point;
         let coords = [transformed_point.0.abs(), transformed_point.1.abs(), transformed_point.2.abs()];
         let max_coord = coords.iter().fold(-f32::INFINITY, |a, &b| a.max(b));
         let result;
@@ -128,7 +129,7 @@ impl Object for Cube {
         }
         let mut world_normal = &self.inverse.transpose() * result;
         world_normal.3 = 0.0;
-        world_normal.normalize()
+        normal_to_world(&self.parent_inverses, &world_normal.normalize())
     }
 
     fn get_parent_inverses(&self) -> &Vec<Matrix4x4> {
