@@ -221,6 +221,7 @@ pub fn lighting(
     e_vec: &Vec4,
     n_vec: &Vec4,
     light_intensity: f32,
+    list: &Vec<Matrix4x4>
 ) -> Color {
     let mut color = material.color.clone();
     let material_pattern = &material.pattern;
@@ -228,7 +229,7 @@ pub fn lighting(
         color = material_pattern
             .as_ref()
             .unwrap()
-            .color_at_object(object_inverse, point);
+            .color_at_object(list, object_inverse, point);
     }
 
     //Combines surface and light color

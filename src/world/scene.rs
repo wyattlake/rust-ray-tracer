@@ -41,6 +41,7 @@ impl Scene {
                     &comps.e_vec,
                     &comps.n_vec,
                     light_intensity,
+                    &comps.parent_inverses,
                 );
         }
 

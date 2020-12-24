@@ -1,6 +1,7 @@
 use crate::core::color::Color;
 use crate::core::vector::Vec4;
 use crate::core::matrix::Matrix4x4;
+use crate::objects::object::*;
 use std::fmt::Debug;
 use std::any::Any;
 
@@ -13,7 +14,7 @@ pub trait Pattern: Debug + PatternClone {
     fn transform(&mut self, matrix: Matrix4x4);
 
     //Finds the color on a pattern given the transformations of the matrix the pattern is on
-    fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color;
+    fn color_at_object(&self, list: &Vec<Matrix4x4>, object_inverse: &Matrix4x4, point: &Vec4) -> Color;
 
     //Methods used to allow PartialEq between objects
     fn eq(&self, other: &dyn Pattern) -> bool;
@@ -71,8 +72,9 @@ impl Pattern for TestPattern  {
     }
 
     //Gets the color at a specific point taking into account pattern and object transformations
-    fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
-        let object_point = object_inverse * point;
+    fn color_at_object(&self, list: &Vec<Matrix4x4>, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
+        let group_point = world_to_object(list, point);
+        let object_point = object_inverse * group_point;
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
@@ -120,8 +122,9 @@ impl Pattern for StripePattern  {
     }
 
     //Gets the color at a specific point taking into account pattern and object transformations
-    fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
-        let object_point = object_inverse * point;
+    fn color_at_object(&self, list: &Vec<Matrix4x4>, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
+        let group_point = world_to_object(list, point);
+        let object_point = object_inverse * group_point;
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
@@ -176,8 +179,9 @@ impl Pattern for GradientPattern  {
     }
 
     //Gets the color at a specific point taking into account pattern and object transformations
-    fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
-        let object_point = object_inverse * point;
+    fn color_at_object(&self, list: &Vec<Matrix4x4>, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
+        let group_point = world_to_object(list, point);
+        let object_point = object_inverse * group_point;
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
@@ -225,8 +229,9 @@ impl Pattern for RingPattern  {
     }
 
     //Gets the color at a specific point taking into account pattern and object transformations
-    fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
-        let object_point = object_inverse * point;
+    fn color_at_object(&self, list: &Vec<Matrix4x4>, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
+        let group_point = world_to_object(list, point);
+        let object_point = object_inverse * group_point;
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }
@@ -274,8 +279,9 @@ impl Pattern for CheckerboardPattern  {
     }
 
     //Gets the color at a specific point taking into account pattern and object transformations
-    fn color_at_object(&self, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
-        let object_point = object_inverse * point;
+    fn color_at_object(&self, list: &Vec<Matrix4x4>, object_inverse: &Matrix4x4, point: &Vec4) -> Color {
+        let group_point = world_to_object(list, point);
+        let object_point = object_inverse * group_point;
         let pattern_point = &self.inverse * object_point;
         self.color_at(&pattern_point)
     }

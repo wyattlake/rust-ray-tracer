@@ -21,6 +21,7 @@ pub struct Comp {
     pub material: Material,
     pub n1: f32, //Refraction index of the object the ray is passing form
     pub n2: f32, //Refraction index of the object the ray is passing to
+    pub parent_inverses: Vec<Matrix4x4>
 }
 
 impl Comp {
@@ -38,6 +39,7 @@ impl Comp {
         under_point: Vec4,
         n1: f32,
         n2: f32,
+        parent_inverses: Vec<Matrix4x4> 
     ) -> Comp {
         Comp {
             t,
@@ -52,6 +54,7 @@ impl Comp {
             under_point,
             n1,
             n2,
+            parent_inverses,
         }
     }
 
@@ -124,6 +127,7 @@ impl Comp {
             under_point,
             n1,
             n2,
+            intersection.object.get_parent_inverses().clone(),
         )
     }
 }

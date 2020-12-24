@@ -2,6 +2,7 @@ use rust_ray_tracer::core::canvas::Canvas;
 use rust_ray_tracer::core::color::*;
 use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::vector::Vec4;
+use rust_ray_tracer::materials::patterns::*;
 use rust_ray_tracer::objects::plane::Plane;
 use rust_ray_tracer::objects::cone::Cone;
 use rust_ray_tracer::objects::group::Group;
@@ -68,6 +69,7 @@ fn main() {
     blue_material.ambient = 0.2;
     blue_material.specular = 0.0;
     blue_material.diffuse = 0.6;
+    blue_material.pattern = Some(Box::new(StripePattern::new(WHITE, BLACK, Matrix4x4::scaling(0.1, 0.1, 0.1))));
     //blue_material.reflectivity = 0.3;
 
     let cone1 = Cone::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.3, 0.5, 0.3), blue_material.clone(), -1.0, 0.0, true);
