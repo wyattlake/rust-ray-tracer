@@ -20,7 +20,7 @@ mod tests {
     //Tests finding the normal on a triangle
     fn triangle_normals() {
         let triangle = Triangle::default();
-        assert_eq!(triangle.normal(&Vec4(0.0, 0.5, 0.0, 1.0)), triangle.normal);
+        assert_eq!(triangle.normal(&Vec4(0.0, 0.5, 0.0, 1.0), None, None), triangle.normal);
     }
 
     #[test]

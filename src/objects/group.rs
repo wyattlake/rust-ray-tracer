@@ -62,12 +62,23 @@ impl<'a> Object for Group {
             let object_intersections = object.intersect(&transformed_ray);
             if object_intersections != None {
                 for intersection in object_intersections.unwrap() {
-                    let new_intersection = Intersection::new(
-                        intersection.t,
-                        Ray::position(&transformed_ray, intersection.t),
-                        (intersection.object).normal(&Ray::position(&ray, intersection.t)),
-                        intersection.object,
-                    );
+                    let new_intersection;
+                    if intersection.u == None {
+                        new_intersection = Intersection::new(
+                            intersection.t,
+                            Ray::position(&transformed_ray, intersection.t),
+                            (intersection.object).normal(&Ray::position(&ray, intersection.t), None, None),
+                            intersection.object,
+                        );
+                    }
+                    else {
+                        new_intersection = Intersection::new(
+                            intersection.t,
+                            Ray::position(&transformed_ray, intersection.t),
+                            (intersection.object).normal(&Ray::position(&ray, intersection.t), intersection.u, intersection.v),
+                            intersection.object,
+                        );
+                    }
                     intersections.push(new_intersection);
                 }
             }
@@ -79,7 +90,7 @@ impl<'a> Object for Group {
     }
 
     //The normal of a group is always a vector pointing directly upwards
-    fn normal(&self, _world_point: &Vec4) -> Vec4 {
+    fn normal(&self, _world_point: &Vec4, _u: Option<f32>, _v: Option<f32>) -> Vec4 {
         panic!("Cannot find the normal of a group");
     }
 

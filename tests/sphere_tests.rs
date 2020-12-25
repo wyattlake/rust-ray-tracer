@@ -12,7 +12,7 @@ mod tests {
     //Tests surface normals on the x axis
     fn surface_normal_y() {
         let s = Sphere::new(Matrix4x4::identity(), Material::default());
-        let vector = Object::normal(&s, &Vec4::new(0.0, 1.0, 0.0, 1.0));
+        let vector = Object::normal(&s, &Vec4::new(0.0, 1.0, 0.0, 1.0), None, None);
         assert_eq!(vector, Vec4::new(0.0, 1.0, 0.0, 0.0)) 
     }
 
@@ -20,7 +20,7 @@ mod tests {
     //Tests surface normals on the x axis
     fn surface_normal_z() {
         let s = Sphere::default();
-        let vector = Object::normal(&s, &Vec4::new(0.0, 0.0, 1.0, 1.0));
+        let vector = Object::normal(&s, &Vec4::new(0.0, 0.0, 1.0, 1.0), None, None);
         assert_eq!(vector, Vec4::new(0.0, 0.0, 1.0, 0.0))
     }
 
@@ -28,7 +28,7 @@ mod tests {
     //Tests surface normals at an arbitrary point
     fn surface_normal() {
         let s = Sphere::default();
-        let vector = Object::normal(&s, &Vec4::new(((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, 1.0));
+        let vector = Object::normal(&s, &Vec4::new(((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, 1.0), None, None);
         assert_eq!(vector.round(), Vec4::new(((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, 0.0).round());
     }
 
@@ -36,7 +36,7 @@ mod tests {
     //Tests if surface normals are normalized
     fn surface_normal_normalized() {
         let s = Sphere::default();
-        let vector = Object::normal(&s, &Vec4::new(((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, 1.0));
+        let vector = Object::normal(&s, &Vec4::new(((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, ((3.0 as f32).sqrt())/3.0, 1.0), None, None);
         assert_eq!(&vector.round(), &vector.normalize().round());
     }
 
@@ -44,7 +44,7 @@ mod tests {
     //Tests surface normals on scaled spheres
     fn surface_normal_scaled() {
         let s = Sphere::new(Matrix4x4::scaling(1.5, 1.0, 1.0) * Matrix4x4::rotation(Axis::Z, 360.0), Material::default());
-        let vector = s.normal(&Vec4::new(1.0, 0.0, 0.0, 0.0));
+        let vector = s.normal(&Vec4::new(1.0, 0.0, 0.0, 0.0), None, None);
         assert_eq!(vector.round(), Vec4::new(1.0, 0.0, 0.0, 0.0));
     }
 }

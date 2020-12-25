@@ -8,6 +8,8 @@ pub struct Intersection<'a> {
     pub hit: Vec4,
     pub normal: Vec4,
     pub object: &'a dyn Object,
+    pub u: Option<f32>,
+    pub v: Option<f32>,
 }
 
 impl<'a> Intersection<'a> {
@@ -23,8 +25,28 @@ impl<'a> Intersection<'a> {
             hit,
             normal,
             object,
+            u: None,
+            v: None,
         }
     }
+
+    pub fn new_uv(
+        t: f32,
+        hit: Vec4,
+        normal: Vec4,
+        object: &'a dyn Object,
+        u: f32,
+        v: f32,
+    ) -> Intersection {
+        Intersection {
+            t,
+            hit,
+            normal,
+            object,
+            u: Some(u),
+            v: Some(v),
+        }
+    } 
 
     //Finds which intersection is visible given a list of intersection
     pub fn hit(list_ref: &'a Vec<Intersection>) -> Option<Intersection<'a>> {

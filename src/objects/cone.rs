@@ -84,7 +84,7 @@ impl Object for Cone {
                     Intersection::new(
                         t,
                         Ray::position(&ray, t),
-                        self.normal(&Ray::position(&ray, t)),
+                        self.normal(&Ray::position(&ray, t), None, None),
                         self,
                     ) 
                 );
@@ -110,7 +110,7 @@ impl Object for Cone {
                         Intersection::new(
                             t1 - bump,
                             Ray::position(&ray, t1 - bump),
-                            self.normal(&Ray::position(&ray, t1 - bump)),
+                            self.normal(&Ray::position(&ray, t1 - bump), None, None),
                             self,
                         )
                     );
@@ -122,7 +122,7 @@ impl Object for Cone {
                         Intersection::new(
                             t2 - bump,
                             Ray::position(&ray, t2 - bump),
-                            self.normal(&Ray::position(&ray, t2 - bump)),
+                            self.normal(&Ray::position(&ray, t2 - bump), None, None),
                             self,
                         )
                     );
@@ -144,7 +144,7 @@ impl Object for Cone {
                         Intersection::new(
                             t1,
                             Ray::position(&ray, t1),
-                            self.normal(&Ray::position(&ray, t1)),
+                            self.normal(&Ray::position(&ray, t1), None, None),
                             self,
                         )
                     );
@@ -155,7 +155,7 @@ impl Object for Cone {
                         Intersection::new(
                             t2,
                             Ray::position(&ray, t2),
-                            self.normal(&Ray::position(&ray, t2)),
+                            self.normal(&Ray::position(&ray, t2), None, None),
                             self,
                         )
                     );
@@ -172,7 +172,7 @@ impl Object for Cone {
     }
 
     //Finds the normal on a given point on a cone
-    fn normal(&self, world_point: &Vec4) -> Vec4 {
+    fn normal(&self, world_point: &Vec4, _u: Option<f32>, _v: Option<f32>) -> Vec4 {
         let group_point = world_to_object(&self.parent_inverses, world_point);
         let object_point = &self.inverse * group_point;
         let distance = object_point.0.powi(2) + object_point.2.powi(2);

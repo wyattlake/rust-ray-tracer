@@ -31,7 +31,7 @@ mod tests {
     //Tests surface normals on the x axis
     fn surface_normal_x() {
         let s = Sphere::new(Matrix4x4::identity(), Material::default());
-        let vector = Object::normal(&s, &Vec4::new(1.0, 0.0, 0.0, 1.0));
+        let vector = Object::normal(&s, &Vec4::new(1.0, 0.0, 0.0, 1.0), None, None);
         assert_eq!(vector, Vec4::new(1.0, 0.0, 0.0, 0.0))
     }
 }

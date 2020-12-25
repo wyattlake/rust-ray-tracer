@@ -3,7 +3,9 @@ pub mod plane;
 pub mod cube;
 pub mod cylinder;
 pub mod cone;
+
 pub mod triangle;
+pub mod smooth_triangle;
 
 pub mod group;
 

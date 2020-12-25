@@ -62,8 +62,8 @@ mod tests {
     //Tests cube normals
     fn cube_normal() {
         let cube = Cube::default();
-        assert_eq!(cube.normal(&Vec4(1.0, 0.5, -0.8, 1.0)), Vec4(1.0, 0.0, 0.0, 0.0));
-        assert_eq!(cube.normal(&Vec4(-1.0, -0.2, 0.9, 1.0)), Vec4(-1.0, 0.0, 0.0, 0.0));
-        assert_eq!(cube.normal(&Vec4(-0.4, 1.0, -0.1, 1.0)), Vec4(0.0, 1.0, 0.0, 0.0));
+        assert_eq!(cube.normal(&Vec4(1.0, 0.5, -0.8, 1.0), None, None), Vec4(1.0, 0.0, 0.0, 0.0),);
+        assert_eq!(cube.normal(&Vec4(-1.0, -0.2, 0.9, 1.0), None, None), Vec4(-1.0, 0.0, 0.0, 0.0));
+        assert_eq!(cube.normal(&Vec4(-0.4, 1.0, -0.1, 1.0), None, None), Vec4(0.0, 1.0, 0.0, 0.0));
     }
 }

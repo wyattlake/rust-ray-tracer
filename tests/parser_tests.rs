@@ -48,4 +48,20 @@ mod tests {
         assert_eq!(&t3.p2, &result.vertices[3]);
         assert_eq!(&t3.p3, &result.vertices[4]);
     }
+
+    #[test]
+    fn smooth_obj_parsing() {
+        let file = File::open("tests/test3.obj");
+        let result = Parser::parse_obj(file.unwrap());
+        assert_eq!(&result.smooth_triangles.len(), &2);
+        let t1 = result.smooth_triangles[0].clone();
+        let t2 = result.smooth_triangles[1].clone();
+        assert_eq!(&t1.p1, &result.vertices[0]);
+        assert_eq!(&t1.p2, &result.vertices[1]);
+        assert_eq!(&t1.p3, &result.vertices[2]);
+        assert_eq!(&t1.n1, &result.normals[2]);
+        assert_eq!(&t1.n2, &result.normals[0]);
+        assert_eq!(&t1.n3, &result.normals[1]);
+        assert_eq!(t1, t2);
+    }
 }

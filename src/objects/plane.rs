@@ -60,13 +60,13 @@ impl Object for Plane {
         }
         else {
             let t = -&transformed_ray.origin.1 / &transformed_ray.direction.1;
-            let i = Intersection::new(t, Ray::position(&ray, t), self.normal(&Ray::position(&ray, t)), self);
+            let i = Intersection::new(t, Ray::position(&ray, t), self.normal(&Ray::position(&ray, t), None, None), self);
             Some(vec![i])
         }
     }
 
     //The normal of a plane is always a vector pointing directly upwards
-    fn normal(&self, _world_point: &Vec4) -> Vec4 {
+    fn normal(&self, _world_point: &Vec4, _u: Option<f32>, _v: Option<f32>) -> Vec4 {
         let mut result = &self.inverse.transpose() * Vec4::new(0.0, 1.0, 0.0, 0.0);
         result.3 = 0.0;
         normal_to_world(&self.parent_inverses, &result.normalize())

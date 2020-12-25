@@ -4,6 +4,7 @@ use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::vector::Vec4;
 use rust_ray_tracer::objects::plane::Plane;
 use rust_ray_tracer::objects::group::Group;
+use rust_ray_tracer::objects::smooth_triangle::SmoothTriangle;
 use rust_ray_tracer::misc::axis::Axis;
 use rust_ray_tracer::world::camera::Camera;
 use rust_ray_tracer::world::lighting::*;
@@ -42,10 +43,12 @@ fn main() {
     let mut teapot_material = Material::default();
     teapot_material.specular = 0.0;
 
-    let teapot = File::open("src/models/teapot.obj").unwrap();
-    let mut group = Group::new(Matrix4x4::rotation(Axis::Y, -90.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), teapot_material);
+    let teapot = File::open("src/models/dragon.obj").unwrap();
+    let mut group = Group::new(Matrix4x4::scaling(0.15, 0.15, 0.15), teapot_material);
     let parsed = Parser::parse_obj(teapot);
     parsed.convert_to_group(&mut group);
+
+    let cube = Cube::new(Matrix4x4::scaling(0.447175, 0.70498, 1.0), Material::default());
 
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {
@@ -58,7 +61,7 @@ fn main() {
     
     //Creates a camera and defines its properties
     let mut camera = Camera::new(WIDTH, HEIGHT, 45.0);
-    let start_pos = Vec4::new(-10.0, 3.0, 2.5, 1.0);
+    let start_pos = Vec4::new(-10.0, 1.0, 2.5, 1.0);
     let end_pos = Vec4::new(0.0, 1.0, 0.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 

@@ -83,14 +83,14 @@ impl Object for Sphere {
             let i1 = Intersection::new(
                 t1,
                 Ray::position(&ray, t1),
-                self.normal(&Ray::position(&ray, t1)),
+                self.normal(&Ray::position(&ray, t1), None, None),
                 self,
             );
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
             let i2 = Intersection::new(
                 t2,
                 Ray::position(&ray, t2),
-                self.normal(&Ray::position(&ray, t2)),
+                self.normal(&Ray::position(&ray, t2), None, None),
                 self,
             );
             Some(vec![i1, i2])
@@ -100,7 +100,7 @@ impl Object for Sphere {
     }
 
     //Finds the normal of a given point on a sphere
-    fn normal(&self, world_point: &Vec4) -> Vec4 {
+    fn normal(&self, world_point: &Vec4, _u: Option<f32>, _v: Option<f32>) -> Vec4 {
         //Applies inverse transformations to the point
         let group_point = world_to_object(&self.parent_inverses, world_point);
         let object_point = &self.inverse * group_point;

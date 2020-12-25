@@ -8,7 +8,6 @@ use crate::objects::group::Group;
 use crate::ray_tracing::ray::Ray;
 use std::any::Any;
 
-//A triangle has a transform trait which keeps track of its transformations
 #[derive(Debug, PartialEq, Clone)]
 pub struct Triangle {
     pub p1: Vec4,
@@ -88,7 +87,7 @@ impl Object for Triangle {
                 Intersection::new(
                     t,
                     Ray::position(&ray, t),
-                    self.normal(&Ray::position(&ray, t)),
+                    self.normal(&Ray::position(&ray, t), None, None),
                     self,
                 )
             ]
@@ -96,7 +95,7 @@ impl Object for Triangle {
     }
 
     //Finds the normal of a given point on a triangle
-    fn normal(&self, _world_point: &Vec4) -> Vec4 {
+    fn normal(&self, _world_point: &Vec4, _u: Option<f32>, _v: Option<f32>) -> Vec4 {
        normal_to_world(&self.parent_inverses, &self.normal)
     }
 

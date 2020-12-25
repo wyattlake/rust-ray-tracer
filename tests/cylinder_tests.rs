@@ -43,10 +43,10 @@ mod tests {
     fn cylinder_normal() {
         let cylinder = Cylinder::default();
         
-        assert_eq!(cylinder.normal(&Vec4(1.0, 0.0, 0.0, 1.0)), Vec4(1.0, 0.0, 0.0, 0.0));
-        assert_eq!(cylinder.normal(&Vec4(0.0, 5.0, -1.0, 1.0)), Vec4(0.0, 0.0, -1.0, 0.0));
-        assert_eq!(cylinder.normal(&Vec4(0.0, -2.0, 1.0, 1.0)), Vec4(0.0, 0.0, 1.0, 0.0));
-        assert_eq!(cylinder.normal(&Vec4(-1.0, -1.0, 0.0, 1.0)), Vec4(-1.0, 0.0, 0.0, 0.0));
+        assert_eq!(cylinder.normal(&Vec4(1.0, 0.0, 0.0, 1.0), None, None), Vec4(1.0, 0.0, 0.0, 0.0));
+        assert_eq!(cylinder.normal(&Vec4(0.0, 5.0, -1.0, 1.0), None, None), Vec4(0.0, 0.0, -1.0, 0.0));
+        assert_eq!(cylinder.normal(&Vec4(0.0, -2.0, 1.0, 1.0), None, None), Vec4(0.0, 0.0, 1.0, 0.0));
+        assert_eq!(cylinder.normal(&Vec4(-1.0, -1.0, 0.0, 1.0), None, None), Vec4(-1.0, 0.0, 0.0, 0.0));
     }
 
     #[test]

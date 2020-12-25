@@ -101,7 +101,7 @@ mod tests {
         let list = vec![Matrix4x4::new((1.0, -0.0, 0.0, -0.0), (-0.0, 0.5, -0.0, 0.0), (0.0, -0.0, 0.33333334, -0.0), (-0.0, 0.0, -0.0, 1.0)), Matrix4x4::new((-0.00000004371139, -0.0, -1.0, -0.0), (-0.0, 1.0, -0.0, 0.0), (1.0, -0.0, -0.00000004371139, -0.0), (-0.0, 0.0, -0.0, 1.0))];
         let mut s_clone = Sphere::new(Matrix4x4::translation(5.0, 0.0, 0.0), Material::default());
         s_clone.parent_inverses = list;
-        let normal = s_clone.normal(&Vec4(1.7321, 1.1547, -5.5774, 1.0));
+        let normal = s_clone.normal(&Vec4(1.7321, 1.1547, -5.5774, 1.0), None, None);
         assert_eq!(normal.round(), Vec4(0.2857, 0.4286, -0.8571, 0.0).round());
     }
 

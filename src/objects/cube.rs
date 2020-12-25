@@ -100,13 +100,13 @@ impl Object for Cube {
                     Intersection::new(
                         tmin,
                         Ray::position(&ray, tmin),
-                        self.normal(&Ray::position(&ray, tmin)),
+                        self.normal(&Ray::position(&ray, tmin), None, None),
                         self,
                     ),
                     Intersection::new(
                         tmax,
                         Ray::position(&ray, tmax),
-                        self.normal(&Ray::position(&ray, tmax)),
+                        self.normal(&Ray::position(&ray, tmax), None, None),
                         self,
                     ),
                 ]
@@ -115,7 +115,7 @@ impl Object for Cube {
     }
 
     //Finds the normal on a given point on a cube
-    fn normal(&self, world_point: &Vec4) -> Vec4 {
+    fn normal(&self, world_point: &Vec4, _u: Option<f32>, _v: Option<f32>) -> Vec4 {
         let group_point = world_to_object(&self.parent_inverses, world_point);
         let transformed_point = &self.inverse * group_point;
         let coords = [transformed_point.0.abs(), transformed_point.1.abs(), transformed_point.2.abs()];

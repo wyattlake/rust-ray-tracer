@@ -93,37 +93,37 @@ mod tests {
             Intersection::new(
                 2.0,
                 Ray::position(&ray, 2.0),
-                a.normal(&Ray::position(&ray, 2.0)),
+                a.normal(&Ray::position(&ray, 2.0), None, None),
                 &a,
             ),
             Intersection::new(
                 2.75,
                 Ray::position(&ray, 2.75),
-                b.normal(&Ray::position(&ray, 2.75)),
+                b.normal(&Ray::position(&ray, 2.75), None, None),
                 &b,
             ),
             Intersection::new(
                 3.25,
                 Ray::position(&ray, 3.25),
-                c.normal(&Ray::position(&ray, 3.25)),
+                c.normal(&Ray::position(&ray, 3.25), None, None),
                 &c,
             ),
             Intersection::new(
                 4.75,
                 Ray::position(&ray, 4.75),
-                b.normal(&Ray::position(&ray, 4.75)),
+                b.normal(&Ray::position(&ray, 4.75), None, None),
                 &b,
             ),
             Intersection::new(
                 5.25,
                 Ray::position(&ray, 5.25),
-                c.normal(&Ray::position(&ray, 5.25)),
+                c.normal(&Ray::position(&ray, 5.25), None, None),
                 &c,
             ),
             Intersection::new(
                 6.0,
                 Ray::position(&ray, 6.0),
-                a.normal(&Ray::position(&ray, 6.0)),
+                a.normal(&Ray::position(&ray, 6.0), None, None),
                 &a,
             )
         ];
@@ -159,7 +159,7 @@ mod tests {
         let i = Intersection::new(
             5.0,
             Ray::position(&ray, 5.0),
-            object.normal(&Ray::position(&ray, 5.0)),
+            object.normal(&Ray::position(&ray, 5.0), None, None),
             &object,
         );
 
@@ -182,13 +182,13 @@ mod tests {
             Intersection::new(
                 4.0,
                 Ray::position(&ray, 4.0),
-                scene.objects[0].normal(&Ray::position(&ray, 4.0)),
+                scene.objects[0].normal(&Ray::position(&ray, 4.0), None, None),
                 &*scene.objects[0],
             ),
             Intersection::new(
                 6.0,
                 Ray::position(&ray, 6.0),
-                scene.objects[0].normal(&Ray::position(&ray, 6.0)),
+                scene.objects[0].normal(&Ray::position(&ray, 6.0), None, None),
                 &*scene.objects[0],
             )
         ];
@@ -234,13 +234,13 @@ mod tests {
             Intersection::new(
                 4.0,
                 Ray::position(&ray, 4.0),
-                scene.objects[0].normal(&Ray::position(&ray, 4.0)),
+                scene.objects[0].normal(&Ray::position(&ray, 4.0), None, None),
                 &*scene.objects[0],
             ),
             Intersection::new(
                 6.0,
                 Ray::position(&ray, 6.0),
-                scene.objects[0].normal(&Ray::position(&ray, 6.0)),
+                scene.objects[0].normal(&Ray::position(&ray, 6.0), None, None),
                 &*scene.objects[0],
             )
         ];
@@ -288,13 +288,13 @@ mod tests {
             Intersection::new(
                 -(2.0 as f32).sqrt() / 2.0,
                 Ray::position(&ray, -(2.0 as f32).sqrt() / 2.0),
-                scene.objects[0].normal(&Ray::position(&ray, -(2.0 as f32).sqrt() / 2.0)),
+                scene.objects[0].normal(&Ray::position(&ray, -(2.0 as f32).sqrt() / 2.0), None, None),
                 &*scene.objects[0],
             ),
             Intersection::new(
                 (2.0 as f32).sqrt() / 2.0,
                 Ray::position(&ray, (2.0 as f32).sqrt() / 2.0),
-                scene.objects[0].normal(&Ray::position(&ray, (2.0 as f32).sqrt() / 2.0)),
+                scene.objects[0].normal(&Ray::position(&ray, (2.0 as f32).sqrt() / 2.0), None, None),
                 &*scene.objects[0],
             )
         ];
@@ -344,25 +344,25 @@ mod tests {
             Intersection::new(
                 -0.9899,
                 Ray::position(&ray, -0.9899),
-                scene.objects[0].normal(&Ray::position(&ray, -0.9899)),
+                scene.objects[0].normal(&Ray::position(&ray, -0.9899), None, None),
                 &*scene.objects[0],
             ),
             Intersection::new(
                 -0.4899,
                 Ray::position(&ray, -0.4899),
-                scene.objects[1].normal(&Ray::position(&ray, -0.4899)),
+                scene.objects[1].normal(&Ray::position(&ray, -0.4899), None, None),
                 &*scene.objects[1],
             ),
             Intersection::new(
                 0.4899,
                 Ray::position(&ray, 0.4899),
-                scene.objects[1].normal(&Ray::position(&ray, 0.4899)),
+                scene.objects[1].normal(&Ray::position(&ray, 0.4899), None, None),
                 &*scene.objects[1],
             ),
             Intersection::new(
                 0.9899,
                 Ray::position(&ray, 0.9899),
-                scene.objects[0].normal(&Ray::position(&ray, 0.9899)),
+                scene.objects[0].normal(&Ray::position(&ray, 0.9899), None, None),
                 &*scene.objects[0],
             )
         ];
@@ -427,7 +427,7 @@ mod tests {
             Intersection::new(
                 (2.0 as f32).sqrt(),
                 Ray::position(&ray, (2.0 as f32).sqrt()),
-                scene.objects[2].normal(&Ray::position(&ray, (2.0 as f32).sqrt())),
+                scene.objects[2].normal(&Ray::position(&ray, (2.0 as f32).sqrt()), None, None),
                 &*scene.objects[2],
             ),
         ];

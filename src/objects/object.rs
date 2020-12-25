@@ -18,7 +18,7 @@ pub trait Object: Debug + ObjectClone {
     fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>>;
 
     //Finds the normal of an object at a given point
-    fn normal(&self, world_point: &Vec4) -> Vec4;
+    fn normal(&self, _world_point: &Vec4, u: Option<f32>, v: Option<f32>) -> Vec4;
 
     //Adds a given object to a group
     fn add_to_group(self, group: &mut Group);
