@@ -20,8 +20,7 @@ pub struct CSG {
     pub transform: Matrix4x4,
     pub inverse: Matrix4x4,
     pub material: Material,
-    pub left: Box<dyn Object>,
-    pub right: Box<dyn Object>,
+    pub objects: Vec<Box<dyn Object>>,
     pub operation: Operation,
     pub parent_inverses: Vec<Matrix4x4>,
     pub parent_material: Option<Material>,
@@ -40,8 +39,7 @@ impl CSG {
             transform: Matrix4x4::identity(),
             inverse: Matrix4x4::identity(),
             material: Material::default(),
-            left: Box::new(sphere),
-            right: Box::new(cube),
+            objects: vec![Box::new(sphere), Box::new(cube)],
             operation: Operation::Union,
             parent_inverses: vec![],
             parent_material: None,
@@ -60,8 +58,7 @@ impl CSG {
             inverse: transform.inverse().unwrap(),
             transform,
             material,
-            left,
-            right,
+            objects: vec![left, right],
             operation,
             parent_inverses: vec![],
             parent_material: None,
@@ -92,8 +89,9 @@ impl Object for CSG {
     fn intersect(&self, ray: &Ray) -> Option<Vec<Intersection>> {
         let transformed_ray = Ray::transform(ray, &self.inverse);
         let mut valid_intersections: Vec<Intersection> = vec![];
-        let left_intersections = self.left.intersect(&transformed_ray);
-        let right_intersections = self.left.intersect(&transformed_ray);
+        
+        let left_intersections = self.objects[0].intersect(&transformed_ray);
+        let right_intersections = self.objects[1].intersect(&transformed_ray);
 
         if !left_intersections.is_none() {
             let mut unwrapped_left = left_intersections.unwrap();
