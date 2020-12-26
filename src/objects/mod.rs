@@ -8,6 +8,7 @@ pub mod triangle;
 pub mod smooth_triangle;
 
 pub mod group;
+pub mod csg;
 
 pub mod parser;
 

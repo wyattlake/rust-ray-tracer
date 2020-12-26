@@ -2,7 +2,6 @@
 
 mod tests {
     use rust_ray_tracer::objects::parser::Parser;
-    use rust_ray_tracer::core::vector::Vec4;
     use std::fs::File;
 
     #[test]

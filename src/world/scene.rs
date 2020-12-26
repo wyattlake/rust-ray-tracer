@@ -44,7 +44,7 @@ impl Scene {
                     &comps.parent_inverses,
                 );
         }
-
+        let environment = environment_color(scene, &comps, remaining);
         let mut reflected = reflected_color(&scene, comps, remaining);
         let mut refracted = refracted_color(&scene, comps, remaining);
 
@@ -55,7 +55,7 @@ impl Scene {
             refracted = refracted * (1.0 - reflectance);
         }
         
-        color + reflected + refracted
+        color + reflected + refracted + environment
     }
 
     //Computes the color at a given point
@@ -67,7 +67,8 @@ impl Scene {
         let intersections = Ray::intersect_scene(&scene, ray.clone());
         let hit = Intersection::hit(&intersections);
         if !hit.is_none() {
-            let comps = Comp::compute_vars(hit.unwrap(), &ray, &intersections);
+            let unwrapped = hit.unwrap();
+            let comps = Comp::compute_vars(unwrapped, &ray, &intersections);
             let color = Scene::scene_lighting(scene, &comps, remaining);
             Some(color)
         } else {
@@ -94,6 +95,7 @@ impl Scene {
                         0.0,
                         0.0,
                         1.0,
+                        0.0,
                         true,
                         None,
                     ),

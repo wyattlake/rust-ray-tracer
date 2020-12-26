@@ -5,7 +5,6 @@ mod tests {
     use rust_ray_tracer::objects::object::Object;
     use rust_ray_tracer::core::vector::Vec4;
     use rust_ray_tracer::ray_tracing::ray::Ray;
-    use rust_ray_tracer::materials::material::Material;
 
     #[test]
     //Tests intersecting a ray with a smooth triangle

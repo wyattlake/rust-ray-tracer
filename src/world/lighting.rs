@@ -6,6 +6,7 @@ use crate::ray_tracing::intersection::Intersection;
 use crate::materials::material::*;
 use crate::ray_tracing::ray::Ray;
 use crate::world::scene::Scene;
+use crate::misc::utils::*;
 use rand::Rng;
 
 //A Light is either a PointLight or an AreaLight
@@ -191,6 +192,35 @@ pub fn refracted_color(scene: &Scene, comps: &Comp, remaining: i32) -> Color {
     }
 }
 
+//Finds the refracted color at a certain point
+pub fn environment_color(scene: &Scene, comps: &Comp, remaining: i32) -> Color {
+    if remaining < 5 || comps.material.environment_lighting == 0.0 {
+        return BLACK;
+    }
+    let new_ray = Ray::new_from_vec(comps.over_point.clone(), comps.n_vec.clone());
+    let intersections = Ray::intersect_scene(&scene, new_ray.clone());
+    let hit = Intersection::hit(&intersections);
+    let factor;
+    if hit != None {
+        let distance = hit.unwrap().t;
+        if 1.0 - distance > 0.0 {
+            factor = 1.0 - distance;  
+        }
+        else {
+            factor = 0.0;
+        }
+    }
+    else {
+        factor = 0.0;
+    }
+    let color = Scene::compute_color(new_ray, scene, remaining - 1);
+    if color != None {
+        color.unwrap() * comps.material.environment_lighting * factor
+    } else {
+        Color::new(0.0, 0.0, 0.0)
+    } 
+}
+
 //Approximates reflectance
 pub fn schlick(comps: &Comp) -> f32 {
    let mut cos = Vec4::dot(&comps.e_vec, &comps.n_vec);
@@ -251,7 +281,7 @@ pub fn lighting(
 
         //A negative light_dot_normal means the light is obstructed
         if light_dot_normal >= 0.0 {
-            diffuse_sum = diffuse_sum + (&effective_color * material.diffuse * light_dot_normal * light_intensity);
+            diffuse_sum = diffuse_sum + (&effective_color * material.diffuse * light_dot_normal * clamp_float(light_intensity, 0.8, 1.0));
 
             //reflect_dot_eye represents the cosine of the angle between the reflection and eye vectors
             let reflect_vec = Vec4::reflect(&light_vec.negate(), &n_vec);
@@ -260,7 +290,7 @@ pub fn lighting(
             if reflect_dot_eye > 0.0 {
                 let factor = f32::powf(reflect_dot_eye as f32, material.shininess);
                 specular_sum = specular_sum
-                    + light.get_intensity() * &material.specular * factor * light_intensity;
+                    + light.get_intensity() * &material.specular * factor * clamp_float(light_intensity, 0.8, 1.0);
             }
         }
     }

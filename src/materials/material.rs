@@ -14,6 +14,7 @@ pub struct Material {
     pub reflectivity: f32,
     pub transparency: f32,
     pub refractive_index: f32,
+    pub environment_lighting: f32,
     pub casts_shadows: bool,
     pub pattern: Option<Box<dyn Pattern>>,
 }
@@ -29,6 +30,7 @@ impl Material {
         reflectivity: f32,
         transparency: f32,
         refractive_index: f32,
+        environment_lighting: f32,
         casts_shadows: bool,
         pattern: Option<Box<dyn Pattern>>,
     ) -> Material {
@@ -41,6 +43,7 @@ impl Material {
             reflectivity,
             transparency,
             refractive_index,
+            environment_lighting,
             casts_shadows,
             pattern,
         }
@@ -77,6 +80,7 @@ impl Material {
             reflectivity: 0.0,
             transparency: 0.0,
             refractive_index: 1.0,
+            environment_lighting: 0.0,
             casts_shadows: true,
             pattern: None,
         }

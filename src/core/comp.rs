@@ -69,10 +69,13 @@ impl Comp {
         let mut n_vec = intersection.normal.clone();
         let e_vec = ray.direction.negate();
         let r_vec = Vec4::reflect(&ray.direction, &n_vec);
-        let mut inside = false;
+        let inside;
         if Vec4::dot(&n_vec, &e_vec) < 0.0 {
             inside = true;
             n_vec = n_vec.negate();
+        }
+        else {
+            inside = false;
         }
         let offset = &n_vec * EPSILON_BUMP;
         let over_point = &point + &offset;
