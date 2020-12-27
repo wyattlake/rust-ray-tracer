@@ -12,6 +12,8 @@ use std::any::Any;
 #[derive(Debug, PartialEq, Clone)]
 pub enum Operation {
     Union,
+    Intersect,
+    Difference,
 }
 
 //A csg has a transform trait which keeps track of its transformations
@@ -50,12 +52,13 @@ impl CSG {
     pub fn new(transform: Matrix4x4, material: Material, left_argument: Box<dyn Object>, right_argument: Box<dyn Object>, operation: Operation) -> CSG {
         let mut left = left_argument;
         let mut right = right_argument;
+        let inverse = transform.inverse().unwrap();
         left.set_parent_material(&material);
-        left.push_parent_inverse(transform.clone());
+        left.push_parent_inverse(inverse.clone());
         right.set_parent_material(&material);
-        right.push_parent_inverse(transform.clone());
+        right.push_parent_inverse(inverse.clone());
         CSG {
-            inverse: transform.inverse().unwrap(),
+            inverse: inverse,
             transform,
             material,
             objects: vec![left, right],
@@ -69,6 +72,12 @@ impl CSG {
         match operation {
             Operation::Union => {
                 (left_hit && !in_right) || (!left_hit && !in_left)
+            }
+            Operation::Intersect => {
+                (left_hit && in_right) || (!left_hit && in_left)
+            }
+            Operation::Difference => {
+                (left_hit && !in_right) || (!left_hit && in_left) 
             }
         }
     }
@@ -94,7 +103,7 @@ impl Object for CSG {
         let right_intersections = self.objects[1].intersect(&transformed_ray);
 
         if !left_intersections.is_none() {
-            let mut unwrapped_left = left_intersections.unwrap();
+            let mut unwrapped_left = left_intersections.clone().unwrap();
             unwrapped_left.sort_by(|i1, i2| (i1.t).partial_cmp(&i2.t).unwrap());
             if !right_intersections.is_none() {
                 let mut unwrapped_right = right_intersections.unwrap();
@@ -115,6 +124,25 @@ impl Object for CSG {
                     }
                     in_left = !in_left;
                 }
+
+                let unwrapped_left = left_intersections.unwrap();
+
+                let mut in_right = false;
+                for i in unwrapped_right {
+                    let mut in_left = false;
+                    'in_left: for j in &unwrapped_left {
+                        if j.t > i.t {
+                            break 'in_left;
+                        }
+                        else {
+                            in_left = !in_left;
+                        }
+                    }
+                    if CSG::intersection_allowed(&self.operation, false, in_left, in_right) {
+                        valid_intersections.push(i);
+                    }
+                    in_right = !in_right;
+                }
             }
             else {
                 let mut in_left = false;
@@ -127,23 +155,44 @@ impl Object for CSG {
             }
         }
         else {
-            let mut unwrapped_right = right_intersections.unwrap();
-            unwrapped_right.sort_by(|i1, i2| (i1.t).partial_cmp(&i2.t).unwrap()); 
-            let mut in_right = false;
-            for i in unwrapped_right {
-                if CSG::intersection_allowed(&self.operation, true, in_right, false) {
-                    valid_intersections.push(i);
+            if !right_intersections.is_none() {
+                let mut unwrapped_right = right_intersections.unwrap();
+                unwrapped_right.sort_by(|i1, i2| (i1.t).partial_cmp(&i2.t).unwrap()); 
+                let mut in_right = false;
+                for i in unwrapped_right {
+                    if CSG::intersection_allowed(&self.operation, false, false, in_right) {
+                        valid_intersections.push(i);
+                    }
+                    in_right = !in_right;
                 }
-                in_right = !in_right;
             }
         }
 
-        for i in &mut valid_intersections {
-            i.hit = Ray::position(&transformed_ray, i.t);
+        let mut final_intersections = vec![];
+
+        for intersection in &mut valid_intersections {
+            let new_intersection;
+            if intersection.u == None {
+                new_intersection = Intersection::new(
+                    intersection.t,
+                    Ray::position(&transformed_ray, intersection.t),
+                    (intersection.object).normal(&Ray::position(&ray, intersection.t), None, None),
+                    intersection.object,
+                );
+            }
+            else {
+                new_intersection = Intersection::new(
+                    intersection.t,
+                    Ray::position(&transformed_ray, intersection.t),
+                    (intersection.object).normal(&Ray::position(&ray, intersection.t), intersection.u, intersection.v),
+                    intersection.object,
+                );
+            }
+            final_intersections.push(new_intersection);
         }
 
         if valid_intersections.len() > 0 {
-            Some(valid_intersections)
+            Some(final_intersections)
         }
         else {
             None

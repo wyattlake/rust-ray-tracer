@@ -124,7 +124,7 @@ impl Light for PointLight {
     //Finds the intensity of a PointLight at a given point
     fn light_intensity(&self, point: &Vec4, scene: &Scene) -> f32 {
         if in_shadow(&self.position, point, scene) == true {
-            0.0
+            1.0
         } else {
             1.0
         }
@@ -281,7 +281,7 @@ pub fn lighting(
 
         //A negative light_dot_normal means the light is obstructed
         if light_dot_normal >= 0.0 {
-            diffuse_sum = diffuse_sum + (&effective_color * material.diffuse * light_dot_normal * clamp_float(light_intensity, 0.8, 1.0));
+            diffuse_sum = diffuse_sum + (&effective_color * material.diffuse * light_dot_normal * clamp_float(light_intensity, 0.4, 1.0));
 
             //reflect_dot_eye represents the cosine of the angle between the reflection and eye vectors
             let reflect_vec = Vec4::reflect(&light_vec.negate(), &n_vec);
@@ -290,7 +290,7 @@ pub fn lighting(
             if reflect_dot_eye > 0.0 {
                 let factor = f32::powf(reflect_dot_eye as f32, material.shininess);
                 specular_sum = specular_sum
-                    + light.get_intensity() * &material.specular * factor * clamp_float(light_intensity, 0.8, 1.0);
+                    + light.get_intensity() * &material.specular * factor * clamp_float(light_intensity, 0.4, 1.0);
             }
         }
     }
