@@ -8,14 +8,24 @@ mod tests {
     //Tests matrix indexing
     #[test]
     fn indexing() {
-        let matrix = Matrix4x4::new((1.0, 2.0, 3.0, 4.0), (5.0, 6.0, 7.0, 8.0), (9.0, 10.0, 11.0, 12.0), (13.0, 14.0, 15.0, 16.0));
-        assert_eq!(matrix.1.2, 7.0);
+        let matrix = Matrix4x4::new(
+            (1.0, 2.0, 3.0, 4.0),
+            (5.0, 6.0, 7.0, 8.0),
+            (9.0, 10.0, 11.0, 12.0),
+            (13.0, 14.0, 15.0, 16.0),
+        );
+        assert_eq!(matrix.1 .2, 7.0);
     }
 
     //Tests multiplying matrices and the identity matrix
     #[test]
     fn multiplication() {
-        let matrix1 = Matrix4x4::new((1.0, 2.0, 3.0, 4.0), (5.0, 6.0, 7.0, 8.0), (9.0, 10.0, 11.0, 12.0), (13.0, 14.0, 15.0, 16.0));
+        let matrix1 = Matrix4x4::new(
+            (1.0, 2.0, 3.0, 4.0),
+            (5.0, 6.0, 7.0, 8.0),
+            (9.0, 10.0, 11.0, 12.0),
+            (13.0, 14.0, 15.0, 16.0),
+        );
         let identity1 = Matrix4x4::identity();
         let result1 = matrix1.clone() * identity1;
         assert_eq!(&matrix1, &result1);
@@ -32,8 +42,18 @@ mod tests {
     //Tests transposing matrices
     #[test]
     fn transposition() {
-        let matrix1 = Matrix4x4::new((0.0, 9.0, 3.0, 0.0), (9.0, 8.0, 0.0, 8.0), (1.0, 8.0, 5.0, 3.0), (0.0, 0.0, 5.0, 8.0));
-        let matrix2 = Matrix4x4::new((0.0, 9.0, 1.0, 0.0), (9.0, 8.0, 8.0, 0.0), (3.0, 0.0, 5.0, 5.0), (0.0, 8.0, 3.0, 8.0));
+        let matrix1 = Matrix4x4::new(
+            (0.0, 9.0, 3.0, 0.0),
+            (9.0, 8.0, 0.0, 8.0),
+            (1.0, 8.0, 5.0, 3.0),
+            (0.0, 0.0, 5.0, 8.0),
+        );
+        let matrix2 = Matrix4x4::new(
+            (0.0, 9.0, 1.0, 0.0),
+            (9.0, 8.0, 8.0, 0.0),
+            (3.0, 0.0, 5.0, 5.0),
+            (0.0, 8.0, 3.0, 8.0),
+        );
         assert_eq!(matrix2, matrix1.transpose());
         let matrix3 = Matrix3x3::new((0.0, 9.0, 3.0), (9.0, 8.0, 0.0), (1.0, 8.0, 5.0));
         let matrix4 = Matrix3x3::new((0.0, 9.0, 1.0), (9.0, 8.0, 8.0), (3.0, 0.0, 5.0));
@@ -49,7 +69,12 @@ mod tests {
         let matrix1 = Matrix3x3::new((1.0, 2.0, 3.0), (4.0, 5.0, 6.0), (7.0, 8.0, 9.0));
         let matrix2 = Matrix3x3::sub_matrix(&matrix1, 1, 2);
         assert_eq!(Matrix2x2::new((1.0, 2.0), (7.0, 8.0)), matrix2);
-        let matrix3 = Matrix4x4::new((-2.0, -8.0, 3.0, 5.0), (-3.0, 1.0, 7.0, 3.0), (1.0, 2.0, -9.0, 6.0), (-6.0, 7.0, 7.0, -9.0));
+        let matrix3 = Matrix4x4::new(
+            (-2.0, -8.0, 3.0, 5.0),
+            (-3.0, 1.0, 7.0, 3.0),
+            (1.0, 2.0, -9.0, 6.0),
+            (-6.0, 7.0, 7.0, -9.0),
+        );
         let matrix4 = Matrix3x3::new((1.0, 7.0, 3.0), (2.0, -9.0, 6.0), (7.0, 7.0, -9.0));
         let matrix5 = Matrix4x4::sub_matrix(&matrix3, 0, 0);
         assert_eq!(matrix4, matrix5);
@@ -69,7 +94,12 @@ mod tests {
         let matrix1 = Matrix3x3::new((1.0, 2.0, 6.0), (-5.0, 8.0, -4.0), (2.0, 6.0, 4.0));
         let result1 = Matrix3x3::determinant(&matrix1);
         assert_eq!(result1, -196.0);
-        let matrix2 = Matrix4x4::new((-2.0, -8.0, 3.0, 5.0), (-3.0, 1.0, 7.0, 3.0), (1.0, 2.0, -9.0, 6.0), (-6.0, 7.0, 7.0, -9.0));
+        let matrix2 = Matrix4x4::new(
+            (-2.0, -8.0, 3.0, 5.0),
+            (-3.0, 1.0, 7.0, 3.0),
+            (1.0, 2.0, -9.0, 6.0),
+            (-6.0, 7.0, 7.0, -9.0),
+        );
         let result2 = Matrix4x4::determinant(&matrix2);
         assert_eq!(result2, -4071.0);
     }
@@ -77,9 +107,19 @@ mod tests {
     #[test]
     //Tests matrix inverse
     fn matrix_inverse() {
-        let matrix1 = Matrix4x4::new((1.0, 0.0, 0.0, 5.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0));
+        let matrix1 = Matrix4x4::new(
+            (1.0, 0.0, 0.0, 5.0),
+            (0.0, 1.0, 0.0, 0.0),
+            (0.0, 0.0, 1.0, 0.0),
+            (0.0, 0.0, 0.0, 1.0),
+        );
         let result1 = matrix1.inverse();
-        let matrix2 = Matrix4x4::new((1.0, 0.0, 0.0, -5.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0));
+        let matrix2 = Matrix4x4::new(
+            (1.0, 0.0, 0.0, -5.0),
+            (0.0, 1.0, 0.0, 0.0),
+            (0.0, 0.0, 1.0, 0.0),
+            (0.0, 0.0, 0.0, 1.0),
+        );
         assert_eq!(matrix2, result1.unwrap());
         let matrix3 = Matrix4x4::identity();
         let matrix4 = matrix3.clone().inverse();
@@ -127,9 +167,15 @@ mod tests {
     //Tests rotation
     fn rotation() {
         let point = Vec4(1.0, 1.0, 1.0, 1.0);
-        let point2 = Matrix4x4::rotation(Axis::Z, 360.0) * Matrix4x4::rotation(Axis::Y, 360.0) * Matrix4x4::rotation(Axis::X, 360.0) * point.clone();
+        let point2 = Matrix4x4::rotation(Axis::Z, 360.0)
+            * Matrix4x4::rotation(Axis::Y, 360.0)
+            * Matrix4x4::rotation(Axis::X, 360.0)
+            * point.clone();
         //Values are rounded because rotations are affected by rounding errors
-        assert_eq!((point.0.round(), point.1.round(), point.2.round()), (point2.0.round(), point2.2.round(), point2.2.round()));
+        assert_eq!(
+            (point.0.round(), point.1.round(), point.2.round()),
+            (point2.0.round(), point2.2.round(), point2.2.round())
+        );
     }
 
     #[test]
@@ -192,7 +238,12 @@ mod tests {
         let view_end_pos = Vec4::new(4.0, -2.0, 8.0, 1.0);
         let up_vec = Vec4::new(1.0, 1.0, 0.0, 0.0);
         let transform = Matrix4x4::view_transform(view_start_pos, view_end_pos, up_vec);
-        let expected_result = Matrix4x4::new((-0.50709, 0.50709, 0.67612, -2.36643), (0.76772, 0.60609, 0.12122, -2.82843), (-0.35857, 0.59761, -0.71714, 0.0), (0.0, 0.0, 0.0, 1.0)); 
+        let expected_result = Matrix4x4::new(
+            (-0.50709, 0.50709, 0.67612, -2.36643),
+            (0.76772, 0.60609, 0.12122, -2.82843),
+            (-0.35857, 0.59761, -0.71714, 0.0),
+            (0.0, 0.0, 0.0, 1.0),
+        );
         assert_eq!(transform.round(), expected_result.round());
     }
 }

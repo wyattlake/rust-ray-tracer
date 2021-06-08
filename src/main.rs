@@ -3,7 +3,6 @@ use rust_ray_tracer::core::color::*;
 use rust_ray_tracer::core::matrix::Matrix4x4;
 use rust_ray_tracer::core::vector::Vec4;
 use rust_ray_tracer::objects::plane::Plane;
-use rust_ray_tracer::objects::group::Group;
 use rust_ray_tracer::misc::axis::Axis;
 use rust_ray_tracer::objects::cube::Cube;
 use rust_ray_tracer::objects::cylinder::Cylinder;
@@ -11,104 +10,77 @@ use rust_ray_tracer::objects::sphere::Sphere;
 use rust_ray_tracer::world::camera::Camera;
 use rust_ray_tracer::world::lighting::*;
 use rust_ray_tracer::materials::material::Material;
-use rust_ray_tracer::objects::csg::{CSG, Operation};
-use rust_ray_tracer::objects::parser::Parser;
-use std::fs::File;
 use rust_ray_tracer::world::scene::Scene;
-use std::time::Instant;
+use std::{default, time::Instant};
 
 fn main() {
     //Width and height of the scene
-    const WIDTH: usize = 1000;
-    const HEIGHT: usize = 1000;
+    const WIDTH: usize = 100;
+    const HEIGHT: usize = 100;
 
     //Canvas where color is stored
     let mut canvas = Canvas::new(WIDTH, HEIGHT);
 
     //Creating an AreaLight
-    let corner = Vec4(-0.25, 0.99, -1.0, 1.0);
+    let corner = Vec4(-3.0, 5.0, -5.0, 1.0);
     let v1 = Vec4::new(0.5, 0.0, 0.0, 0.0);
-    let v2 = Vec4::new(0.0, 0.0, 0.5, 0.0);
-    let back_light = AreaLight::new(corner, v1, 5, v2, 5, Color(0.7, 0.7, 0.65));
+    let v2 = Vec4::new(0.0, 0.5, 0.0, 0.0);
+    let light = AreaLight::new(corner, v1, 5, v2, 5, Color(0.8, 0.8, 0.8));
 
-    // let light = PointLight::new(Color(0.1, 0.1, 0.05), Vec4(0.0, 0.0, -2.0, 1.0));
-    // let front_light = PointLight::new(Color(0.1, 0.1, 0.05), Vec4(0.0, 1.0, -5.0, 1.0));
-    //let front_light = PointLight::new(Color(1.1, 1.1, 1.05), Vec4(0.0, 5.0, -10.0, 1.0));
-
-    //let back_light = PointLight::new(Color(0.7, 0.7, 0.65), Vec4(-0.25, 0.99, -1.0, 1.0));
-
-    let front_light = PointLight::new(Color(0.2, 0.2, 0.15), Vec4(0.0, 1.0, -2.0, 1.0));
+    let pl = PointLight::new(Color::new(0.4, 0.4, 0.4), Vec4::new(5.0, 0.0, 20.0, 1.0));
 
     //Creating a plane
     let mut white_material = Material::default();
-    white_material.ambient = 0.3;
-    white_material.diffuse = 0.9;
+    white_material.ambient = 0.5;
+    white_material.diffuse = 0.3;
     white_material.specular = 0.0;
     white_material.casts_shadows = false;
 
-    let floor = Plane::new(Matrix4x4::identity(), white_material.clone());
-    let ceiling = Plane::new(Matrix4x4::translation(0.0, 2.0, 0.0), white_material.clone());
+    let mut wm2 = Material::default();
+    wm2.ambient = 0.6;
+    wm2.specular = 0.0;
 
-    let mut red_material = Material::default();
-    red_material.ambient = 0.2;
-    red_material.diffuse = 0.9;
-    red_material.specular = 0.0;
-    red_material.color = Color::new_255(237, 19, 41);
-    red_material.casts_shadows = false;
+    let mut m1 = Material::default();
+    m1.color = Color::new_255(255, 163, 64);
+    m1.ambient = 0.5;
+    m1.diffuse = 0.85;
+    m1.reflectivity = 0.1;
 
-    let mut green_material = Material::default();
-    green_material.ambient = 0.2;
-    green_material.diffuse = 0.9;
-    green_material.specular = 0.0;
-    green_material.color = Color::new_255(67, 209, 56);
-    green_material.casts_shadows = false;
+    let mut m2 = Material::default();
+    m2.color = Color::new_255(64, 169, 255);
+    m2.ambient = 0.5;
+    m2.reflectivity = 0.1;
 
-    let left_wall = Cube::new(Matrix4x4::translation(2.0, 0.0, 0.0) * Matrix4x4::rotation(Axis::Z, 90.0) * Matrix4x4::scaling(5.0, 1.0, 5.0), green_material);
-    let right_wall = Cube::new(Matrix4x4::translation(-2.0, 0.0, 0.0) * Matrix4x4::rotation(Axis::Z, 90.0) * Matrix4x4::scaling(5.0, 1.0, 5.0), red_material);
-    let back_wall = Cube::new(Matrix4x4::translation(0.0, 1.0, 1.0), white_material);
+    let mut lm = Material::default();
+    lm.specular = 0.0;
+    lm.color = Color::new(1.5, 1.5, 1.5);
+    lm.ambient = 1.5;
+    lm.casts_shadows = false;
+    lm.diffuse = 0.0;
 
-    let mut box_material = Material::default();
-    box_material.ambient = 0.3;
-    box_material.diffuse = 0.9;
-    box_material.specular = 0.0;
-
-    let mut reflective_material = Material::default();
-    reflective_material.color = BLACK;
-    reflective_material.reflectivity = 0.95;
-
-    //let box1 = Cube::new(Matrix4x4::rotation(Axis::Y, -20.0) * Matrix4x4::translation(-0.9, 0.5, -1.3) * Matrix4x4::scaling(0.25, 0.5, 0.25), box_material.clone());
-    let box1 = Sphere::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.65, 0.65, 0.65), box_material.clone());
-    let box2 = Cube::new(Matrix4x4::translation(0.0, 0.0, 0.0) * Matrix4x4::scaling(0.5, 0.5, 0.5), box_material.clone());
-
-    let cyl1 = Cylinder::new(Matrix4x4::scaling(0.3, 1.0, 0.3), Material::default(), -1.0, 1.0, true);
-    let cyl2 = Cylinder::new(Matrix4x4::rotation(Axis::X, 90.0) * Matrix4x4::scaling(0.3, 1.0, 0.3), Material::default(), -1.0, 1.0, true);
-    let cyl3 = Cylinder::new(Matrix4x4::rotation(Axis::Z, 90.0) * Matrix4x4::scaling(0.3, 1.0, 0.3), Material::default(), -1.0, 1.0, true);
-
-    let csg1 = CSG::new(Matrix4x4::identity(), reflective_material.clone(), Box::new(box1), Box::new(box2), Operation::Intersect);
-    let csg2 = CSG::new(Matrix4x4::translation(0.0, 0.0, 0.0), box_material.clone(), Box::new(csg1), Box::new(cyl1), Operation::Difference);
-    let csg3 = CSG::new(Matrix4x4::translation(0.0, 0.0, 0.0), box_material.clone(), Box::new(csg2), Box::new(cyl2), Operation::Difference);
-    let csg4 = CSG::new(Matrix4x4::translation(0.0, 0.5, -1.5), box_material.clone(), Box::new(csg3), Box::new(cyl3), Operation::Difference);
-
+    let sphere1 = Sphere::new(Matrix4x4::translation(-0.3, 1.0, -0.5), m1.clone());
+    let sphere2 = Sphere::new(Matrix4x4::translation(1.3, 0.5, -0.1) * Matrix4x4::scaling(0.5, 0.5, 0.5), m2.clone());
+    let sphere3 = Sphere::new(Matrix4x4::translation(-1.2, 0.4, -1.7) * Matrix4x4::scaling(0.4, 0.4, 0.4), m2.clone());
+    let cube1 = Cube::new(Matrix4x4::translation(0.0, 20.0, -15.0) * Matrix4x4::scaling(20.0, 20.0, 20.0), wm2.clone());
+    
     //Creates a new scene using the area light, a plane, and a sphere
     let scene: Scene = Scene {
         light_sources: vec![
-            Box::new(front_light),
-            Box::new(back_light),
+            Box::new(pl),
+            Box::new(light),
         ],
         objects: vec![
-            Box::new(floor),
-            Box::new(ceiling),
-            Box::new(left_wall),
-            Box::new(right_wall),
-            Box::new(back_wall),
-            Box::new(csg4),
+            Box::new(sphere1),
+            Box::new(sphere2),
+            Box::new(sphere3),
+            Box::new(cube1),
         ],
     };
     
     //Creates a camera and defines its properties
     let mut camera = Camera::new(WIDTH, HEIGHT, 45.0);
-    let start_pos = Vec4::new(0.0, 1.0, -5.0, 1.0);
-    let end_pos = Vec4::new(0.0, 1.0, 0.0, 1.0);
+    let start_pos = Vec4::new(0.0, 1.6, -5.5, 1.0);
+    let end_pos = Vec4::new(0.0, 1.0, 1.0, 1.0);
     let up_vec = Vec4::new(0.0, 1.0, 0.0, 0.0);
 
     //Transforms the view according to the camera transformation
@@ -117,7 +89,7 @@ fn main() {
     println!("Render started...");
     let now = Instant::now();
 
-    Camera::render(&camera, &scene, &mut canvas);
+    Camera::render_supersampled(&camera, &scene, &mut canvas);
 
     let duration = now.elapsed();
     println!("Image successfully rendered");
